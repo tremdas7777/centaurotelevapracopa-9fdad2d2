@@ -22,6 +22,7 @@ import {
 export default function Checkout() {
   const [searchParams] = useSearchParams();
   const prefilledName = searchParams.get('nome') || '';
+  const prefilledCpf = searchParams.get('cpf') || '';
 
   const [nome, setNome] = useState(prefilledName);
   const [email, setEmail] = useState('');
@@ -55,6 +56,9 @@ export default function Checkout() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    if (prefilledCpf && !cpf) {
+      setCpf(formatCpf(prefilledCpf));
+    }
   }, []);
 
   useEffect(() => {
