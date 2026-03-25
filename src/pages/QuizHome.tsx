@@ -138,6 +138,8 @@ export default function QuizHome() {
       return;
     }
     setCpfError('');
+    // TODO: integrar API de CPF para puxar nome real
+    setClientName('Cliente');
     setShowCepInput(true);
   };
   const [showCepInput, setShowCepInput] = useState(false);
