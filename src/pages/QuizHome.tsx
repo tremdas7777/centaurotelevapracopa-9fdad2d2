@@ -7,6 +7,9 @@ import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Gift, ShoppingCart, S
 import camisaImg from '@/assets/camisa-brasil-hero.png';
 import albumImg from '@/assets/album-copa-hero.png';
 import centauroLogo from '@/assets/centauro-logo.png';
+import stadiumHero from '@/assets/stadium-hero.jpg';
+import trophyImg from '@/assets/world-cup-trophy.png';
+import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
 
 interface Question {
   id: number;
