@@ -7,6 +7,9 @@ import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Gift, ShoppingCart, S
 import camisaImg from '@/assets/camisa-brasil-hero.png';
 import albumImg from '@/assets/album-copa-hero.png';
 import centauroLogo from '@/assets/centauro-logo.png';
+import stadiumHero from '@/assets/stadium-hero.jpg';
+import trophyImg from '@/assets/world-cup-trophy.png';
+import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
 
 interface Question {
   id: number;
@@ -67,6 +70,7 @@ const quizQuestions: Question[] = [
 ];
 
 export default function QuizHome() {
+  const [showHome, setShowHome] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [quizComplete, setQuizComplete] = useState(false);
@@ -112,6 +116,108 @@ export default function QuizHome() {
     const checkoutUrl = localStorage.getItem('checkoutUrl') || 'https://seu-checkout.com/taxa-envio';
     window.location.href = checkoutUrl;
   };
+
+  // HOME / LANDING PAGE
+  if (showHome) {
+    return (
+      <div className="min-h-screen bg-foreground flex flex-col">
+        {/* Centauro Top Bar */}
+        <div className="bg-primary py-3 px-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <img src={centauroLogo} alt="Centauro" className="h-8 md:h-10 object-contain brightness-0 invert" />
+            <span className="text-primary-foreground text-[10px] font-bold tracking-[0.15em] uppercase opacity-80">
+              Copa do Mundo 2026
+            </span>
+          </div>
+        </div>
+
+        {/* Hero Section */}
+        <div
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-4 py-20 md:py-32"
+          style={{
+            backgroundImage: `url(${stadiumHero})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          <div className="absolute inset-0 bg-foreground/70" />
+          <div className="relative z-10 max-w-2xl mx-auto">
+            <img src={trophyImg} alt="Copa do Mundo 2026" className="h-24 md:h-32 mx-auto mb-6 drop-shadow-2xl" width={512} height={512} />
+            <h1 className="text-4xl md:text-6xl font-black text-primary-foreground leading-tight mb-4 tracking-tight">
+              Teste seus conhecimentos
+            </h1>
+            <p className="text-lg md:text-2xl font-semibold text-primary-foreground/80 mb-10">
+              Responda 8 perguntas sobre a <span className="text-centauro-gold font-black">Seleção Brasileira</span>
+            </p>
+            <Button
+              onClick={() => setShowHome(false)}
+              className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-12 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider"
+              style={{ boxShadow: '0 8px 30px hsl(145 63% 42% / 0.5)' }}
+            >
+              Começar Agora
+            </Button>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <footer className="bg-foreground border-t border-primary-foreground/10">
+          <div className="max-w-5xl mx-auto px-4 py-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+              {/* Links */}
+              <div>
+                <h4 className="text-primary-foreground font-black text-sm mb-3">Enlaces Rápidos</h4>
+                <p className="text-primary-foreground/60 text-xs cursor-pointer hover:text-primary-foreground/80 transition-colors">Início</p>
+              </div>
+              {/* Contato */}
+              <div>
+                <h4 className="text-primary-foreground font-black text-sm mb-3">Contato</h4>
+                <div className="space-y-2">
+                  <p className="text-primary-foreground/60 text-xs flex items-center gap-2">
+                    <Mail size={12} /> suporte@centaurocopa2026.com.br
+                  </p>
+                  <p className="text-primary-foreground/60 text-xs flex items-center gap-2">
+                    <Phone size={12} /> +55 (11) 4002-8922
+                  </p>
+                  <p className="text-primary-foreground/60 text-xs flex items-center gap-2">
+                    <MapPinIcon size={12} /> São Paulo, SP - Brasil
+                  </p>
+                </div>
+              </div>
+              {/* Legal */}
+              <div>
+                <h4 className="text-primary-foreground font-black text-sm mb-3">Informação Legal</h4>
+                <p className="text-primary-foreground/60 text-xs"><strong className="text-primary-foreground/80">CNPJ:</strong> 06.347.409/0001-90</p>
+                <p className="text-primary-foreground/60 text-xs mt-1"><strong className="text-primary-foreground/80">Razão Social:</strong> Centauro Esportes S.A.</p>
+              </div>
+            </div>
+
+            {/* Trust */}
+            <div className="border-t border-primary-foreground/10 pt-6 mb-6">
+              <h4 className="text-primary-foreground/80 font-bold text-xs mb-3">Segurança e Confiança</h4>
+              <div className="flex flex-wrap gap-4">
+                {['SSL 256-bit Cifrado', 'Garantia de 30 dias', 'Suporte 24/7', 'Dados Protegidos'].map(item => (
+                  <span key={item} className="flex items-center gap-1.5 text-primary-foreground/50 text-[11px]">
+                    <CheckCircle size={12} className="text-centauro-green" /> {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Copyright */}
+            <div className="border-t border-primary-foreground/10 pt-5 text-center">
+              <img src={centauroLogo} alt="Centauro" className="h-5 mx-auto mb-2 opacity-20 brightness-0 invert" />
+              <p className="text-primary-foreground/30 text-[10px]">
+                © 2026 Quiz Copa do Mundo 2026 - Brasil. Todos os direitos reservados.
+              </p>
+              <p className="text-primary-foreground/30 text-[10px] mt-0.5">
+                Desenvolvido com ❤️ para os fãs do futebol brasileiro
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    );
+  }
 
   if (showAnimation) {
     return <LoadingAnimation onComplete={() => { setShowAnimation(false); setQuizComplete(true); }} />;
