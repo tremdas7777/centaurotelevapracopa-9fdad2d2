@@ -12,7 +12,7 @@ import albumImg from '@/assets/album-copa-hero.webp';
 import centauroLogo from '@/assets/centauro-logo.webp';
 import stadiumHero from '@/assets/stadium-hero.webp';
 import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.webp';
-import worldcupTrophy from '@/assets/worldcup-trophy.webp';
+import cbfLogo from '@/assets/centauro-cbf-logo-transparent.webp';
 import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
 import { playCorrectSound, playWrongSound, playRevealSound } from '@/lib/quizSounds';
 
@@ -152,7 +152,7 @@ export default function QuizHome() {
           <div className="max-w-4xl mx-auto flex items-center justify-center gap-3">
             <img src={centauroLogo} alt="Centauro" className="h-14 md:h-20 object-contain brightness-0 invert" />
             <span className="text-primary-foreground text-xl font-light opacity-40">×</span>
-            <img src={worldcupTrophy} alt="FIFA World Cup 2026" className="h-10 md:h-16 object-contain" />
+            <img src={cbfLogo} alt="CBF" className="h-10 md:h-16 object-contain" />
           </div>
         </div>
 
@@ -183,7 +183,7 @@ export default function QuizHome() {
               className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-14 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider w-full max-w-sm"
               style={{ boxShadow: '0 8px 30px hsl(145 63% 42% / 0.5)' }}
             >
-              COMEÇAR QUIZ
+              PARTICIPAR AGORA
             </Button>
 
             <p className="text-primary-foreground/30 text-[11px] mt-3 font-semibold">100% Gratuito · 2 minutos · Resultado na hora</p>
