@@ -364,7 +364,7 @@ export default function Checkout() {
               {cpfError && (
                 <p className="text-destructive text-xs font-semibold mt-1.5">{cpfError}</p>
               )}
-
+            </div>
             {/* CEP */}
             <div>
               <label className="text-xs font-bold text-foreground mb-1.5 block">CEP</label>
