@@ -159,16 +159,21 @@ export default function QuizHome() {
           </div>
         </div>
 
-        {/* Players banner - same size as quiz */}
-        <div className="w-full h-40 md:h-64 relative overflow-hidden">
-          <img src={quizBannerPreload} alt="Jogadores Seleção Brasileira" className="w-full h-full object-cover object-top" />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 55%, hsl(0 0% 13%) 100%)' }} />
-        </div>
+        {/* Players banner + stadium blend */}
+        <div className="relative">
+          <div className="w-full h-40 md:h-64 relative overflow-hidden z-10">
+            <img
+              src={quizBannerPreload}
+              alt="Jogadores Seleção Brasileira"
+              className="w-full h-full object-cover object-top block"
+              style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 72%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 0%, black 72%, transparent 100%)' }}
+            />
+          </div>
 
-        {/* Stadium banner - overlaps with negative margin for seamless blend */}
-        <div className="w-full h-28 md:h-40 relative overflow-hidden -mt-1">
-          <img src={stadiumHero} alt="" className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, hsl(0 0% 13%) 0%, hsl(0 0% 13% / 0.4) 40%, hsl(0 0% 13% / 0.4) 60%, hsl(0 0% 13%) 100%)' }} />
+          <div className="w-full h-28 md:h-40 relative overflow-hidden -mt-10 md:-mt-16">
+            <img src={stadiumHero} alt="" className="w-full h-full object-cover object-center" />
+            <div className="absolute inset-0 bg-gradient-to-b from-foreground/20 via-foreground/35 to-foreground/85" />
+          </div>
         </div>
 
         {/* Hero content */}
