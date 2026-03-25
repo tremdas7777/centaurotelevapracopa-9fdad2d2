@@ -165,8 +165,12 @@ export default function QuizHome() {
           <div className="absolute inset-0 bg-gradient-to-b from-foreground/20 via-transparent to-foreground" />
         </div>
 
-        {/* Hero content - fills remaining viewport */}
-        <div className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 bg-foreground">
+        {/* Hero content with stadium background - fills remaining viewport */}
+        <div
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8"
+          style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+        >
+          <div className="absolute inset-0 bg-foreground/85" />
           <div className="relative z-10 max-w-lg mx-auto flex flex-col items-center">
 
             <p className="text-xs font-bold text-centauro-green uppercase tracking-widest mb-2">⚽ Promoção Copa do Mundo 2026</p>
