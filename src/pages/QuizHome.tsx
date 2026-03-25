@@ -160,7 +160,7 @@ export default function QuizHome() {
         </div>
 
         {/* Combined banners - players fading into stadium */}
-        <div className="w-full relative overflow-hidden" style={{ height: '280px' }}>
+        <div className="w-full relative overflow-hidden" style={{ height: '340px' }}>
           {/* Stadium as base layer */}
           <div className="absolute inset-0">
             <img src={stadiumHero} alt="" className="w-full h-full object-cover object-center" />
