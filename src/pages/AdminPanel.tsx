@@ -344,87 +344,127 @@ export default function AdminPanel() {
         {activeTab === 'pixels' && (
           <div>
             <h2 className="text-xl font-black text-foreground mb-1">Pixels de Rastreamento</h2>
-            <p className="text-muted-foreground text-xs mb-6">Configure seus pixels para rastrear conversões</p>
+            <p className="text-muted-foreground text-xs mb-6">Configure quantos pixels quiser por plataforma</p>
 
-            <div className="space-y-4">
-              {/* Facebook Pixel */}
-              <Card className="p-5 border border-border">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#1877F2]/10 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#1877F2]"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            {/* Facebook Pixels */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-[#1877F2]/10 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-[#1877F2]"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                   </div>
-                  <div>
-                    <h3 className="font-black text-foreground text-sm">Facebook / Meta Pixel</h3>
-                    <p className="text-muted-foreground text-[11px]">Pixel + Conversions API (CAPI)</p>
-                  </div>
+                  <h3 className="font-black text-foreground text-sm">Facebook / Meta Pixel</h3>
+                  <Badge variant="secondary" className="text-[10px]">{pixelConfig.facebookPixels.length}</Badge>
                 </div>
-                <div className="space-y-2">
-                  <div>
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Pixel ID</label>
-                    <Input value={pixelConfig.facebookPixelId} onChange={(e) => setPixelConfig(prev => ({ ...prev, facebookPixelId: e.target.value }))} placeholder="Ex: 123456789012345" className="font-mono text-xs mt-1" />
-                    <p className="text-[9px] text-muted-foreground mt-1">Meta Business Suite → Gerenciador de Eventos → Fontes de dados → ID do Pixel</p>
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Access Token (CAPI)</label>
-                    <Input type="password" value={pixelConfig.facebookAccessToken} onChange={(e) => setPixelConfig(prev => ({ ...prev, facebookAccessToken: e.target.value }))} placeholder="Token da Conversions API" className="font-mono text-xs mt-1" />
-                    <p className="text-[9px] text-muted-foreground mt-1">Gerenciador de Eventos → Configurações → Gerar token de acesso. Envia eventos server-side (CAPI)</p>
-                  </div>
-                </div>
-              </Card>
+                <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => setPixelConfig(prev => ({ ...prev, facebookPixels: [...prev.facebookPixels, { id: crypto.randomUUID(), pixelId: '', accessToken: '' }] }))}>
+                  <Plus size={12} className="mr-1" /> Adicionar
+                </Button>
+              </div>
+              {pixelConfig.facebookPixels.length === 0 && <p className="text-xs text-muted-foreground text-center py-4 border border-dashed border-border rounded-md">Nenhum pixel Facebook adicionado</p>}
+              <div className="space-y-2">
+                {pixelConfig.facebookPixels.map((fb, i) => (
+                  <Card key={fb.id} className="p-4 border border-border">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[11px] font-black text-foreground">Pixel #{i + 1}</span>
+                      <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10 h-6 w-6 p-0" onClick={() => setPixelConfig(prev => ({ ...prev, facebookPixels: prev.facebookPixels.filter(p => p.id !== fb.id) }))}>
+                        <Trash2 size={12} />
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      <div>
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Pixel ID</label>
+                        <Input value={fb.pixelId} onChange={(e) => setPixelConfig(prev => ({ ...prev, facebookPixels: prev.facebookPixels.map(p => p.id === fb.id ? { ...p, pixelId: e.target.value } : p) }))} placeholder="Ex: 123456789012345" className="font-mono text-xs mt-1" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Access Token (CAPI)</label>
+                        <Input type="password" value={fb.accessToken} onChange={(e) => setPixelConfig(prev => ({ ...prev, facebookPixels: prev.facebookPixels.map(p => p.id === fb.id ? { ...p, accessToken: e.target.value } : p) }))} placeholder="Token da Conversions API (opcional)" className="font-mono text-xs mt-1" />
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
 
-              {/* TikTok Pixel */}
-              <Card className="p-5 border border-border">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-foreground/10 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-foreground"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.11V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.75a8.18 8.18 0 004.76 1.52V6.84a4.84 4.84 0 01-1-.15z"/></svg>
+            {/* TikTok Pixels */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-foreground/10 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-foreground"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.11V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.75a8.18 8.18 0 004.76 1.52V6.84a4.84 4.84 0 01-1-.15z"/></svg>
                   </div>
-                  <div>
-                    <h3 className="font-black text-foreground text-sm">TikTok Pixel</h3>
-                    <p className="text-muted-foreground text-[11px]">Pixel + Events API server-side</p>
-                  </div>
+                  <h3 className="font-black text-foreground text-sm">TikTok Pixel</h3>
+                  <Badge variant="secondary" className="text-[10px]">{pixelConfig.tiktokPixels.length}</Badge>
                 </div>
-                <div className="space-y-2">
-                  <div>
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Pixel ID</label>
-                    <Input value={pixelConfig.tiktokPixelId} onChange={(e) => setPixelConfig(prev => ({ ...prev, tiktokPixelId: e.target.value }))} placeholder="Ex: CXXXXXXXXXXXXXXX" className="font-mono text-xs mt-1" />
-                    <p className="text-[9px] text-muted-foreground mt-1">TikTok Ads Manager → Ativos → Eventos → Web Events → Pixel ID</p>
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Access Token</label>
-                    <Input type="password" value={pixelConfig.tiktokAccessToken} onChange={(e) => setPixelConfig(prev => ({ ...prev, tiktokAccessToken: e.target.value }))} placeholder="Token da Events API" className="font-mono text-xs mt-1" />
-                    <p className="text-[9px] text-muted-foreground mt-1">TikTok Ads Manager → Ativos → Eventos → Configurações → Gerar Access Token</p>
-                  </div>
-                </div>
-              </Card>
+                <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => setPixelConfig(prev => ({ ...prev, tiktokPixels: [...prev.tiktokPixels, { id: crypto.randomUUID(), pixelId: '', accessToken: '' }] }))}>
+                  <Plus size={12} className="mr-1" /> Adicionar
+                </Button>
+              </div>
+              {pixelConfig.tiktokPixels.length === 0 && <p className="text-xs text-muted-foreground text-center py-4 border border-dashed border-border rounded-md">Nenhum pixel TikTok adicionado</p>}
+              <div className="space-y-2">
+                {pixelConfig.tiktokPixels.map((tt, i) => (
+                  <Card key={tt.id} className="p-4 border border-border">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[11px] font-black text-foreground">Pixel #{i + 1}</span>
+                      <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10 h-6 w-6 p-0" onClick={() => setPixelConfig(prev => ({ ...prev, tiktokPixels: prev.tiktokPixels.filter(p => p.id !== tt.id) }))}>
+                        <Trash2 size={12} />
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      <div>
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Pixel ID</label>
+                        <Input value={tt.pixelId} onChange={(e) => setPixelConfig(prev => ({ ...prev, tiktokPixels: prev.tiktokPixels.map(p => p.id === tt.id ? { ...p, pixelId: e.target.value } : p) }))} placeholder="Ex: CXXXXXXXXXXXXXXX" className="font-mono text-xs mt-1" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Access Token</label>
+                        <Input type="password" value={tt.accessToken} onChange={(e) => setPixelConfig(prev => ({ ...prev, tiktokPixels: prev.tiktokPixels.map(p => p.id === tt.id ? { ...p, accessToken: e.target.value } : p) }))} placeholder="Token da Events API (opcional)" className="font-mono text-xs mt-1" />
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
 
-              {/* Google Ads */}
-              <Card className="p-5 border border-border">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#4285F4]/10 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-5 h-5"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            {/* Google Ads Pixels */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-[#4285F4]/10 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" className="w-4 h-4"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
                   </div>
-                  <div>
-                    <h3 className="font-black text-foreground text-sm">Google Ads</h3>
-                    <p className="text-muted-foreground text-[11px]">Google Tag (gtag.js) + Conversão</p>
-                  </div>
+                  <h3 className="font-black text-foreground text-sm">Google Ads</h3>
+                  <Badge variant="secondary" className="text-[10px]">{pixelConfig.googleAdsPixels.length}</Badge>
                 </div>
-                <div className="space-y-2">
-                  <div>
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">ID de Conversão</label>
-                    <Input value={pixelConfig.googleAdsId} onChange={(e) => setPixelConfig(prev => ({ ...prev, googleAdsId: e.target.value }))} placeholder="Ex: AW-123456789" className="font-mono text-xs mt-1" />
-                    <p className="text-[9px] text-muted-foreground mt-1">Google Ads → Ferramentas → Medição → Conversões → Tag de configuração</p>
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Rótulo de Conversão</label>
-                    <Input value={pixelConfig.googleAdsLabel} onChange={(e) => setPixelConfig(prev => ({ ...prev, googleAdsLabel: e.target.value }))} placeholder="Ex: AbCdEfGhIjKlMnOp" className="font-mono text-xs mt-1" />
-                    <p className="text-[9px] text-muted-foreground mt-1">Google Ads → Conversões → Detalhes da conversão → Rótulo da conversão</p>
-                  </div>
-                </div>
-              </Card>
+                <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => setPixelConfig(prev => ({ ...prev, googleAdsPixels: [...prev.googleAdsPixels, { id: crypto.randomUUID(), adsId: '', adsLabel: '' }] }))}>
+                  <Plus size={12} className="mr-1" /> Adicionar
+                </Button>
+              </div>
+              {pixelConfig.googleAdsPixels.length === 0 && <p className="text-xs text-muted-foreground text-center py-4 border border-dashed border-border rounded-md">Nenhum pixel Google Ads adicionado</p>}
+              <div className="space-y-2">
+                {pixelConfig.googleAdsPixels.map((ga, i) => (
+                  <Card key={ga.id} className="p-4 border border-border">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[11px] font-black text-foreground">Pixel #{i + 1}</span>
+                      <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10 h-6 w-6 p-0" onClick={() => setPixelConfig(prev => ({ ...prev, googleAdsPixels: prev.googleAdsPixels.filter(p => p.id !== ga.id) }))}>
+                        <Trash2 size={12} />
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      <div>
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">ID de Conversão</label>
+                        <Input value={ga.adsId} onChange={(e) => setPixelConfig(prev => ({ ...prev, googleAdsPixels: prev.googleAdsPixels.map(p => p.id === ga.id ? { ...p, adsId: e.target.value } : p) }))} placeholder="Ex: AW-123456789" className="font-mono text-xs mt-1" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Rótulo de Conversão</label>
+                        <Input value={ga.adsLabel} onChange={(e) => setPixelConfig(prev => ({ ...prev, googleAdsPixels: prev.googleAdsPixels.map(p => p.id === ga.id ? { ...p, adsLabel: e.target.value } : p) }))} placeholder="Ex: AbCdEfGhIjKlMnOp" className="font-mono text-xs mt-1" />
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </div>
 
             {/* Utmify HTML Pixel */}
-            <Card className="p-5 border border-border mt-4">
+            <Card className="p-5 border border-border">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-centauro-green/10 flex items-center justify-center">
                   <Zap size={20} className="text-centauro-green" />
@@ -454,11 +494,11 @@ export default function AdminPanel() {
                 <h3 className="font-bold text-foreground text-[11px]">Como funciona</h3>
               </div>
               <ul className="text-[10px] text-muted-foreground space-y-0.5 pl-5 list-disc">
+                <li><strong>Ilimitado:</strong> Adicione quantos pixels quiser de cada plataforma</li>
                 <li><strong>Pixel ID:</strong> Dispara eventos no navegador (PageView, Purchase)</li>
                 <li><strong>Access Token / CAPI:</strong> Envia eventos server-side para maior precisão</li>
                 <li>O token é opcional, mas recomendado para contornar bloqueadores de anúncios</li>
                 <li>Evento de conversão é disparado ao clicar no checkout</li>
-                <li>Deixe campos vazios para desativar uma plataforma</li>
               </ul>
             </div>
           </div>
