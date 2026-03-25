@@ -273,7 +273,7 @@ export default function QuizHome() {
         {/* Centauro Top Bar */}
         <div className="bg-primary py-3 px-4">
           <div className="max-w-4xl mx-auto flex items-center justify-center">
-            <img src={centauroLogo} alt="Centauro" className="h-12 md:h-16 object-contain brightness-0 invert" />
+            <img src={centauroLogo} alt="Centauro" className="h-16 md:h-20 object-contain brightness-0 invert" />
           </div>
         </div>
 
