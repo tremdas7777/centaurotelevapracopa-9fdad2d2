@@ -13,6 +13,7 @@ import centauroLogo from '@/assets/centauro-logo.webp';
 import stadiumHero from '@/assets/stadium-hero.webp';
 import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.webp';
 import cbfLogo from '@/assets/cbf-logo.webp';
+import quizBannerPreload from '@/assets/quiz-banner-sm.webp';
 import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
 import { playCorrectSound, playWrongSound, playRevealSound } from '@/lib/quizSounds';
 
@@ -147,7 +148,9 @@ export default function QuizHome() {
   if (showHome) {
     return (
       <div className="bg-foreground flex flex-col">
-        {/* Centauro Top Bar */}
+        {/* Preload quiz banner */}
+        <link rel="preload" as="image" href={quizBannerPreload} />
+        <img src={quizBannerPreload} alt="" className="hidden" />
         <div className="bg-primary py-4 px-4">
           <div className="max-w-4xl mx-auto flex items-center justify-center -translate-x-2">
             <img src={centauroLogo} alt="Centauro" className="h-14 md:h-20 object-contain brightness-0 invert" />
