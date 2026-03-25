@@ -160,7 +160,11 @@ export default function QuizHome() {
       <div className={`bg-foreground flex flex-col min-h-screen min-h-[100svh] min-h-[100dvh] transition-all duration-500 ease-in-out ${homeExiting ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
         {/* Preload quiz banner */}
         <link rel="preload" as="image" href={quizBannerPreload} />
+        <link rel="preload" as="image" href={camisaImg} />
+        <link rel="preload" as="image" href={albumImg} />
         <img src={quizBannerPreload} alt="" className="hidden" />
+        <img src={camisaImg} alt="" className="hidden" />
+        <img src={albumImg} alt="" className="hidden" />
         <div className="bg-primary py-4 px-4">
           <div className="max-w-4xl mx-auto flex items-center justify-center -translate-x-2">
             <img src={centauroLogo} alt="Centauro" className="h-14 md:h-20 object-contain brightness-0 invert" />
@@ -324,7 +328,7 @@ export default function QuizHome() {
                 <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider">
                   Exclusivo
                 </span>
-                <img src={camisaImg} alt="Camisa Brasil 2026" className="max-h-44 object-contain" />
+                <img src={camisaImg} alt="Camisa Brasil 2026" className="max-h-44 object-contain" loading="eager" fetchPriority="high" />
               </div>
               <div className="p-5">
                 <h3 className="text-lg font-black text-foreground mb-0.5">Camisa Brasil 2026</h3>
@@ -367,7 +371,7 @@ export default function QuizHome() {
                 <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider">
                   Exclusivo
                 </span>
-                <img src={albumImg} alt="Álbum Copa 2026" className="max-h-44 object-contain" />
+                <img src={albumImg} alt="Álbum Copa 2026" className="max-h-44 object-contain" loading="eager" fetchPriority="high" />
               </div>
               <div className="p-5">
                 <h3 className="text-lg font-black text-foreground mb-0.5">Álbum Copa 2026</h3>
