@@ -138,11 +138,32 @@ export default function QuizHome() {
       return;
     }
     setCpfError('');
+    // TODO: integrar API de CPF para puxar nome real
+    setClientName('Cliente');
     setShowCepInput(true);
   };
   const [showCepInput, setShowCepInput] = useState(false);
   const [cepValue, setCepValue] = useState('');
+  const [cepError, setCepError] = useState('');
   const [freteRevealed, setFreteRevealed] = useState(false);
+  const [clientName, setClientName] = useState('');
+
+  const formatCep = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 8);
+    if (digits.length <= 5) return digits;
+    return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+  };
+
+  const validateCep = (cep: string): boolean => {
+    const digits = cep.replace(/\D/g, '');
+    return digits.length === 8;
+  };
+
+  const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCep(e.target.value);
+    setCepValue(formatted);
+    setCepError('');
+  };
   const hasTrackedVisitor = useRef(false);
   const hasTrackedQuizStart = useRef(false);
   const hasTrackedQuizComplete = useRef(false);
@@ -532,19 +553,17 @@ export default function QuizHome() {
 
           {/* Address / CPF Dialog */}
           <Dialog open={showAddressDialog} onOpenChange={setShowAddressDialog}>
-            <DialogContent className="max-w-md mx-auto">
+            <DialogContent className="max-w-[calc(100%-2.5rem)] sm:max-w-md mx-auto rounded-2xl">
               <DialogHeader>
                 <DialogTitle className="text-center text-xl font-black text-foreground">
-                  {showCepInput ? 'Informe seu endereço' : 'Identificação'}
+                  {showCepInput ? 'Endereço de entrega' : 'Identificação'}
                 </DialogTitle>
               </DialogHeader>
 
               {!showCepInput ? (
                 <div className="space-y-5 pt-2">
                   <div className="bg-secondary p-5 rounded-lg text-center">
-                    <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
-                      <Users size={20} className="text-primary-foreground" />
-                    </div>
+                    <img src={centauroLogo} alt="Centauro" className="h-10 mx-auto mb-3 object-contain" />
                     <p className="font-bold text-foreground text-sm mb-1">Já é cliente Centauro?</p>
                     <p className="text-muted-foreground text-xs mb-4">Insira seu CPF para localizar seus dados</p>
                     <Input
@@ -573,7 +592,7 @@ export default function QuizHome() {
                   </div>
 
                   <Button
-                    onClick={() => setShowCepInput(true)}
+                    onClick={() => { setClientName(''); setShowCepInput(true); }}
                     variant="outline"
                     className="w-full py-5 font-bold text-sm"
                   >
@@ -585,24 +604,35 @@ export default function QuizHome() {
                 <div className="space-y-4 pt-2">
                   <div className="bg-secondary p-5 rounded-lg text-center">
                     <Truck size={24} className="text-primary mx-auto mb-3" />
-                    <p className="font-bold text-foreground text-sm mb-1">Informe seu CEP</p>
-                    <p className="text-muted-foreground text-xs mb-4">Para calcular o envio dos seus prêmios</p>
+                    <p className="font-bold text-foreground text-sm mb-1">
+                      {clientName ? `Olá, ${clientName}! 👋` : 'Informe seu CEP'}
+                    </p>
+                    <p className="text-muted-foreground text-xs mb-4">
+                      {clientName ? 'Agora informe seu CEP para calcular o envio' : 'Para calcular o envio dos seus prêmios'}
+                    </p>
                     <Input
                       placeholder="00000-000"
                       value={cepValue}
-                      onChange={(e) => setCepValue(e.target.value)}
-                      className="text-center font-mono text-lg"
+                      onChange={handleCepChange}
+                      className={`text-center font-mono text-lg ${cepError ? 'border-destructive' : ''}`}
                       maxLength={9}
                     />
+                    {cepError && (
+                      <p className="text-destructive text-xs font-semibold mt-2">{cepError}</p>
+                    )}
                   </div>
                   <Button
                     onClick={() => {
+                      if (!validateCep(cepValue)) {
+                        setCepError('CEP inválido. Informe 8 dígitos.');
+                        return;
+                      }
                       setFreteRevealed(true);
                       setShowAddressDialog(false);
                       handleGoToCheckout();
                     }}
                     className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-6 rounded-lg"
-                    disabled={cepValue.length < 8}
+                    disabled={cepValue.replace(/\D/g, '').length < 8}
                     style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)' }}
                   >
                     CONFIRMAR E RESGATAR PRÊMIOS
