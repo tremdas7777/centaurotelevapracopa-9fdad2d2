@@ -79,8 +79,8 @@
 }
 
 @keyframes pulse-glow-green {
-  0%, 100% { box-shadow: 0 8px 20px hsl(145 63% 42% / 0.3); }
-  50% { box-shadow: 0 8px 35px hsl(145 63% 42% / 0.6); }
+  0%, 100% { box-shadow: 0 8px 25px hsl(145 63% 42% / 0.4), 0 0 60px hsl(145 63% 42% / 0.15); }
+  50% { box-shadow: 0 8px 45px hsl(145 63% 42% / 0.7), 0 0 80px hsl(145 63% 42% / 0.3); }
 }
 
 @keyframes float-up {
