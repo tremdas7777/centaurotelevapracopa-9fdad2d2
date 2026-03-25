@@ -450,7 +450,7 @@ export default function Checkout() {
             </div>
 
             {/* Bairro + Cidade + Estado */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-[1fr_1fr_80px] gap-4">
               <div data-field-error={showFieldErrors && !bairro ? 'true' : undefined}>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">Bairro</label>
                 <Input placeholder="Bairro" value={bairro} onChange={(e) => setBairro(e.target.value)} className={`py-5 ${showFieldErrors && !bairro ? 'border-destructive focus-visible:ring-destructive' : ''}`} />
