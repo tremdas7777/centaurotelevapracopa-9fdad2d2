@@ -70,11 +70,14 @@ export default function PixPopup({ open, onOpenChange, pixCode, pixQrCodeBase64,
           </div>
 
           {/* QR Code */}
-          {pixQrCodeBase64 ? (
+          {pixCode ? (
             <div className="flex justify-center">
               <div className="bg-white p-3 rounded-lg">
                 <img
-                  src={pixQrCodeBase64.startsWith('data:') ? pixQrCodeBase64 : `data:image/png;base64,${pixQrCodeBase64}`}
+                  src={pixQrCodeBase64 
+                    ? (pixQrCodeBase64.startsWith('data:') ? pixQrCodeBase64 : `data:image/png;base64,${pixQrCodeBase64}`)
+                    : `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(pixCode)}`
+                  }
                   alt="QR Code PIX"
                   className="w-48 h-48 object-contain"
                 />
