@@ -165,15 +165,14 @@ export default function QuizHome() {
             src={quizBannerPreload}
             alt="Jogadores Seleção Brasileira"
             className="w-full h-full object-cover object-top block"
-            style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 60%, rgba(0,0,0,0.92) 76%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 0%, black 60%, rgba(0,0,0,0.92) 76%, transparent 100%)' }}
+            style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 45%, rgba(0,0,0,0.5) 70%, transparent 90%)', maskImage: 'linear-gradient(to bottom, black 0%, black 45%, rgba(0,0,0,0.5) 70%, transparent 90%)' }}
           />
-          <div className="absolute inset-x-0 bottom-0 h-16 md:h-24 bg-gradient-to-b from-transparent via-foreground/25 to-foreground/70" />
         </div>
 
         {/* Hero content with stadium as background */}
         <div
-          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-20 -mt-10 min-h-[75vh]"
-          style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-20 -mt-16 min-h-[75vh]"
+          style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center top' }}
         >
           <div className="absolute inset-0 bg-foreground/80" />
           <div className="relative z-10 max-w-lg mx-auto flex flex-col items-center">
