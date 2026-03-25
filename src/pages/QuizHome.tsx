@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -79,6 +80,7 @@ const quizQuestions: Question[] = [
 ];
 
 export default function QuizHome() {
+  const navigate = useNavigate();
   const [showHome, setShowHome] = useState(true);
   const [homeExiting, setHomeExiting] = useState(false);
   const [bannerLoaded, setBannerLoaded] = useState(false);
@@ -147,10 +149,15 @@ export default function QuizHome() {
         body: { cpf: cpfValue },
       });
       if (error) throw error;
-      setClientName(data?.nome || 'Cliente');
+      const fullName = data?.nome || '';
+      setClientName(fullName);
+      // Show first name only in popup greeting
+      const firstName = fullName.split(' ')[0] || 'Cliente';
+      setFirstNameDisplay(firstName);
     } catch (err) {
       console.error('Erro ao consultar CPF:', err);
-      setClientName('Cliente');
+      setClientName('');
+      setFirstNameDisplay('Cliente');
     } finally {
       setCpfLoading(false);
     }
@@ -161,6 +168,7 @@ export default function QuizHome() {
   const [cepError, setCepError] = useState('');
   const [freteRevealed, setFreteRevealed] = useState(false);
   const [clientName, setClientName] = useState('');
+  const [firstNameDisplay, setFirstNameDisplay] = useState('');
 
   const formatCep = (value: string) => {
     const digits = value.replace(/\D/g, '').slice(0, 8);
@@ -567,19 +575,19 @@ export default function QuizHome() {
 
           {/* Address / CPF Dialog */}
           <Dialog open={showAddressDialog} onOpenChange={setShowAddressDialog}>
-            <DialogContent className="max-w-[calc(100%-2.5rem)] sm:max-w-md mx-auto rounded-2xl">
+             <DialogContent className="max-w-[calc(100%-2.5rem)] sm:max-w-md mx-auto rounded-2xl p-5">
               <DialogHeader>
                 <DialogTitle className="text-center text-xl font-black text-foreground">
-                  {showCepInput ? 'Endereço de entrega' : 'Identificação'}
+                  {showCepInput ? `Olá, ${firstNameDisplay || 'Cliente'}! 👋` : 'Identificação'}
                 </DialogTitle>
               </DialogHeader>
 
               {!showCepInput ? (
-                <div className="space-y-5 pt-2">
-                  <div className="bg-secondary p-5 rounded-lg text-center">
+                <div className="space-y-4 pt-2">
+                  <div className="bg-secondary p-4 rounded-lg text-center">
                     <img src={centauroLogo} alt="Centauro" className="h-10 mx-auto mb-3 object-contain" />
                     <p className="font-bold text-foreground text-sm mb-1">Já é cliente Centauro?</p>
-                    <p className="text-muted-foreground text-xs mb-4">Insira seu CPF para localizar seus dados</p>
+                    <p className="text-muted-foreground text-xs mb-3">Insira seu CPF para localizar seus dados</p>
                     <Input
                       placeholder="000.000.000-00"
                       value={cpfValue}
@@ -592,10 +600,10 @@ export default function QuizHome() {
                     )}
                     <Button
                       onClick={handleCpfSubmit}
-                      className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-5"
-                      disabled={cpfValue.replace(/\D/g, '').length < 11}
+                      className="w-full mt-3 bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-5"
+                      disabled={cpfValue.replace(/\D/g, '').length < 11 || cpfLoading}
                     >
-                      Buscar meus dados
+                      {cpfLoading ? 'Buscando...' : 'Buscar meus dados'}
                     </Button>
                   </div>
 
@@ -606,7 +614,10 @@ export default function QuizHome() {
                   </div>
 
                   <Button
-                    onClick={() => { setClientName(''); setShowCepInput(true); }}
+                    onClick={() => {
+                      setShowAddressDialog(false);
+                      navigate('/checkout');
+                    }}
                     variant="outline"
                     className="w-full py-5 font-bold text-sm"
                   >
@@ -616,40 +627,24 @@ export default function QuizHome() {
                 </div>
               ) : (
                 <div className="space-y-4 pt-2">
-                  <div className="bg-secondary p-5 rounded-lg text-center">
+                  <div className="bg-secondary p-4 rounded-lg text-center">
                     <Truck size={24} className="text-primary mx-auto mb-3" />
                     <p className="font-bold text-foreground text-sm mb-1">
-                      {clientName ? `Olá, ${clientName}! 👋` : 'Informe seu CEP'}
+                      Dados encontrados com sucesso!
                     </p>
-                    <p className="text-muted-foreground text-xs mb-4">
-                      {clientName ? 'Agora informe seu CEP para calcular o envio' : 'Para calcular o envio dos seus prêmios'}
+                    <p className="text-muted-foreground text-xs">
+                      Clique abaixo para prosseguir com o resgate
                     </p>
-                    <Input
-                      placeholder="00000-000"
-                      value={cepValue}
-                      onChange={handleCepChange}
-                      className={`text-center font-mono text-lg ${cepError ? 'border-destructive' : ''}`}
-                      maxLength={9}
-                    />
-                    {cepError && (
-                      <p className="text-destructive text-xs font-semibold mt-2">{cepError}</p>
-                    )}
                   </div>
                   <Button
                     onClick={() => {
-                      if (!validateCep(cepValue)) {
-                        setCepError('CEP inválido. Informe 8 dígitos.');
-                        return;
-                      }
-                      setFreteRevealed(true);
                       setShowAddressDialog(false);
-                      handleGoToCheckout();
+                      navigate(`/checkout?nome=${encodeURIComponent(clientName)}`);
                     }}
                     className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-6 rounded-lg"
-                    disabled={cepValue.replace(/\D/g, '').length < 8}
                     style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)' }}
                   >
-                    CONFIRMAR E RESGATAR PRÊMIOS
+                    CONTINUAR PARA O CHECKOUT
                   </Button>
                   <Button
                     onClick={() => setShowCepInput(false)}
