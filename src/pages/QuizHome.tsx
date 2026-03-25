@@ -7,12 +7,12 @@ import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Gift, ShoppingCart, S
 import { trackEvent } from '@/lib/funnelTracking';
 import { fireConversionEvent } from '@/lib/pixelManager';
 import { fireSaleWebhook } from '@/lib/webhookManager';
-import camisaImg from '@/assets/camisa-brasil-hero.png';
-import albumImg from '@/assets/album-copa-hero.png';
-import centauroLogo from '@/assets/centauro-logo.png';
-import stadiumHero from '@/assets/stadium-hero.jpg';
-import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.png';
-import worldcupTrophy from '@/assets/worldcup-trophy.png';
+import camisaImg from '@/assets/camisa-brasil-hero.webp';
+import albumImg from '@/assets/album-copa-hero.webp';
+import centauroLogo from '@/assets/centauro-logo.webp';
+import stadiumHero from '@/assets/stadium-hero.webp';
+import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.webp';
+import worldcupTrophy from '@/assets/worldcup-trophy.webp';
 import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
 
 interface Question {
