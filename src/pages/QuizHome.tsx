@@ -142,7 +142,26 @@ export default function QuizHome() {
   };
   const [showCepInput, setShowCepInput] = useState(false);
   const [cepValue, setCepValue] = useState('');
+  const [cepError, setCepError] = useState('');
   const [freteRevealed, setFreteRevealed] = useState(false);
+  const [clientName, setClientName] = useState('');
+
+  const formatCep = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 8);
+    if (digits.length <= 5) return digits;
+    return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+  };
+
+  const validateCep = (cep: string): boolean => {
+    const digits = cep.replace(/\D/g, '');
+    return digits.length === 8;
+  };
+
+  const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCep(e.target.value);
+    setCepValue(formatted);
+    setCepError('');
+  };
   const hasTrackedVisitor = useRef(false);
   const hasTrackedQuizStart = useRef(false);
   const hasTrackedQuizComplete = useRef(false);
