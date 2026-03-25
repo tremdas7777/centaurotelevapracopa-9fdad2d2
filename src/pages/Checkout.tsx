@@ -53,6 +53,7 @@ export default function Checkout() {
   const [pixQrCodeBase64, setPixQrCodeBase64] = useState('');
   const [pixOrderId, setPixOrderId] = useState('');
   const [pixError, setPixError] = useState('');
+  const [showFieldErrors, setShowFieldErrors] = useState(false);
 
   const cepValid = cep.replace(/\D/g, '').length === 8 && !!endereco;
   const shippingCost = shippingMethod === 'sedex' ? 44.90 : shippingMethod === 'retirada' ? 0 : null;
@@ -327,12 +328,6 @@ export default function Checkout() {
             </div>
             <span className="text-xs font-black text-centauro-gold">INCLUSO</span>
           </div>
-          {cepValid && shippingMethod === 'sedex' && (
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-              <span className="text-sm font-bold text-foreground">Frete SEDEX</span>
-              <span className="text-lg font-black text-centauro-green">R$ 44,90</span>
-            </div>
-          )}
         </Card>
 
         {/* Checkout Form */}
@@ -517,10 +512,18 @@ export default function Checkout() {
         )}
 
         <Button
-          onClick={handleSubmit}
-          disabled={!isFormValid || pixLoading}
-          className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-7 rounded-lg transition-transform hover:scale-[1.02] active:scale-95 mb-4"
-          style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)', animation: 'pulse-glow-green 2s ease-in-out infinite' }}
+          onClick={() => {
+            if (!isFormValid) {
+              setShowFieldErrors(true);
+              const firstMissing = document.querySelector('[data-field-error="true"]');
+              if (firstMissing) firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              return;
+            }
+            handleSubmit();
+          }}
+          disabled={pixLoading}
+          className={`w-full text-primary-foreground font-black text-base py-7 rounded-lg transition-transform hover:scale-[1.02] active:scale-95 mb-4 ${isFormValid ? 'bg-centauro-green hover:bg-centauro-green/80' : 'bg-centauro-green/50 hover:bg-centauro-green/40'}`}
+          style={{ boxShadow: isFormValid ? '0 6px 25px hsl(145 63% 42% / 0.5)' : 'none', animation: isFormValid ? 'pulse-glow-green 2s ease-in-out infinite' : 'none' }}
         >
           {pixLoading ? (
             <><Loader2 size={18} className="mr-2 animate-spin" /> GERANDO PIX...</>
@@ -545,7 +548,7 @@ export default function Checkout() {
 
         {/* Footer */}
         <div className="text-center py-4">
-          <img src={centauroLogo} alt="Centauro" className="h-5 mx-auto mb-2 opacity-30" />
+          <img src={centauroLogo} alt="Centauro" className="h-10 mx-auto mb-2 opacity-30" />
           <p className="text-muted-foreground text-[10px]">© 2026 Centauro Esportes. Todos os direitos reservados.</p>
         </div>
       </div>
