@@ -142,19 +142,19 @@ export default function QuizHome() {
   // HOME / LANDING PAGE
   if (showHome) {
     return (
-      <div className="min-h-screen bg-foreground flex flex-col">
+      <div className="bg-foreground flex flex-col">
         {/* Centauro Top Bar */}
-        <div className="bg-primary py-2.5 px-4">
+        <div className="bg-primary py-4 px-4">
           <div className="max-w-4xl mx-auto flex items-center justify-center gap-3">
-            <img src={centauroLogo} alt="Centauro" className="h-8 md:h-12 object-contain brightness-0 invert" />
+            <img src={centauroLogo} alt="Centauro" className="h-14 md:h-20 object-contain brightness-0 invert" />
             <span className="text-primary-foreground text-xl font-light opacity-40">×</span>
-            <img src={worldcupTrophy} alt="FIFA World Cup 2026" className="h-8 md:h-12 object-contain" />
+            <img src={worldcupTrophy} alt="FIFA World Cup 2026" className="h-10 md:h-16 object-contain" />
           </div>
         </div>
 
-        {/* Full-screen Hero */}
+        {/* Full-screen Hero - min-h-screen minus top bar */}
         <div
-          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-16 md:py-24"
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 min-h-[calc(100vh-88px)]"
           style={{
             backgroundImage: `url(${stadiumHero})`,
             backgroundSize: 'cover',
