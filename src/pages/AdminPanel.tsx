@@ -33,9 +33,11 @@ export default function AdminPanel() {
   const [webhookMessage, setWebhookMessage] = useState('');
 
   // UTMify state
-  const [utmifyConfig, setUtmifyConfig] = useState<UtmifyConfig>({ apiToken: '' });
+  const [utmifyConfig, setUtmifyConfig] = useState<UtmifyConfig>({ apiToken: '', apiToken2: '' });
   const [utmifyMessage, setUtmifyMessage] = useState('');
+  const [utmifyMessage2, setUtmifyMessage2] = useState('');
   const [utmifyTesting, setUtmifyTesting] = useState(false);
+  const [utmifyTesting2, setUtmifyTesting2] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem('checkoutUrl');
@@ -86,13 +88,16 @@ export default function AdminPanel() {
     setTimeout(() => setUtmifyMessage(''), 3000);
   };
 
-  const handleTestUtmify = async () => {
-    setUtmifyTesting(true);
-    setUtmifyMessage('');
-    const result = await testUtmifyToken(utmifyConfig.apiToken);
-    setUtmifyMessage(result.message);
-    setUtmifyTesting(false);
-    setTimeout(() => setUtmifyMessage(''), 5000);
+  const handleTestUtmify = async (tokenNum: 1 | 2) => {
+    const token = tokenNum === 1 ? utmifyConfig.apiToken : utmifyConfig.apiToken2;
+    const setMsg = tokenNum === 1 ? setUtmifyMessage : setUtmifyMessage2;
+    const setTesting = tokenNum === 1 ? setUtmifyTesting : setUtmifyTesting2;
+    setTesting(true);
+    setMsg('');
+    const result = await testUtmifyToken(token);
+    setMsg(result.message);
+    setTesting(false);
+    setTimeout(() => setMsg(''), 5000);
   };
 
   const handleSaveWebhook = () => {
@@ -462,52 +467,73 @@ export default function AdminPanel() {
                   <Zap size={20} className="text-centauro-green" />
                 </div>
                 <div>
-                  <h3 className="font-black text-foreground text-sm">Token da API</h3>
-                  <p className="text-muted-foreground text-[11px]">Credencial de API gerada na plataforma UTMify</p>
+                  <h3 className="font-black text-foreground text-sm">Tokens da API</h3>
+                  <p className="text-muted-foreground text-[11px]">Configure até 2 tokens UTMify para envio simultâneo</p>
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <div>
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">API Token</label>
+              <div className="space-y-4">
+                {/* Token 1 */}
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Token 1</label>
                   <Input
                     type="password"
                     value={utmifyConfig.apiToken}
                     onChange={(e) => setUtmifyConfig(prev => ({ ...prev, apiToken: e.target.value }))}
-                    placeholder="Cole aqui seu token da UTMify"
-                    className="font-mono text-xs mt-1"
+                    placeholder="Cole aqui o Token 1 da UTMify"
+                    className="font-mono text-xs"
                   />
-                  <p className="text-[9px] text-muted-foreground mt-1">
-                    UTMify → Integrações → Webhooks → Credenciais de API → Adicionar Credencial
-                  </p>
-                </div>
-
-                <div className="flex gap-2">
-                  <Button onClick={handleSaveUtmify} className="flex-1 bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs">
-                    <Save size={14} className="mr-1.5" /> Salvar Token
-                  </Button>
                   <Button
-                    onClick={handleTestUtmify}
+                    onClick={() => handleTestUtmify(1)}
                     variant="outline"
+                    size="sm"
                     className="text-xs font-bold"
                     disabled={utmifyTesting || !utmifyConfig.apiToken}
                   >
                     {utmifyTesting ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Zap size={14} className="mr-1.5" />}
-                    {utmifyTesting ? 'Testando...' : 'Testar Integração'}
+                    {utmifyTesting ? 'Testando...' : 'Testar Token 1'}
                   </Button>
+                  {utmifyMessage && (
+                    <div className={`p-2 rounded-md text-center text-xs font-bold ${
+                      utmifyMessage.includes('válido') || utmifyMessage.includes('sucesso') || utmifyMessage.includes('✓') || utmifyMessage.includes('salvo')
+                        ? 'bg-centauro-green/10 text-centauro-green'
+                        : 'bg-destructive/10 text-destructive'
+                    }`}>{utmifyMessage}</div>
+                  )}
                 </div>
 
-                {utmifyMessage && (
-                  <div className={`p-2.5 rounded-md text-center text-xs font-bold ${
-                    utmifyMessage.includes('válido') || utmifyMessage.includes('sucesso') || utmifyMessage.includes('✓')
-                      ? 'bg-centauro-green/10 text-centauro-green'
-                      : utmifyMessage.includes('salvo')
-                      ? 'bg-centauro-green/10 text-centauro-green'
-                      : 'bg-destructive/10 text-destructive'
-                  }`}>
-                    {utmifyMessage}
-                  </div>
-                )}
+                {/* Token 2 */}
+                <div className="space-y-2 pt-2 border-t border-border">
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Token 2 (opcional)</label>
+                  <Input
+                    type="password"
+                    value={utmifyConfig.apiToken2}
+                    onChange={(e) => setUtmifyConfig(prev => ({ ...prev, apiToken2: e.target.value }))}
+                    placeholder="Cole aqui o Token 2 da UTMify"
+                    className="font-mono text-xs"
+                  />
+                  <Button
+                    onClick={() => handleTestUtmify(2)}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs font-bold"
+                    disabled={utmifyTesting2 || !utmifyConfig.apiToken2}
+                  >
+                    {utmifyTesting2 ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Zap size={14} className="mr-1.5" />}
+                    {utmifyTesting2 ? 'Testando...' : 'Testar Token 2'}
+                  </Button>
+                  {utmifyMessage2 && (
+                    <div className={`p-2 rounded-md text-center text-xs font-bold ${
+                      utmifyMessage2.includes('válido') || utmifyMessage2.includes('sucesso') || utmifyMessage2.includes('✓') || utmifyMessage2.includes('salvo')
+                        ? 'bg-centauro-green/10 text-centauro-green'
+                        : 'bg-destructive/10 text-destructive'
+                    }`}>{utmifyMessage2}</div>
+                  )}
+                </div>
+
+                <Button onClick={handleSaveUtmify} className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs">
+                  <Save size={14} className="mr-1.5" /> Salvar Tokens
+                </Button>
               </div>
             </Card>
 
