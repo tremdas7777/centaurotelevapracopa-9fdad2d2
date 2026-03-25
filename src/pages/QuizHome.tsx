@@ -151,7 +151,7 @@ export default function QuizHome() {
         <div className="bg-primary py-4 px-4">
           <div className="max-w-4xl mx-auto flex items-center justify-center">
             <img src={centauroLogo} alt="Centauro" className="h-14 md:h-20 object-contain brightness-0 invert" />
-            <span className="text-primary-foreground text-3xl font-thin opacity-40 ml-3 mr-4">|</span>
+            <div className="w-px h-8 bg-primary-foreground/30 ml-2 mr-4" />
             <img src={cbfLogo} alt="CBF" className="h-14 md:h-20 object-contain" />
           </div>
         </div>
