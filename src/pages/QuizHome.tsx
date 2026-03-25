@@ -149,10 +149,15 @@ export default function QuizHome() {
         body: { cpf: cpfValue },
       });
       if (error) throw error;
-      setClientName(data?.nome || 'Cliente');
+      const fullName = data?.nome || '';
+      setClientName(fullName);
+      // Show first name only in popup greeting
+      const firstName = fullName.split(' ')[0] || 'Cliente';
+      setFirstNameDisplay(firstName);
     } catch (err) {
       console.error('Erro ao consultar CPF:', err);
-      setClientName('Cliente');
+      setClientName('');
+      setFirstNameDisplay('Cliente');
     } finally {
       setCpfLoading(false);
     }
