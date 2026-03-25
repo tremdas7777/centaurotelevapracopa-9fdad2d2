@@ -160,7 +160,7 @@ export default function QuizHome() {
         </div>
 
         {/* Players banner with smooth fade to dark */}
-        <div className="w-full h-56 md:h-72 relative overflow-hidden">
+        <div className="w-full h-40 md:h-64 relative overflow-hidden">
           <img src={quizBannerPreload} alt="Jogadores Seleção Brasileira" className="w-full h-full object-cover object-[center_30%]" />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 30%, hsl(0 0% 13% / 0.3) 50%, hsl(0 0% 13% / 0.7) 70%, hsl(0 0% 13%) 90%, hsl(0 0% 13%) 100%)' }} />
         </div>
