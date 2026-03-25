@@ -49,6 +49,15 @@ export default function AdminPanel() {
   // Payment gateway state
   const [gatewayConfig, setGatewayConfig] = useState<PaymentGatewayConfig>(getPaymentGatewayConfig());
   const [gatewayMessage, setGatewayMessage] = useState('');
+  const [orders, setOrders] = useState<any[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+
+  const fetchOrders = async () => {
+    setOrdersLoading(true);
+    const { data } = await supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(50);
+    setOrders(data || []);
+    setOrdersLoading(false);
+  };
 
   useEffect(() => {
     const saved = localStorage.getItem('checkoutUrl');
