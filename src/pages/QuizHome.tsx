@@ -692,7 +692,7 @@ export default function QuizHome() {
 
           {/* Footer */}
           <div className="text-center py-6">
-            <img src={centauroLogo} alt="Centauro" className="h-6 mx-auto mb-3 opacity-30" />
+            <img src={centauroLogo} alt="Centauro" className="h-10 mx-auto mb-3 opacity-30" />
             <p className="text-muted-foreground text-[10px]">
               © 2026 Centauro Esportes. Todos os direitos reservados.
             </p>
