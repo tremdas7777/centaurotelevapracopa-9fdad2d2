@@ -644,7 +644,7 @@ export default function QuizHome() {
                     className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-6 rounded-lg"
                     style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)' }}
                   >
-                    BUSCAR MEUS DADOS
+                    CONTINUAR
                   </Button>
                   <Button
                     onClick={() => setShowCepInput(false)}

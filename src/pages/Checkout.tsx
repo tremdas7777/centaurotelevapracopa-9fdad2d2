@@ -81,7 +81,8 @@ export default function Checkout() {
           setBairro(data.bairro || '');
           setCidade(data.localidade || '');
           setEstado(data.uf || '');
-          setNearestStore(`Centauro - Shopping ${data.localidade || 'Centro'}, ${data.localidade || ''} - ${data.uf || ''} | Tel: (${data.ddd || '00'}) 3XXX-XXXX`);
+          const storeNumber = Math.floor(Math.random() * 900) + 100;
+          setNearestStore(`Centauro - Shopping ${data.localidade || 'Centro'}, Nº ${storeNumber}, ${data.localidade || ''} - ${data.uf || ''}`);
         } else {
           setShowCepError(true);
           setEndereco('');
@@ -165,14 +166,10 @@ export default function Checkout() {
             </div>
             <span className="text-xs font-black text-centauro-gold">INCLUSO</span>
           </div>
-          {cepValid && shippingMethod && (
+          {cepValid && shippingMethod === 'sedex' && (
             <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-              <span className="text-sm font-bold text-foreground">
-                {shippingMethod === 'sedex' ? 'Frete SEDEX' : 'Retirada na Loja'}
-              </span>
-              <span className="text-lg font-black text-centauro-green">
-                {shippingMethod === 'sedex' ? 'R$ 44,90' : 'GRÁTIS'}
-              </span>
+              <span className="text-sm font-bold text-foreground">Frete SEDEX</span>
+              <span className="text-lg font-black text-centauro-green">R$ 44,90</span>
             </div>
           )}
         </Card>
@@ -302,7 +299,7 @@ export default function Checkout() {
                     </div>
                     <div className="flex-1">
                       <p className="text-xs font-bold text-foreground">Correios SEDEX</p>
-                      <p className="text-[10px] text-muted-foreground">Prazo: 2 a 5 dias úteis</p>
+                      <p className="text-[10px] text-muted-foreground">Prazo: 3 a 5 dias úteis</p>
                     </div>
                     <span className="text-sm font-black text-centauro-green">R$ 44,90</span>
                   </div>
@@ -341,8 +338,8 @@ export default function Checkout() {
         <div className="grid grid-cols-3 gap-3 mb-6">
           {[
             { icon: CheckCircle, color: 'text-centauro-green', title: 'Resgate Imediato' },
-            { icon: Truck, color: 'text-primary', title: '3-5 dias úteis' },
-            { icon: Shield, color: 'text-foreground', title: 'Compra Segura' },
+            { icon: Truck, color: 'text-centauro-green', title: '3-5 dias úteis' },
+            { icon: Shield, color: 'text-centauro-green', title: 'Compra Segura' },
           ].map(({ icon: Icon, color, title }) => (
             <div key={title} className="bg-card p-3 rounded-lg border border-border text-center">
               <Icon className={`${color} mx-auto mb-1`} size={18} />
