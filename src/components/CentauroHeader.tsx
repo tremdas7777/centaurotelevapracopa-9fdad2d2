@@ -12,16 +12,9 @@ export default function CentauroHeader() {
       </div>
 
       {/* Banner */}
-      <div
-        className="w-full h-48 md:h-64 bg-cover bg-center relative"
-        style={{ backgroundImage: `url(${quizBanner})` }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 to-transparent" />
-        <div className="absolute inset-0 flex flex-col items-center justify-end pb-6">
-          <p className="text-primary-foreground text-sm font-bold tracking-[0.25em] uppercase opacity-90">
-            Promoção Exclusiva Centauro
-          </p>
-        </div>
+      <div className="w-full relative">
+        <img src={quizBanner} alt="Quiz Copa 2026" className="w-full h-auto object-contain" />
+        <div className="absolute inset-0 bg-gradient-to-t from-foreground/30 to-transparent" />
       </div>
     </header>
   );
