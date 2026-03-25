@@ -1,19 +1,31 @@
-const audioCtx = () => new (window.AudioContext || (window as any).webkitAudioContext)();
+let ctx: AudioContext | null = null;
+
+function getAudioContext(): AudioContext {
+  if (!ctx || ctx.state === 'closed') {
+    ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+  }
+  if (ctx.state === 'suspended') {
+    ctx.resume();
+  }
+  return ctx;
+}
 
 function playTone(frequency: number, duration: number, type: OscillatorType = 'sine', volume = 0.3) {
   try {
-    const ctx = audioCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
+    const audioCtx = getAudioContext();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
     osc.type = type;
-    osc.frequency.setValueAtTime(frequency, ctx.currentTime);
-    gain.gain.setValueAtTime(volume, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+    osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+    gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(audioCtx.destination);
     osc.start();
-    osc.stop(ctx.currentTime + duration);
-  } catch {}
+    osc.stop(audioCtx.currentTime + duration);
+  } catch (e) {
+    console.warn('Audio playback failed:', e);
+  }
 }
 
 export function playCorrectSound() {
