@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import CentauroHeader from '@/components/CentauroHeader';
@@ -14,6 +14,7 @@ import stadiumHero from '@/assets/stadium-hero.webp';
 import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.webp';
 import worldcupTrophy from '@/assets/worldcup-trophy.webp';
 import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
+import { playCorrectSound, playWrongSound, playRevealSound } from '@/lib/quizSounds';
 
 interface Question {
   id: number;
@@ -114,7 +115,10 @@ export default function QuizHome() {
     if (selectedAnswer !== null) return;
     setSelectedAnswer(index);
     setShowResult(true);
-    setIsCorrect(index === quizQuestions[currentQuestion].correctAnswer);
+    const correct = index === quizQuestions[currentQuestion].correctAnswer;
+    setIsCorrect(correct);
+    if (correct) playCorrectSound();
+    else playWrongSound();
   };
 
   const handleNextQuestion = () => {
@@ -124,7 +128,7 @@ export default function QuizHome() {
       setShowResult(false);
       setIsCorrect(false);
     } else {
-      if (!hasTrackedQuizComplete.current) { trackEvent('quiz_completed'); hasTrackedQuizComplete.current = true; } setShowAnimation(true);
+      if (!hasTrackedQuizComplete.current) { trackEvent('quiz_completed'); hasTrackedQuizComplete.current = true; } playRevealSound(); setShowAnimation(true);
     }
   };
 
@@ -167,11 +171,11 @@ export default function QuizHome() {
             <p className="text-xs font-bold text-centauro-green uppercase tracking-widest mb-2">⚽ Promoção Copa do Mundo 2026</p>
 
             <h1 className="text-3xl md:text-5xl font-black text-primary-foreground leading-[1.1] mb-4 tracking-tight">
-              Ganhe a Camisa Oficial do Brasil + Álbum da Copa
+              Prove que você é o maior torcedor do Brasil
             </h1>
 
             <p className="text-sm md:text-lg text-primary-foreground/70 mb-8 leading-relaxed max-w-md">
-              Acerte 5 de 8 perguntas sobre a Seleção e <strong className="text-primary-foreground">leve seus prêmios pagando apenas o frete</strong>
+              Teste seus conhecimentos sobre a Seleção e <strong className="text-primary-foreground">desbloqueie prêmios exclusivos</strong>
             </p>
 
             <Button
@@ -547,27 +551,28 @@ export default function QuizHome() {
     <div className="min-h-screen bg-background">
       <CentauroHeader />
 
-      <div className="max-w-xl mx-auto px-4 py-8">
-        {/* Progress */}
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-bold text-muted-foreground">
-              Pergunta {currentQuestion + 1}/{quizQuestions.length}
-            </span>
-            <span className="text-xs font-bold text-primary">
-              {Math.round(progressPercent)}%
+      <div className="max-w-xl mx-auto px-4 py-6">
+        {/* Header: Flag + Question counter + Timer */}
+        <div className="flex justify-between items-center mb-5">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🇧🇷</span>
+            <span className="text-sm font-bold text-foreground">
+              Pergunta {currentQuestion + 1} de {quizQuestions.length}
             </span>
           </div>
-          <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-            <div
-              className="h-full bg-primary rounded-full transition-all duration-500"
-              style={{ width: `${progressPercent}%` }}
-            />
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Clock size={15} />
+            <span className="text-sm font-bold tabular-nums">{formatTime(timeLeft)}</span>
           </div>
         </div>
 
         {/* Question Card */}
         <Card className="p-5 md:p-7 border border-border shadow-sm mb-5">
+          {/* Difficulty badge */}
+          <span className="inline-flex items-center gap-1 bg-centauro-green/15 text-centauro-green text-xs font-bold px-2.5 py-1 rounded-full mb-4">
+            ⚡ {currentQuestion < 3 ? 'Fácil' : currentQuestion < 6 ? 'Médio' : 'Difícil'}
+          </span>
+
           <h2 className="text-xl md:text-2xl font-black text-foreground mb-6 leading-tight">
             {question.question}
           </h2>
@@ -575,10 +580,10 @@ export default function QuizHome() {
             {question.options.map((option, index) => {
               const isSelected = selectedAnswer === index;
               const isCorrectAnswer = index === question.correctAnswer;
-              let btnClass = 'w-full p-3.5 text-left font-semibold rounded-md transition-all duration-200 border text-sm ';
+              let btnClass = 'w-full p-4 text-left font-semibold rounded-xl transition-all duration-200 border-2 text-sm ';
 
               if (selectedAnswer === null) {
-                btnClass += 'bg-card border-border hover:border-primary hover:bg-primary/5 cursor-pointer';
+                btnClass += 'bg-card border-border hover:border-centauro-green hover:bg-centauro-green/5 cursor-pointer';
               } else if (isSelected) {
                 btnClass += isCorrect
                   ? 'bg-centauro-green/10 border-centauro-green text-centauro-green'
@@ -596,21 +601,32 @@ export default function QuizHome() {
                   disabled={selectedAnswer !== null}
                   className={btnClass}
                 >
-                  <span className="flex items-center">
-                    <span className="inline-flex items-center justify-center w-7 h-7 rounded bg-primary text-primary-foreground font-black mr-3 text-xs">
-                      {String.fromCharCode(65 + index)}
-                    </span>
-                    {option}
-                  </span>
+                  {option}
                 </button>
               );
             })}
           </div>
         </Card>
 
+        {/* Dot progress indicator */}
+        <div className="flex justify-center gap-2 mb-5">
+          {quizQuestions.map((_, i) => (
+            <div
+              key={i}
+              className={`w-3 h-3 rounded-full transition-all ${
+                i === currentQuestion
+                  ? 'bg-centauro-green scale-125'
+                  : i < currentQuestion
+                  ? 'bg-centauro-green/50'
+                  : 'bg-border'
+              }`}
+            />
+          ))}
+        </div>
+
         {/* Feedback */}
         {showResult && (
-          <div className={`p-3.5 rounded-md text-center font-bold mb-5 text-sm border ${
+          <div className={`p-3.5 rounded-xl text-center font-bold mb-5 text-sm border-2 ${
             isCorrect
               ? 'bg-centauro-green/10 border-centauro-green text-centauro-green'
               : 'bg-destructive/10 border-destructive text-destructive'
@@ -624,30 +640,12 @@ export default function QuizHome() {
           <div className="flex justify-center">
             <Button
               onClick={handleNextQuestion}
-              className="bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-black text-sm px-8 py-5 rounded-md transition-transform hover:scale-[1.02]"
+              className="bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-black text-sm px-8 py-5 rounded-xl transition-transform hover:scale-[1.02] w-full max-w-sm"
             >
               {currentQuestion === quizQuestions.length - 1 ? '🏆 VER MEUS PRÊMIOS' : 'PRÓXIMA →'}
             </Button>
           </div>
         )}
-
-        {/* Prize preview */}
-        <div className="mt-8 bg-primary/5 rounded-md p-3.5 border border-primary/15">
-          <div className="flex flex-col items-center gap-1.5">
-            <div className="flex items-center gap-2">
-              <Gift size={16} className="text-primary" />
-              <p className="text-xs font-bold text-foreground">
-                Prêmio: <span className="text-primary">Camisa Brasil + Álbum Copa 2026</span>
-              </p>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Ticket size={13} className="text-centauro-gold" />
-              <p className="text-[10px] font-bold text-centauro-gold">
-                + Concorra a 2 ingressos VIP para a Copa 2026!
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Footer vermelho */}
