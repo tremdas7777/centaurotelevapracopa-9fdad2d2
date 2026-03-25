@@ -395,7 +395,7 @@ export default function QuizHome() {
               <div className="flex items-center justify-between p-3.5 bg-primary/5 rounded-md border border-primary/20">
                 <div>
                   <p className="font-bold text-foreground text-sm">Taxa de Envio</p>
-                  <p className="text-xs text-muted-foreground">Entrega em 7-10 dias úteis</p>
+                  <p className="text-xs text-muted-foreground">Entrega em 3-5 dias úteis</p>
                 </div>
                 <p className="font-black text-centauro-green text-lg">R$ 69,90</p>
               </div>
@@ -451,7 +451,7 @@ export default function QuizHome() {
           <div className="grid grid-cols-3 gap-3 mb-8">
             {[
               { icon: CheckCircle, color: 'text-centauro-green', title: 'Garantido', desc: 'Todos ganham' },
-              { icon: Truck, color: 'text-primary', title: 'Entrega', desc: '7-10 dias úteis' },
+              { icon: Truck, color: 'text-primary', title: 'Entrega', desc: '3-5 dias úteis' },
               { icon: Shield, color: 'text-foreground', title: 'Seguro', desc: 'Compra protegida' },
             ].map(({ icon: Icon, color, title, desc }) => (
               <div key={title} className="bg-card p-3.5 rounded-lg border border-border text-center">
@@ -469,7 +469,7 @@ export default function QuizHome() {
             </h3>
             <div className="space-y-2.5">
               {[
-                { q: 'Como funciona a entrega?', a: 'Após confirmar, você recebe um email com rastreamento. Entrega em 7-10 dias úteis.' },
+                { q: 'Como funciona a entrega?', a: 'Após confirmar, você recebe um email com rastreamento. Entrega em 3-5 dias úteis.' },
                 { q: 'Posso devolver?', a: 'Sim! Garantia de 30 dias. Devolvemos seu dinheiro sem perguntas.' },
                 { q: 'Meus dados estão seguros?', a: '100% seguro! SSL 256-bit. Nunca compartilhamos seus dados.' },
                 { q: 'Preciso de suporte?', a: 'Suporte 24/7 via WhatsApp, Email e Chat.' },
