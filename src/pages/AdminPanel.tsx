@@ -187,7 +187,7 @@ export default function AdminPanel() {
         <Card className="max-w-md w-full p-8 border border-border shadow-sm">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-black text-foreground">Painel Admin</h1>
-            <p className="text-muted-foreground text-xs mt-1">Copa 2026 - Gerenciamento</p>
+            <p className="text-muted-foreground text-xs mt-1">Gerenciamento</p>
           </div>
           <div className="mb-4">
             <label className="block mb-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Senha</label>
@@ -241,7 +241,7 @@ export default function AdminPanel() {
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-primary-foreground font-black text-sm">Painel Admin</h1>
-            <p className="text-primary-foreground/60 text-[10px]">Copa 2026 - Gerenciamento</p>
+            <p className="text-primary-foreground/60 text-[10px]">Gerenciamento</p>
           </div>
           <Button onClick={() => { setIsAuthenticated(false); setPassword(''); setMessage(''); }} variant="ghost" size="sm" className="text-primary-foreground hover:bg-primary-foreground/10 text-xs font-bold">
             <LogOut size={14} className="mr-1" /> Sair
