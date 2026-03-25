@@ -427,7 +427,7 @@ export default function QuizHome() {
                   <p className="font-bold text-foreground text-sm">Taxa de Envio</p>
                   <p className="text-xs text-muted-foreground">Entrega em 3-5 dias úteis</p>
                 </div>
-                <p className="font-black text-centauro-green text-lg">R$ 69,90</p>
+                <p className="font-black text-centauro-green text-lg">R$ 49,90</p>
               </div>
             </div>
             <div className="bg-secondary p-5 rounded-md text-center">
@@ -455,7 +455,7 @@ export default function QuizHome() {
               </p>
               <div className="bg-centauro-green rounded-lg p-5 mb-6 max-w-xs mx-auto">
                 <p className="text-primary-foreground text-xs font-bold mb-1 opacity-80">VALOR DO FRETE</p>
-                <p className="text-primary-foreground text-5xl font-black">R$ 69,90</p>
+                <p className="text-primary-foreground text-5xl font-black">R$ 49,90</p>
                 <p className="text-primary-foreground text-xs font-medium mt-1 opacity-80">Entrega em todo Brasil</p>
               </div>
               <Button
