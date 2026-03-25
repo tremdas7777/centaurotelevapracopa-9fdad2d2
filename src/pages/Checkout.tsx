@@ -337,9 +337,9 @@ export default function Checkout() {
         {/* Trust */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           {[
-            { icon: CheckCircle, color: 'text-centauro-green', title: 'Resgate Imediato' },
-            { icon: Truck, color: 'text-centauro-green', title: '3-5 dias úteis' },
-            { icon: Shield, color: 'text-centauro-green', title: 'Compra Segura' },
+            { icon: CheckCircle, color: 'text-foreground', title: 'Resgate Imediato' },
+            { icon: Truck, color: 'text-foreground', title: '3-5 dias úteis' },
+            { icon: Shield, color: 'text-foreground', title: 'Compra Segura' },
           ].map(({ icon: Icon, color, title }) => (
             <div key={title} className="bg-card p-3 rounded-lg border border-border text-center">
               <Icon className={`${color} mx-auto mb-1`} size={18} />
