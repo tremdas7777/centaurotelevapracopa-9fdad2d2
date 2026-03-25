@@ -30,12 +30,12 @@ export default function LoadingAnimation({ onComplete }: LoadingAnimationProps) 
   }, [showSuccess, onComplete]);
 
   return (
-    <div className="min-h-screen bg-primary flex flex-col relative overflow-hidden">
+    <div className="bg-primary flex flex-col relative overflow-hidden">
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.15) 20px, rgba(255,255,255,0.15) 40px)' }} />
       </div>
 
-      <div className="flex-1 flex items-center justify-center relative z-10 text-center px-6">
+      <div className="min-h-screen flex items-center justify-center relative z-10 text-center px-6">
         {!showSuccess ? (
           <>
             <div>
