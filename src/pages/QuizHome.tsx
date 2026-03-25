@@ -159,18 +159,23 @@ export default function QuizHome() {
           </div>
         </div>
 
-        {/* Players banner with smooth fade to dark */}
+        {/* Players banner with smooth fade to stadium */}
         <div className="w-full h-40 md:h-64 relative overflow-hidden">
           <img src={quizBannerPreload} alt="Jogadores Seleção Brasileira" className="w-full h-full object-cover object-[center_30%]" />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 30%, hsl(0 0% 13% / 0.3) 50%, hsl(0 0% 13% / 0.7) 70%, hsl(0 0% 13%) 90%, hsl(0 0% 13%) 100%)' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, hsl(0 0% 13% / 0.4) 60%, hsl(0 0% 13% / 0.8) 80%, hsl(0 0% 13%) 100%)' }} />
         </div>
 
-        {/* Hero content with stadium background - fills remaining viewport */}
+        {/* Stadium banner with fade overlay */}
         <div
-          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 -mt-10"
+          className="relative w-full h-32 md:h-48 -mt-4 overflow-hidden"
           style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
         >
-          <div className="absolute inset-0 bg-foreground/90" />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, hsl(0 0% 13%) 0%, hsl(0 0% 13% / 0.5) 30%, hsl(0 0% 13% / 0.3) 50%, hsl(0 0% 13% / 0.7) 75%, hsl(0 0% 13%) 100%)' }} />
+        </div>
+
+        {/* Hero content */}
+        <div className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 bg-foreground -mt-4">
+          <div className="absolute inset-0 bg-foreground" />
           <div className="relative z-10 max-w-lg mx-auto flex flex-col items-center">
 
             <p className="text-xs font-bold text-centauro-green uppercase tracking-widest mb-2">⚽ Promoção Copa do Mundo 2026</p>
