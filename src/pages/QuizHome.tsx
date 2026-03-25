@@ -433,7 +433,7 @@ export default function QuizHome() {
                 className="w-full max-w-sm bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-6 rounded-lg transition-transform hover:scale-[1.02] active:scale-95"
                 style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)' }}
               >
-                GARANTIR PRÊMIOS E CONCORRER →
+                PAGAR FRETE AGORA
               </Button>
               <div className="flex items-center justify-center gap-1.5 mt-4">
                 <Ticket size={12} className="text-centauro-gold" />
