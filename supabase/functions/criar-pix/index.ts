@@ -77,9 +77,11 @@ serve(async (req) => {
       });
     }
 
-    // Extract PIX data from response - try common field names
-    const pixCode = data.pix_qr_code || data.qr_code || data.pix?.qr_code || data.pix?.emv || data.boleto_url || '';
-    const pixQrCodeBase64 = data.pix_qr_code_url || data.qr_code_url || data.pix?.qr_code_url || data.pix?.qr_code_base64 || '';
+    // Extract PIX data from response - try multiple field paths
+    const pixCode = data.pix?.qrcode || data.pix?.qr_code || data.pix_qr_code || data.qr_code || data.pix?.emv || '';
+    const pixQrCodeBase64 = data.pix?.qrcodeBase64 || data.pix?.qr_code_base64 || data.pix_qr_code_url || data.qr_code_url || '';
+    
+    console.log('Pagou.ai success response:', JSON.stringify(data));
 
     // Save order to database
     const { data: orderData, error: orderError } = await supabase.from('orders').insert({
