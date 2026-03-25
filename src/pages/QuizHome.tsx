@@ -570,7 +570,7 @@ export default function QuizHome() {
                       placeholder="000.000.000-00"
                       value={cpfValue}
                       onChange={handleCpfChange}
-                      className={`text-center font-mono text-lg ${cpfError ? 'border-destructive' : ''}`}
+                      className={`text-center text-lg tracking-widest ${cpfError ? 'border-destructive' : ''}`}
                       maxLength={14}
                     />
                     {cpfError && (
