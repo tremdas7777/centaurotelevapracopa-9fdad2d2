@@ -148,6 +148,7 @@ export default function Checkout() {
         setPixQrCodeBase64(data.pix_qr_code_base64 || '');
         setPixOrderId(data.order_id || '');
         setShowPixPopup(true);
+        fireWebhookEvent('venda_pendente', { source: 'quiz-copa-2026', buyerName: nome, buyerEmail: email, buyerPhone: telefone, amount: shippingCost || 44.90, orderId: data.order_id, gateway: 'pagouai' });
       } catch (err: any) {
         console.error('PIX error:', err);
         setPixError('Erro ao gerar PIX. Tente novamente.');
