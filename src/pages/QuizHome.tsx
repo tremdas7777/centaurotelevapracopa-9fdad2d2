@@ -170,7 +170,7 @@ export default function QuizHome() {
         </div>
 
         {/* Players banner - same size as quiz */}
-        <div className="w-full h-40 md:h-64 relative overflow-hidden z-10">
+        <div className="w-full h-40 md:h-64 lg:h-80 relative overflow-hidden z-10">
           <img
             src={quizBannerPreload}
             alt="Jogadores Seleção Brasileira"
