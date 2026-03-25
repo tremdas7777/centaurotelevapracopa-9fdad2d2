@@ -560,65 +560,53 @@ export default function AdminPanel() {
 
         {/* CHECKOUT TAB */}
         {activeTab === 'checkout' && (
-          <Card className="border border-border p-5">
-            <h1 className="text-xl font-black text-foreground mb-1">Gerenciar Checkout</h1>
-            <p className="text-muted-foreground text-xs mb-6">Copa 2026 - Link de Pagamento</p>
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-xl font-black text-foreground mb-1">Checkout</h2>
+              <p className="text-muted-foreground text-xs">Defina o destino do botão "Garantir Meus Prêmios"</p>
+            </div>
 
-            {/* External Checkout Toggle */}
-            <div className="bg-secondary p-4 rounded-md mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <ExternalLink size={14} className="text-muted-foreground" />
-                <div>
-                  <h3 className="font-bold text-foreground text-xs">Checkout Externo</h3>
-                  <p className="text-[10px] text-muted-foreground">
-                    {externalCheckout ? 'O botão "Garantir Meus Prêmios" redireciona para o link externo' : 'Usando checkout interno do quiz'}
-                  </p>
+            <Card className="border border-border p-5 space-y-4">
+              {/* Toggle */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <ExternalLink size={14} className="text-muted-foreground" />
+                  <span className="font-bold text-foreground text-xs">Usar checkout externo</span>
                 </div>
+                <Switch
+                  checked={externalCheckout}
+                  onCheckedChange={(checked) => {
+                    setExternalCheckout(checked);
+                    localStorage.setItem('externalCheckout', String(checked));
+                  }}
+                />
               </div>
-              <Switch
-                checked={externalCheckout}
-                onCheckedChange={(checked) => {
-                  setExternalCheckout(checked);
-                  localStorage.setItem('externalCheckout', String(checked));
-                }}
-              />
-            </div>
 
-            <div className="bg-secondary p-4 rounded-md mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Link2 size={14} className="text-muted-foreground" />
-                <h3 className="font-bold text-foreground text-xs">Link Atual</h3>
-              </div>
-              <div className="bg-card p-2.5 rounded border border-border font-mono text-[10px] text-muted-foreground break-all">
-                {checkoutUrl || 'Nenhum link configurado'}
-              </div>
-            </div>
-
-            <div className="bg-primary/5 p-4 rounded-md border border-primary/15 mb-4">
-              <h3 className="font-bold text-foreground text-xs mb-3">Novo Link</h3>
-              <Input type="url" value={newCheckoutUrl} onChange={(e) => setNewCheckoutUrl(e.target.value)} placeholder="https://seu-checkout.com/taxa-envio" className="mb-3 font-semibold text-xs" />
-              <Button onClick={handleSave} className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs">
-                <Save size={14} className="mr-1.5" /> Salvar
-              </Button>
-              {message && (
-                <div className={`mt-3 p-2.5 rounded-md text-center text-xs font-bold ${message.includes('sucesso') ? 'bg-centauro-green/10 text-centauro-green' : 'bg-destructive/10 text-destructive'}`}>
-                  {message}
+              {/* URL field - only when external is on */}
+              {externalCheckout && (
+                <div className="space-y-2">
+                  <Input
+                    type="url"
+                    value={newCheckoutUrl}
+                    onChange={(e) => setNewCheckoutUrl(e.target.value)}
+                    placeholder="https://seu-checkout.com/pagamento"
+                    className="font-mono text-xs"
+                  />
+                  <Button onClick={handleSave} className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs" size="sm">
+                    <Save size={14} className="mr-1.5" /> Salvar Link
+                  </Button>
+                  <StatusMessage msg={message} />
                 </div>
               )}
-            </div>
 
-            <div className="bg-centauro-gold/10 p-3.5 rounded-md border border-centauro-gold/20">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <Info size={13} className="text-centauro-gold" />
-                <h3 className="font-bold text-foreground text-[11px]">Informações</h3>
-              </div>
-              <ul className="text-[10px] text-muted-foreground space-y-0.5 pl-5 list-disc">
-                <li>Alterações são imediatas</li>
-                <li>Todos os usuários serão redirecionados</li>
-                <li>Verifique a URL antes de salvar</li>
-              </ul>
-            </div>
-          </Card>
+              {/* Status info */}
+              <p className="text-[10px] text-muted-foreground">
+                {externalCheckout
+                  ? checkoutUrl ? `Redirecionando para: ${checkoutUrl}` : 'Nenhum link configurado ainda'
+                  : 'Usando o checkout interno do quiz (CPF → endereço → pagamento)'}
+              </p>
+            </Card>
+          </div>
         )}
       </div>
     </div>
