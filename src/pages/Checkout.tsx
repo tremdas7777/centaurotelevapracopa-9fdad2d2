@@ -53,6 +53,7 @@ export default function Checkout() {
   const [pixQrCodeBase64, setPixQrCodeBase64] = useState('');
   const [pixOrderId, setPixOrderId] = useState('');
   const [pixError, setPixError] = useState('');
+  const [showFieldErrors, setShowFieldErrors] = useState(false);
 
   const cepValid = cep.replace(/\D/g, '').length === 8 && !!endereco;
   const shippingCost = shippingMethod === 'sedex' ? 44.90 : shippingMethod === 'retirada' ? 0 : null;
@@ -327,12 +328,6 @@ export default function Checkout() {
             </div>
             <span className="text-xs font-black text-centauro-gold">INCLUSO</span>
           </div>
-          {cepValid && shippingMethod === 'sedex' && (
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-              <span className="text-sm font-bold text-foreground">Frete SEDEX</span>
-              <span className="text-lg font-black text-centauro-green">R$ 44,90</span>
-            </div>
-          )}
         </Card>
 
         {/* Checkout Form */}
@@ -344,64 +339,61 @@ export default function Checkout() {
 
           <div className="space-y-4">
             {/* Nome */}
-            <div>
+            <div data-field-error={showFieldErrors && !nome ? 'true' : undefined}>
               <label className="text-xs font-bold text-foreground mb-1.5 block">Nome Completo</label>
               <Input
                 placeholder="Seu nome completo"
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
-                className="py-5"
+                className={`py-5 ${showFieldErrors && !nome ? 'border-destructive focus-visible:ring-destructive' : ''}`}
               />
+              {showFieldErrors && !nome && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
             </div>
 
             {/* Email + Telefone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
+              <div data-field-error={showFieldErrors && (!email || !!emailError) ? 'true' : undefined}>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">E-mail</label>
                 <Input
                   type="email"
                   placeholder="seu@email.com"
                   value={email}
                   onChange={handleEmailChange}
-                  className={`py-5 ${emailError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  className={`py-5 ${emailError || (showFieldErrors && !email) ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                 />
-                {emailError && (
-                  <p className="text-destructive text-xs font-semibold mt-1.5">{emailError}</p>
-                )}
+                {emailError && <p className="text-destructive text-xs font-semibold mt-1.5">{emailError}</p>}
+                {showFieldErrors && !email && !emailError && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
               </div>
-              <div>
+              <div data-field-error={showFieldErrors && (telefone.replace(/\D/g, '').length < 10 || !!telefoneError) ? 'true' : undefined}>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">Telefone</label>
                 <Input
                   placeholder="(00) 00000-0000"
                   value={telefone}
                   onChange={handleTelefoneChange}
-                  className={`py-5 ${telefoneError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  className={`py-5 ${telefoneError || (showFieldErrors && telefone.replace(/\D/g, '').length < 10) ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                   inputMode="numeric"
                   maxLength={15}
                 />
-                {telefoneError && (
-                  <p className="text-destructive text-xs font-semibold mt-1.5">{telefoneError}</p>
-                )}
+                {telefoneError && <p className="text-destructive text-xs font-semibold mt-1.5">{telefoneError}</p>}
+                {showFieldErrors && !telefone && !telefoneError && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
               </div>
             </div>
 
             {/* CPF */}
-            <div>
+            <div data-field-error={showFieldErrors && (cpf.replace(/\D/g, '').length !== 11 || !!cpfError) ? 'true' : undefined}>
               <label className="text-xs font-bold text-foreground mb-1.5 block">CPF</label>
               <Input
                 placeholder="000.000.000-00"
                 value={cpf}
                 onChange={handleCpfChange}
-                className={`py-5 ${cpfError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                className={`py-5 ${cpfError || (showFieldErrors && cpf.replace(/\D/g, '').length !== 11) ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                 inputMode="numeric"
                 maxLength={14}
               />
-              {cpfError && (
-                <p className="text-destructive text-xs font-semibold mt-1.5">{cpfError}</p>
-              )}
+              {cpfError && <p className="text-destructive text-xs font-semibold mt-1.5">{cpfError}</p>}
+              {showFieldErrors && !cpf && !cpfError && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
             </div>
-            {/* CEP */}
-            <div>
+            <div data-field-error={showFieldErrors && cep.replace(/\D/g, '').length !== 8 ? 'true' : undefined}>
               <label className="text-xs font-bold text-foreground mb-1.5 block">CEP</label>
               <div className="relative">
                 <Input
@@ -410,7 +402,7 @@ export default function Checkout() {
                   onChange={handleCepChange}
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  className="py-5"
+                  className={`py-5 ${showFieldErrors && cep.replace(/\D/g, '').length !== 8 ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                   maxLength={9}
                 />
                 {cepLoading && (
@@ -419,27 +411,30 @@ export default function Checkout() {
                   </div>
                 )}
               </div>
+              {showFieldErrors && cep.replace(/\D/g, '').length !== 8 && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
             </div>
 
             {/* Endereço + Número */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-2">
+              <div className="col-span-2" data-field-error={showFieldErrors && !endereco ? 'true' : undefined}>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">Endereço</label>
                 <Input
                   placeholder="Rua, Avenida..."
                   value={endereco}
                   onChange={(e) => setEndereco(e.target.value)}
-                  className="py-5"
+                  className={`py-5 ${showFieldErrors && !endereco ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                 />
+                {showFieldErrors && !endereco && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
               </div>
-              <div>
+              <div data-field-error={showFieldErrors && !numero ? 'true' : undefined}>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">Número</label>
                 <Input
                   placeholder="Nº"
                   value={numero}
                   onChange={(e) => setNumero(e.target.value)}
-                  className="py-5"
+                  className={`py-5 ${showFieldErrors && !numero ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                 />
+                {showFieldErrors && !numero && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
               </div>
             </div>
 
@@ -456,17 +451,20 @@ export default function Checkout() {
 
             {/* Bairro + Cidade + Estado */}
             <div className="grid grid-cols-3 gap-4">
-              <div>
+              <div data-field-error={showFieldErrors && !bairro ? 'true' : undefined}>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">Bairro</label>
-                <Input placeholder="Bairro" value={bairro} onChange={(e) => setBairro(e.target.value)} className="py-5" />
+                <Input placeholder="Bairro" value={bairro} onChange={(e) => setBairro(e.target.value)} className={`py-5 ${showFieldErrors && !bairro ? 'border-destructive focus-visible:ring-destructive' : ''}`} />
+                {showFieldErrors && !bairro && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
               </div>
-              <div>
+              <div data-field-error={showFieldErrors && !cidade ? 'true' : undefined}>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">Cidade</label>
-                <Input placeholder="Cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} className="py-5" />
+                <Input placeholder="Cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} className={`py-5 ${showFieldErrors && !cidade ? 'border-destructive focus-visible:ring-destructive' : ''}`} />
+                {showFieldErrors && !cidade && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
               </div>
-              <div>
+              <div data-field-error={showFieldErrors && !estado ? 'true' : undefined}>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">Estado</label>
-                <Input placeholder="UF" value={estado} onChange={(e) => setEstado(e.target.value.toUpperCase().slice(0, 2))} className="py-5" maxLength={2} />
+                <Input placeholder="UF" value={estado} onChange={(e) => setEstado(e.target.value.toUpperCase().slice(0, 2))} className={`py-5 ${showFieldErrors && !estado ? 'border-destructive focus-visible:ring-destructive' : ''}`} maxLength={2} />
+                {showFieldErrors && !estado && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
               </div>
             </div>
 
@@ -517,10 +515,18 @@ export default function Checkout() {
         )}
 
         <Button
-          onClick={handleSubmit}
-          disabled={!isFormValid || pixLoading}
-          className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-7 rounded-lg transition-transform hover:scale-[1.02] active:scale-95 mb-4"
-          style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)', animation: 'pulse-glow-green 2s ease-in-out infinite' }}
+          onClick={() => {
+            if (!isFormValid) {
+              setShowFieldErrors(true);
+              const firstMissing = document.querySelector('[data-field-error="true"]');
+              if (firstMissing) firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              return;
+            }
+            handleSubmit();
+          }}
+          disabled={pixLoading}
+          className={`w-full text-primary-foreground font-black text-base py-7 rounded-lg transition-transform hover:scale-[1.02] active:scale-95 mb-4 ${isFormValid ? 'bg-centauro-green hover:bg-centauro-green/80' : 'bg-centauro-green/50 hover:bg-centauro-green/40'}`}
+          style={{ boxShadow: isFormValid ? '0 6px 25px hsl(145 63% 42% / 0.5)' : 'none', animation: isFormValid ? 'pulse-glow-green 2s ease-in-out infinite' : 'none' }}
         >
           {pixLoading ? (
             <><Loader2 size={18} className="mr-2 animate-spin" /> GERANDO PIX...</>
@@ -545,7 +551,7 @@ export default function Checkout() {
 
         {/* Footer */}
         <div className="text-center py-4">
-          <img src={centauroLogo} alt="Centauro" className="h-5 mx-auto mb-2 opacity-30" />
+          <img src={centauroLogo} alt="Centauro" className="h-10 mx-auto mb-2 opacity-30" />
           <p className="text-muted-foreground text-[10px]">© 2026 Centauro Esportes. Todos os direitos reservados.</p>
         </div>
       </div>
