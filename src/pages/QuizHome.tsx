@@ -9,7 +9,7 @@ import albumImg from '@/assets/album-copa-hero.png';
 import centauroLogo from '@/assets/centauro-logo.png';
 import stadiumHero from '@/assets/stadium-hero.jpg';
 import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.png';
-import centauroCopaLogo from '@/assets/centauro-copa-logo.png';
+import worldcupTrophy from '@/assets/worldcup-trophy.png';
 import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
 
 interface Question {
@@ -124,8 +124,10 @@ export default function QuizHome() {
       <div className="min-h-screen bg-foreground flex flex-col">
         {/* Centauro Top Bar */}
         <div className="bg-primary py-3 px-4">
-          <div className="max-w-4xl mx-auto flex items-center justify-center">
-            <img src={centauroCopaLogo} alt="Centauro Copa do Mundo" className="h-14 md:h-20 object-contain drop-shadow-lg brightness-0 invert" />
+          <div className="max-w-4xl mx-auto flex items-center justify-center gap-3">
+            <img src={centauroLogo} alt="Centauro" className="h-10 md:h-14 object-contain brightness-0 invert" />
+            <span className="text-primary-foreground text-2xl md:text-3xl font-light opacity-50">×</span>
+            <img src={worldcupTrophy} alt="FIFA World Cup 2026" className="h-10 md:h-14 object-contain" />
           </div>
         </div>
 
