@@ -245,7 +245,7 @@ export default function Checkout() {
     }
   };
 
-  const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cpf.replace(/\D/g, '').length === 11 && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
+  const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cpf.replace(/\D/g, '').length === 11 && !cpfError && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
 
   return (
     <div className="min-h-screen bg-background" style={{ fontFamily: "'Rubik', 'Inter', system-ui, sans-serif" }}>
