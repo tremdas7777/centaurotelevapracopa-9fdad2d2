@@ -3,13 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { Eye, EyeOff, LogOut, Save, Link2, Info, BarChart3, ShoppingCart, TrendingUp, Users, CheckCircle, ArrowDown, Trash2, Code, Webhook, Bell, Zap, Loader2, ExternalLink, CreditCard, QrCode } from 'lucide-react';
+import { Eye, EyeOff, LogOut, Save, Link2, Info, BarChart3, ShoppingCart, TrendingUp, Users, CheckCircle, ArrowDown, Trash2, Code, Webhook, Bell, Zap, Loader2, ExternalLink, CreditCard, QrCode, Copy, RefreshCw } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import { getFunnelStats, clearFunnelEvents } from '@/lib/funnelTracking';
 import { getPixelConfig, savePixelConfig, type PixelConfig } from '@/lib/pixelManager';
 import { getWebhookConfig, saveWebhookConfig, type WebhookConfig } from '@/lib/webhookManager';
 import { getUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
 import { getPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
+import { supabase } from '@/integrations/supabase/client';
 
 const ADMIN_PASSWORD = 'escalabahia';
 
