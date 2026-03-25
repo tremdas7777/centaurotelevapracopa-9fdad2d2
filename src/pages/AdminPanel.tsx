@@ -77,6 +77,12 @@ export default function AdminPanel() {
     return () => clearInterval(interval);
   }, [isAuthenticated, period]);
 
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'pedidos') {
+      fetchOrders();
+    }
+  }, [isAuthenticated, activeTab]);
+
   const handleLogin = () => {
     if (password === ADMIN_PASSWORD) {
       setIsAuthenticated(true); setPassword(''); setMessage('');
