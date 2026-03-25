@@ -149,9 +149,9 @@ export default function QuizHome() {
       <div className="bg-foreground flex flex-col">
         {/* Centauro Top Bar */}
         <div className="bg-primary py-4 px-4">
-          <div className="max-w-4xl mx-auto flex items-center justify-center gap-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-center">
             <img src={centauroLogo} alt="Centauro" className="h-14 md:h-20 object-contain brightness-0 invert" />
-            <span className="text-primary-foreground text-3xl font-thin opacity-40">|</span>
+            <span className="text-primary-foreground text-3xl font-thin opacity-40 ml-3 mr-4">|</span>
             <img src={cbfLogo} alt="CBF" className="h-14 md:h-20 object-contain" />
           </div>
         </div>
