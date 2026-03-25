@@ -561,6 +561,7 @@ export default function QuizHome() {
 
   // Quiz screen
   const question = quizQuestions[currentQuestion];
+  if (!question) return null;
   const progressPercent = ((currentQuestion + 1) / quizQuestions.length) * 100;
 
   return (
