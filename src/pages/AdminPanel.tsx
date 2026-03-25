@@ -656,7 +656,73 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* CHECKOUT TAB */}
+        {/* PEDIDOS TAB */}
+        {activeTab === 'pedidos' && (
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-black text-foreground mb-1">Pedidos</h2>
+                <p className="text-muted-foreground text-xs">Visualize os pedidos gerados via PIX</p>
+              </div>
+              <Button onClick={fetchOrders} variant="outline" size="sm" className="text-xs font-bold" disabled={ordersLoading}>
+                <RefreshCw size={14} className={`mr-1 ${ordersLoading ? 'animate-spin' : ''}`} />
+                Atualizar
+              </Button>
+            </div>
+
+            {orders.length === 0 && !ordersLoading && (
+              <Card className="p-8 border border-border text-center">
+                <ShoppingCart size={32} className="mx-auto mb-3 text-muted-foreground" />
+                <p className="text-sm font-bold text-foreground">Nenhum pedido ainda</p>
+                <p className="text-xs text-muted-foreground mt-1">Os pedidos aparecerão aqui quando clientes gerarem PIX</p>
+                <Button onClick={fetchOrders} className="mt-4 bg-primary text-primary-foreground text-xs font-bold" size="sm">
+                  Carregar Pedidos
+                </Button>
+              </Card>
+            )}
+
+            {ordersLoading && (
+              <div className="flex justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+              </div>
+            )}
+
+            {orders.length > 0 && (
+              <div className="space-y-3">
+                {orders.map((order) => (
+                  <Card key={order.id} className="p-4 border border-border">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <p className="text-xs font-black text-foreground">{order.buyer_name || 'Sem nome'}</p>
+                        <p className="text-[10px] text-muted-foreground">{order.buyer_email || 'Sem email'}</p>
+                        {order.buyer_phone && <p className="text-[10px] text-muted-foreground">{order.buyer_phone}</p>}
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <Badge className={`text-[10px] ${order.status === 'paid' ? 'bg-centauro-green/10 text-centauro-green border-centauro-green/30' : 'bg-centauro-gold/10 text-centauro-gold border-centauro-gold/30'}`}>
+                          {order.status === 'paid' ? 'Pago' : 'Pendente'}
+                        </Badge>
+                        <Badge variant="outline" className={`text-[10px] ${order.qr_code_copied ? 'border-centauro-green/30 text-centauro-green' : 'border-muted-foreground/30 text-muted-foreground'}`}>
+                          <Copy size={10} className="mr-1" />
+                          {order.qr_code_copied ? 'Copiado' : 'Não copiado'}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between pt-2 border-t border-border">
+                      <span className="text-xs font-bold text-foreground">
+                        R$ {(order.amount_cents / 100).toFixed(2).replace('.', ',')}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {new Date(order.created_at).toLocaleString('pt-BR')}
+                      </span>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+
         {activeTab === 'checkout' && (
           <div className="space-y-4">
             <div>
