@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import CentauroHeader from '@/components/CentauroHeader';
@@ -96,6 +98,11 @@ export default function QuizHome() {
   const [timeLeft, setTimeLeft] = useState(1800);
   const [selectedSize, setSelectedSize] = useState('M');
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
+  const [showAddressDialog, setShowAddressDialog] = useState(false);
+  const [cpfValue, setCpfValue] = useState('');
+  const [showCepInput, setShowCepInput] = useState(false);
+  const [cepValue, setCepValue] = useState('');
+  const [freteRevealed, setFreteRevealed] = useState(false);
   const hasTrackedVisitor = useRef(false);
   const hasTrackedQuizStart = useRef(false);
   const hasTrackedQuizComplete = useRef(false);
@@ -146,7 +153,7 @@ export default function QuizHome() {
   const handleGoToCheckout = () => {
     if (!hasTrackedCheckout.current) {
       trackEvent('checkout');
-      fireConversionEvent('Purchase', { value: 49.90, currency: 'BRL' });
+      fireConversionEvent('Purchase', { value: 44.90, currency: 'BRL' });
       fireSaleWebhook({ source: 'quiz-copa-2026' });
       hasTrackedCheckout.current = true;
     }
@@ -427,7 +434,11 @@ export default function QuizHome() {
                   <p className="font-bold text-foreground text-sm">Taxa de Envio</p>
                   <p className="text-xs text-muted-foreground">Entrega em 3-5 dias úteis</p>
                 </div>
-                <p className="font-black text-centauro-green text-lg">R$ 49,90</p>
+                {freteRevealed ? (
+                  <p className="font-black text-centauro-green text-lg">R$ 44,90</p>
+                ) : (
+                  <p className="font-black text-muted-foreground text-sm">Informe o CEP</p>
+                )}
               </div>
             </div>
             <div className="bg-secondary p-5 rounded-md text-center">
@@ -443,27 +454,22 @@ export default function QuizHome() {
               <div className="absolute inset-0" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.15) 20px, rgba(255,255,255,0.15) 40px)' }} />
             </div>
             <div className="relative z-10">
-              <ShoppingCart className="w-10 h-10 text-primary-foreground mx-auto mb-3 opacity-80" />
+              <Gift className="w-10 h-10 text-primary-foreground mx-auto mb-3 opacity-80" />
               <p className="text-primary-foreground/60 text-xs font-bold tracking-[0.2em] uppercase mb-2">
                 Último Passo
               </p>
               <h3 className="text-3xl md:text-4xl font-black text-primary-foreground mb-2 tracking-tight">
-                PAGUE APENAS O FRETE
+                RESGATE SEUS PRÊMIOS AGORA
               </h3>
               <p className="text-primary-foreground/70 text-xs font-semibold mb-6 max-w-sm mx-auto">
                 Resgate imediato da camisa e álbum + concorra ao <span className="text-centauro-gold font-black">sorteio de 2 ingressos VIP</span> para a Copa 2026! Sorteio: 15/06/2026
               </p>
-              <div className="bg-centauro-green rounded-lg p-5 mb-6 max-w-xs mx-auto">
-                <p className="text-primary-foreground text-xs font-bold mb-1 opacity-80">VALOR DO FRETE</p>
-                <p className="text-primary-foreground text-5xl font-black">R$ 49,90</p>
-                <p className="text-primary-foreground text-xs font-medium mt-1 opacity-80">Entrega em todo Brasil</p>
-              </div>
               <Button
-                onClick={handleGoToCheckout}
+                onClick={() => setShowAddressDialog(true)}
                 className="w-full max-w-sm bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-6 rounded-lg transition-transform hover:scale-[1.02] active:scale-95"
-                style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)' }}
+                style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)', animation: 'pulse-glow-green 2s ease-in-out infinite' }}
               >
-                PAGAR FRETE AGORA
+                GARANTIR MEUS PRÊMIOS
               </Button>
               <div className="flex items-center justify-center gap-1.5 mt-4">
                 <Ticket size={12} className="text-centauro-gold" />
@@ -476,6 +482,92 @@ export default function QuizHome() {
               </p>
             </div>
           </div>
+
+          {/* Address / CPF Dialog */}
+          <Dialog open={showAddressDialog} onOpenChange={setShowAddressDialog}>
+            <DialogContent className="max-w-md mx-auto">
+              <DialogHeader>
+                <DialogTitle className="text-center text-xl font-black text-foreground">
+                  {showCepInput ? 'Informe seu endereço' : 'Identificação'}
+                </DialogTitle>
+              </DialogHeader>
+
+              {!showCepInput ? (
+                <div className="space-y-5 pt-2">
+                  <div className="bg-secondary p-5 rounded-lg text-center">
+                    <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Users size={20} className="text-primary-foreground" />
+                    </div>
+                    <p className="font-bold text-foreground text-sm mb-1">Já é cliente Centauro?</p>
+                    <p className="text-muted-foreground text-xs mb-4">Insira seu CPF para localizar seus dados</p>
+                    <Input
+                      placeholder="000.000.000-00"
+                      value={cpfValue}
+                      onChange={(e) => setCpfValue(e.target.value)}
+                      className="text-center font-mono text-lg"
+                      maxLength={14}
+                    />
+                    <Button
+                      onClick={() => { setShowCepInput(true); }}
+                      className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-5"
+                      disabled={cpfValue.length < 11}
+                    >
+                      Buscar meus dados
+                    </Button>
+                  </div>
+
+                  <div className="relative flex items-center gap-3">
+                    <div className="flex-1 h-px bg-border" />
+                    <span className="text-muted-foreground text-xs font-semibold">ou</span>
+                    <div className="flex-1 h-px bg-border" />
+                  </div>
+
+                  <Button
+                    onClick={() => setShowCepInput(true)}
+                    variant="outline"
+                    className="w-full py-5 font-bold text-sm"
+                  >
+                    <MapPin size={16} className="mr-2" />
+                    Inserir endereço manualmente
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4 pt-2">
+                  <div className="bg-secondary p-5 rounded-lg text-center">
+                    <Truck size={24} className="text-primary mx-auto mb-3" />
+                    <p className="font-bold text-foreground text-sm mb-1">Informe seu CEP</p>
+                    <p className="text-muted-foreground text-xs mb-4">Para calcular o envio dos seus prêmios</p>
+                    <Input
+                      placeholder="00000-000"
+                      value={cepValue}
+                      onChange={(e) => setCepValue(e.target.value)}
+                      className="text-center font-mono text-lg"
+                      maxLength={9}
+                    />
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setFreteRevealed(true);
+                      setShowAddressDialog(false);
+                      handleGoToCheckout();
+                    }}
+                    className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-6 rounded-lg"
+                    disabled={cepValue.length < 8}
+                    style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)' }}
+                  >
+                    CONFIRMAR E RESGATAR PRÊMIOS
+                  </Button>
+                  <Button
+                    onClick={() => setShowCepInput(false)}
+                    variant="ghost"
+                    className="w-full text-muted-foreground text-xs"
+                  >
+                    ← Voltar
+                  </Button>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
 
           {/* Trust badges */}
           <div className="grid grid-cols-3 gap-3 mb-8">
