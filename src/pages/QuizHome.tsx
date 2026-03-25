@@ -508,7 +508,7 @@ export default function QuizHome() {
                 </div>
                 <p className="font-black text-centauro-green text-sm">GRÁTIS</p>
               </div>
-              <div className="border-t border-border" />
+              <div className="border-t border-foreground/20" />
               <div className="flex items-center justify-between p-3.5 bg-centauro-gold/10 rounded-md border border-centauro-gold/30">
                 <div>
                 <p className="font-bold text-foreground text-sm flex items-center gap-1.5">
@@ -656,8 +656,8 @@ export default function QuizHome() {
           {/* Trust badges */}
           <div className="grid grid-cols-3 gap-3 mb-8">
             {[
-              { icon: CheckCircle, color: 'text-centauro-green', title: 'Resgate Imediato', desc: 'Camisa + Álbum' },
-              { icon: Truck, color: 'text-primary', title: 'Entrega', desc: '3-5 dias úteis' },
+              { icon: CheckCircle, color: 'text-foreground', title: 'Resgate Imediato', desc: 'Camisa + Álbum' },
+              { icon: Truck, color: 'text-foreground', title: 'Entrega', desc: '3-5 dias úteis' },
               { icon: Shield, color: 'text-foreground', title: 'Seguro', desc: 'Compra protegida' },
             ].map(({ icon: Icon, color, title, desc }) => (
               <div key={title} className="bg-card p-3.5 rounded-lg border border-border text-center">
