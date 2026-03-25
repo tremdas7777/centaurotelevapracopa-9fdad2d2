@@ -3,9 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import CentauroHeader from '@/components/CentauroHeader';
 import LoadingAnimation from '@/components/LoadingAnimation';
-import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Star, Gift } from 'lucide-react';
+import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Gift, ShoppingCart, Star } from 'lucide-react';
 import camisaImg from '@/assets/camisa-brasil-hero.png';
 import albumImg from '@/assets/album-copa-hero.png';
+import centauroLogo from '@/assets/centauro-logo.png';
 
 interface Question {
   id: number;
@@ -30,7 +31,7 @@ const quizQuestions: Question[] = [
   {
     id: 3,
     question: 'Qual jogador é o maior artilheiro da Seleção em Copas?',
-    options: ['Ronaldo', 'Pelé', 'Ronaldinho', 'Neymar'],
+    options: ['Ronaldo Fenômeno', 'Pelé', 'Ronaldinho', 'Neymar'],
     correctAnswer: 0,
   },
   {
@@ -118,213 +119,213 @@ export default function QuizHome() {
 
   if (quizComplete) {
     return (
-      <div className="min-h-screen bg-secondary">
-        <CentauroHeader />
+      <div className="min-h-screen bg-background">
+        {/* Centauro Top Bar */}
+        <div className="bg-primary py-3 px-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-center">
+            <img src={centauroLogo} alt="Centauro" className="h-8 md:h-10 object-contain brightness-0 invert" />
+          </div>
+        </div>
 
         {/* Urgency Bar */}
-        <div className="bg-accent text-accent-foreground py-3">
-          <div className="max-w-4xl mx-auto px-4 flex items-center justify-center gap-6 text-sm font-bold">
+        <div className="bg-foreground text-primary-foreground py-2.5">
+          <div className="max-w-4xl mx-auto px-4 flex items-center justify-center gap-6 text-xs font-bold">
             <div className="flex items-center gap-2">
-              <Clock size={16} className="text-primary" />
-              <span>Oferta expira em: </span>
-              <span className="text-primary animate-countdown">{formatTime(timeLeft)}</span>
+              <Clock size={14} className="text-primary" />
+              <span>Oferta expira em:</span>
+              <span className="text-primary animate-countdown font-mono">{formatTime(timeLeft)}</span>
             </div>
             <div className="hidden md:flex items-center gap-2">
-              <Users size={16} className="text-centauro-gold" />
+              <Users size={14} className="text-centauro-gold" />
               <span>{viewersCount} pessoas vendo agora</span>
             </div>
           </div>
         </div>
 
-        {/* Victory Section */}
-        <div className="bg-primary py-16 text-center relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
-            {[...Array(6)].map((_, i) => (
-              <Star key={i} className="absolute text-primary-foreground" size={40} style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                transform: `rotate(${Math.random() * 360}deg)`,
-              }} />
-            ))}
+        {/* Victory */}
+        <div className="bg-primary py-14 text-center relative overflow-hidden">
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.1) 20px, rgba(255,255,255,0.1) 40px)' }} />
           </div>
-          <Trophy className="w-20 h-20 text-centauro-gold mx-auto mb-4" />
-          <h1 className="text-5xl md:text-6xl font-black text-primary-foreground mb-3 tracking-tight">
+          <Trophy className="w-16 h-16 text-centauro-gold mx-auto mb-3" />
+          <h1 className="text-4xl md:text-5xl font-black text-primary-foreground mb-2 tracking-tight">
             PARABÉNS!
           </h1>
-          <p className="text-xl font-bold text-primary-foreground/90">
-            Você ganhou seus prêmios exclusivos Centauro!
+          <p className="text-lg font-semibold text-primary-foreground/90">
+            Você desbloqueou seus prêmios exclusivos!
           </p>
         </div>
 
-        {/* Products */}
-        <div className="max-w-4xl mx-auto px-4 py-12">
-          <h2 className="text-3xl font-black text-foreground mb-8 text-center tracking-tight">
-            SEUS PRÊMIOS
-          </h2>
+        <div className="max-w-4xl mx-auto px-4 py-10">
+          {/* Products */}
+          <div className="flex items-center gap-2 mb-6">
+            <div className="h-0.5 flex-1 bg-primary" />
+            <h2 className="text-xl font-black text-foreground px-4 tracking-tight uppercase">Seus Prêmios</h2>
+            <div className="h-0.5 flex-1 bg-primary" />
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            <Card className="overflow-hidden border-2 border-border hover:border-primary transition-colors">
-              <div className="bg-secondary p-8 flex items-center justify-center min-h-[250px]">
-                <img src={camisaImg} alt="Camisa Brasil 2026" className="max-h-52 object-contain" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
+            {/* Camisa */}
+            <Card className="overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow">
+              <div className="relative bg-secondary p-6 flex items-center justify-center h-56">
+                <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider">
+                  Exclusivo
+                </span>
+                <img src={camisaImg} alt="Camisa Brasil 2026" className="max-h-44 object-contain" />
               </div>
-              <div className="p-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded">EXCLUSIVO</span>
-                </div>
-                <h3 className="text-xl font-black text-foreground mb-1">Camisa Brasil 2026</h3>
-                <p className="text-muted-foreground text-sm mb-4">Seleção Brasileira - Edição Copa</p>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2 text-foreground">
-                    <CheckCircle size={14} className="text-centauro-green" /> Qualidade Premium
-                  </li>
-                  <li className="flex items-center gap-2 text-foreground">
-                    <CheckCircle size={14} className="text-centauro-green" /> Bordado Oficial CBF
-                  </li>
-                  <li className="flex items-center gap-2 text-foreground">
-                    <CheckCircle size={14} className="text-centauro-green" /> Todos os tamanhos
-                  </li>
+              <div className="p-5">
+                <h3 className="text-lg font-black text-foreground mb-0.5">Camisa Brasil 2026</h3>
+                <p className="text-muted-foreground text-xs mb-3">Seleção Brasileira - Edição Copa do Mundo</p>
+                <ul className="space-y-1.5 text-xs mb-4">
+                  {['Qualidade Premium', 'Bordado Oficial CBF', 'Todos os tamanhos'].map((item) => (
+                    <li key={item} className="flex items-center gap-2 text-foreground">
+                      <CheckCircle size={12} className="text-centauro-green shrink-0" /> {item}
+                    </li>
+                  ))}
                 </ul>
-                <div className="mt-4 flex items-center gap-2">
-                  <span className="text-muted-foreground line-through text-sm">R$ 249,90</span>
-                  <span className="text-centauro-green font-black text-lg">GRÁTIS</span>
+                <div className="flex items-center gap-2 pt-3 border-t border-border">
+                  <span className="text-muted-foreground line-through text-xs">R$ 249,90</span>
+                  <span className="bg-centauro-green/10 text-centauro-green font-black text-sm px-2 py-0.5 rounded">GRÁTIS</span>
                 </div>
               </div>
             </Card>
 
-            <Card className="overflow-hidden border-2 border-border hover:border-primary transition-colors">
-              <div className="bg-secondary p-8 flex items-center justify-center min-h-[250px]">
-                <img src={albumImg} alt="Álbum Copa 2026" className="max-h-52 object-contain" />
+            {/* Álbum */}
+            <Card className="overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow">
+              <div className="relative bg-secondary p-6 flex items-center justify-center h-56">
+                <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider">
+                  Exclusivo
+                </span>
+                <img src={albumImg} alt="Álbum Copa 2026" className="max-h-44 object-contain" />
               </div>
-              <div className="p-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded">EXCLUSIVO</span>
-                </div>
-                <h3 className="text-xl font-black text-foreground mb-1">Álbum Copa 2026</h3>
-                <p className="text-muted-foreground text-sm mb-4">Panini + 50 Pacotes de Figurinhas</p>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2 text-foreground">
-                    <CheckCircle size={14} className="text-centauro-green" /> 140+ packs de figurinhas
-                  </li>
-                  <li className="flex items-center gap-2 text-foreground">
-                    <CheckCircle size={14} className="text-centauro-green" /> Edição Limitada FIFA
-                  </li>
-                  <li className="flex items-center gap-2 text-foreground">
-                    <CheckCircle size={14} className="text-centauro-green" /> Figurinhas Exclusivas
-                  </li>
+              <div className="p-5">
+                <h3 className="text-lg font-black text-foreground mb-0.5">Álbum Copa 2026</h3>
+                <p className="text-muted-foreground text-xs mb-3">Panini + 50 Pacotes de Figurinhas</p>
+                <ul className="space-y-1.5 text-xs mb-4">
+                  {['140+ packs de figurinhas', 'Edição Limitada FIFA', 'Figurinhas Exclusivas'].map((item) => (
+                    <li key={item} className="flex items-center gap-2 text-foreground">
+                      <CheckCircle size={12} className="text-centauro-green shrink-0" /> {item}
+                    </li>
+                  ))}
                 </ul>
-                <div className="mt-4 flex items-center gap-2">
-                  <span className="text-muted-foreground line-through text-sm">R$ 189,90</span>
-                  <span className="text-centauro-green font-black text-lg">GRÁTIS</span>
+                <div className="flex items-center gap-2 pt-3 border-t border-border">
+                  <span className="text-muted-foreground line-through text-xs">R$ 189,90</span>
+                  <span className="bg-centauro-green/10 text-centauro-green font-black text-sm px-2 py-0.5 rounded">GRÁTIS</span>
                 </div>
               </div>
             </Card>
           </div>
 
           {/* Order Summary */}
-          <Card className="p-8 mb-8 border-2 border-border">
-            <h3 className="text-2xl font-black text-foreground mb-6 text-center tracking-tight">
-              RESUMO DO PEDIDO
+          <Card className="p-6 mb-8 border border-border shadow-sm">
+            <h3 className="text-lg font-black text-foreground mb-5 text-center uppercase tracking-tight">
+              Resumo do Pedido
             </h3>
-            <div className="space-y-3 mb-6">
-              <div className="flex items-center justify-between p-4 bg-secondary rounded-lg">
+            <div className="space-y-2.5 mb-5">
+              <div className="flex items-center justify-between p-3.5 bg-secondary rounded-md">
                 <div>
-                  <p className="font-bold text-foreground">Camisa Oficial Brasil 2026</p>
-                  <p className="text-sm text-muted-foreground">Valor: R$ 249,90</p>
+                  <p className="font-bold text-foreground text-sm">Camisa Oficial Brasil 2026</p>
+                  <p className="text-xs text-muted-foreground">Valor original: R$ 249,90</p>
                 </div>
-                <p className="font-black text-centauro-green">GRÁTIS</p>
+                <p className="font-black text-centauro-green text-sm">GRÁTIS</p>
               </div>
-              <div className="flex items-center justify-between p-4 bg-secondary rounded-lg">
+              <div className="flex items-center justify-between p-3.5 bg-secondary rounded-md">
                 <div>
-                  <p className="font-bold text-foreground">Álbum Copa 2026 + 50 Packs</p>
-                  <p className="text-sm text-muted-foreground">Valor: R$ 189,90</p>
+                  <p className="font-bold text-foreground text-sm">Álbum Copa 2026 + 50 Packs</p>
+                  <p className="text-xs text-muted-foreground">Valor original: R$ 189,90</p>
                 </div>
-                <p className="font-black text-centauro-green">GRÁTIS</p>
+                <p className="font-black text-centauro-green text-sm">GRÁTIS</p>
               </div>
-              <div className="border-t border-border my-4" />
-              <div className="flex items-center justify-between p-4 bg-primary/5 rounded-lg border border-primary/20">
+              <div className="border-t border-border" />
+              <div className="flex items-center justify-between p-3.5 bg-primary/5 rounded-md border border-primary/20">
                 <div>
-                  <p className="font-bold text-foreground">Taxa de Envio</p>
-                  <p className="text-sm text-muted-foreground">Entrega em 7-10 dias úteis</p>
+                  <p className="font-bold text-foreground text-sm">Taxa de Envio</p>
+                  <p className="text-xs text-muted-foreground">Entrega em 7-10 dias úteis</p>
                 </div>
                 <p className="font-black text-primary text-lg">R$ 69,90</p>
               </div>
             </div>
-            <div className="bg-secondary p-6 rounded-lg text-center">
-              <p className="text-muted-foreground text-sm font-medium mb-1">Total de Prêmios</p>
-              <p className="text-4xl font-black text-foreground mb-1">R$ 439,80</p>
-              <p className="text-lg font-bold text-centauro-green">Você economiza R$ 370,00!</p>
+            <div className="bg-secondary p-5 rounded-md text-center">
+              <p className="text-muted-foreground text-xs font-medium mb-1">Economia total</p>
+              <p className="text-3xl font-black text-foreground mb-0.5">R$ 370,00</p>
+              <p className="text-sm font-bold text-centauro-green">de desconto nos seus prêmios!</p>
             </div>
           </Card>
 
           {/* CTA */}
-          <div className="bg-accent rounded-2xl p-8 md:p-12 text-center mb-8">
-            <Gift className="w-12 h-12 text-primary mx-auto mb-4" />
-            <p className="text-accent-foreground/70 text-sm font-bold tracking-widest uppercase mb-3">
-              Próximo Passo
-            </p>
-            <h3 className="text-3xl md:text-4xl font-black text-accent-foreground mb-2">
-              PAGUE APENAS O FRETE
-            </h3>
-            <div className="bg-primary rounded-xl p-6 my-6 max-w-sm mx-auto">
-              <p className="text-primary-foreground text-xs font-bold mb-1 opacity-80">VALOR DO FRETE</p>
-              <p className="text-primary-foreground text-5xl font-black">R$ 69,90</p>
-              <p className="text-primary-foreground text-xs font-bold mt-1 opacity-80">Entrega em 7-10 dias úteis</p>
+          <div className="bg-primary rounded-xl p-8 md:p-10 text-center mb-8 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-5">
+              <div className="absolute inset-0" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.15) 20px, rgba(255,255,255,0.15) 40px)' }} />
             </div>
-            <Button
-              onClick={handleGoToCheckout}
-              className="w-full max-w-md bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-black text-lg py-6 rounded-xl animate-pulse-glow transition-transform hover:scale-105 active:scale-95"
-              style={{ boxShadow: '0 8px 25px hsl(142 72% 42% / 0.4)' }}
-            >
-              🏆 GARANTIR MEUS PRÊMIOS AGORA
-            </Button>
-            <p className="text-accent-foreground/60 text-sm font-bold mt-4">
-              Oferta válida por {formatTime(timeLeft)}
-            </p>
+            <div className="relative z-10">
+              <ShoppingCart className="w-10 h-10 text-primary-foreground mx-auto mb-3 opacity-80" />
+              <p className="text-primary-foreground/70 text-xs font-bold tracking-[0.2em] uppercase mb-2">
+                Último Passo
+              </p>
+              <h3 className="text-3xl md:text-4xl font-black text-primary-foreground mb-6 tracking-tight">
+                PAGUE APENAS O FRETE
+              </h3>
+              <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-lg p-5 mb-6 max-w-xs mx-auto border border-primary-foreground/20">
+                <p className="text-primary-foreground text-xs font-bold mb-1 opacity-70">VALOR DO FRETE</p>
+                <p className="text-primary-foreground text-5xl font-black">R$ 69,90</p>
+                <p className="text-primary-foreground text-xs font-medium mt-1 opacity-70">Entrega em todo Brasil</p>
+              </div>
+              <Button
+                onClick={handleGoToCheckout}
+                className="w-full max-w-sm bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-black text-base py-6 rounded-lg animate-pulse-glow transition-transform hover:scale-[1.02] active:scale-95"
+              >
+                GARANTIR MEUS PRÊMIOS →
+              </Button>
+              <p className="text-primary-foreground/50 text-xs font-medium mt-4">
+                ⏰ Oferta válida por {formatTime(timeLeft)}
+              </p>
+            </div>
           </div>
 
           {/* Trust badges */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-card p-4 rounded-lg border border-border text-center">
-              <CheckCircle className="text-centauro-green mx-auto mb-2" size={24} />
-              <h4 className="font-bold text-foreground text-sm">Garantido</h4>
-              <p className="text-xs text-muted-foreground">Todos ganham</p>
-            </div>
-            <div className="bg-card p-4 rounded-lg border border-border text-center">
-              <Truck className="text-primary mx-auto mb-2" size={24} />
-              <h4 className="font-bold text-foreground text-sm">Entrega Rápida</h4>
-              <p className="text-xs text-muted-foreground">7-10 dias úteis</p>
-            </div>
-            <div className="bg-card p-4 rounded-lg border border-border text-center">
-              <Shield className="text-foreground mx-auto mb-2" size={24} />
-              <h4 className="font-bold text-foreground text-sm">100% Seguro</h4>
-              <p className="text-xs text-muted-foreground">Compra protegida</p>
-            </div>
+          <div className="grid grid-cols-3 gap-3 mb-8">
+            {[
+              { icon: CheckCircle, color: 'text-centauro-green', title: 'Garantido', desc: 'Todos ganham' },
+              { icon: Truck, color: 'text-primary', title: 'Entrega', desc: '7-10 dias úteis' },
+              { icon: Shield, color: 'text-foreground', title: 'Seguro', desc: 'Compra protegida' },
+            ].map(({ icon: Icon, color, title, desc }) => (
+              <div key={title} className="bg-card p-3.5 rounded-lg border border-border text-center">
+                <Icon className={`${color} mx-auto mb-1.5`} size={20} />
+                <h4 className="font-bold text-foreground text-xs">{title}</h4>
+                <p className="text-[10px] text-muted-foreground">{desc}</p>
+              </div>
+            ))}
           </div>
 
           {/* FAQ */}
-          <Card className="p-6 md:p-8 border-2 border-border">
-            <h3 className="text-xl font-black text-foreground mb-6 text-center">
-              PERGUNTAS FREQUENTES
+          <Card className="p-5 md:p-6 border border-border shadow-sm mb-8">
+            <h3 className="text-base font-black text-foreground mb-4 text-center uppercase tracking-tight">
+              Perguntas Frequentes
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {[
-                { q: 'Como funciona a entrega?', a: 'Após confirmar o pedido, você receberá um email com o rastreamento. Entrega em 7-10 dias úteis.' },
-                { q: 'Posso devolver?', a: 'Sim! Garantia de 30 dias. Se não gostar, devolvemos seu dinheiro.' },
+                { q: 'Como funciona a entrega?', a: 'Após confirmar, você recebe um email com rastreamento. Entrega em 7-10 dias úteis.' },
+                { q: 'Posso devolver?', a: 'Sim! Garantia de 30 dias. Devolvemos seu dinheiro sem perguntas.' },
                 { q: 'Meus dados estão seguros?', a: '100% seguro! SSL 256-bit. Nunca compartilhamos seus dados.' },
-                { q: 'Como entro em contato?', a: 'Suporte 24/7 via WhatsApp, Email e Chat.' },
+                { q: 'Preciso de suporte?', a: 'Suporte 24/7 via WhatsApp, Email e Chat.' },
               ].map((faq, i) => (
-                <div key={i} className="bg-secondary p-4 rounded-lg">
-                  <p className="font-bold text-foreground text-sm mb-1">{faq.q}</p>
-                  <p className="text-xs text-muted-foreground">{faq.a}</p>
+                <div key={i} className="bg-secondary p-3.5 rounded-md">
+                  <p className="font-bold text-foreground text-xs mb-0.5">{faq.q}</p>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{faq.a}</p>
                 </div>
               ))}
             </div>
           </Card>
 
           {/* Footer */}
-          <div className="text-center py-8 text-muted-foreground text-xs">
-            <p>© 2026 Centauro Esportes. Todos os direitos reservados.</p>
-            <p className="mt-1">Promoção válida enquanto durar o estoque.</p>
+          <div className="text-center py-6">
+            <img src={centauroLogo} alt="Centauro" className="h-6 mx-auto mb-3 opacity-30" />
+            <p className="text-muted-foreground text-[10px]">
+              © 2026 Centauro Esportes. Todos os direitos reservados.
+            </p>
+            <p className="text-muted-foreground text-[10px] mt-0.5">
+              Promoção válida enquanto durar o estoque.
+            </p>
           </div>
         </div>
       </div>
@@ -336,21 +337,21 @@ export default function QuizHome() {
   const progressPercent = ((currentQuestion + 1) / quizQuestions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-secondary">
+    <div className="min-h-screen bg-background">
       <CentauroHeader />
 
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="max-w-xl mx-auto px-4 py-8">
         {/* Progress */}
-        <div className="mb-8">
+        <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-bold text-muted-foreground">
-              Pergunta {currentQuestion + 1} de {quizQuestions.length}
+            <span className="text-xs font-bold text-muted-foreground">
+              Pergunta {currentQuestion + 1}/{quizQuestions.length}
             </span>
-            <span className="text-sm font-bold text-primary">
+            <span className="text-xs font-bold text-primary">
               {Math.round(progressPercent)}%
             </span>
           </div>
-          <div className="w-full bg-border rounded-full h-2.5 overflow-hidden">
+          <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
             <div
               className="h-full bg-primary rounded-full transition-all duration-500"
               style={{ width: `${progressPercent}%` }}
@@ -359,15 +360,15 @@ export default function QuizHome() {
         </div>
 
         {/* Question Card */}
-        <Card className="p-6 md:p-8 border-2 border-border mb-6">
-          <h2 className="text-2xl md:text-3xl font-black text-foreground mb-8 leading-tight">
+        <Card className="p-5 md:p-7 border border-border shadow-sm mb-5">
+          <h2 className="text-xl md:text-2xl font-black text-foreground mb-6 leading-tight">
             {question.question}
           </h2>
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {question.options.map((option, index) => {
               const isSelected = selectedAnswer === index;
               const isCorrectAnswer = index === question.correctAnswer;
-              let btnClass = 'w-full p-4 text-left font-bold rounded-lg transition-all duration-300 border-2 ';
+              let btnClass = 'w-full p-3.5 text-left font-semibold rounded-md transition-all duration-200 border text-sm ';
 
               if (selectedAnswer === null) {
                 btnClass += 'bg-card border-border hover:border-primary hover:bg-primary/5 cursor-pointer';
@@ -389,7 +390,7 @@ export default function QuizHome() {
                   className={btnClass}
                 >
                   <span className="flex items-center">
-                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground font-black mr-3 text-sm">
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded bg-primary text-primary-foreground font-black mr-3 text-xs">
                       {String.fromCharCode(65 + index)}
                     </span>
                     {option}
@@ -402,7 +403,7 @@ export default function QuizHome() {
 
         {/* Feedback */}
         {showResult && (
-          <div className={`p-4 rounded-lg text-center font-bold mb-6 border-2 ${
+          <div className={`p-3.5 rounded-md text-center font-bold mb-5 text-sm border ${
             isCorrect
               ? 'bg-centauro-green/10 border-centauro-green text-centauro-green'
               : 'bg-destructive/10 border-destructive text-destructive'
@@ -416,7 +417,7 @@ export default function QuizHome() {
           <div className="flex justify-center">
             <Button
               onClick={handleNextQuestion}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg px-10 py-5 rounded-lg transition-transform hover:scale-105"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-black text-sm px-8 py-5 rounded-md transition-transform hover:scale-[1.02]"
             >
               {currentQuestion === quizQuestions.length - 1 ? '🏆 VER MEUS PRÊMIOS' : 'PRÓXIMA →'}
             </Button>
@@ -424,10 +425,10 @@ export default function QuizHome() {
         )}
 
         {/* Prize preview */}
-        <div className="mt-8 bg-accent/50 rounded-lg p-4 border border-border">
-          <div className="flex items-center gap-3 justify-center">
-            <Gift size={18} className="text-primary" />
-            <p className="text-sm font-bold text-foreground">
+        <div className="mt-8 bg-primary/5 rounded-md p-3.5 border border-primary/15">
+          <div className="flex items-center gap-2.5 justify-center">
+            <Gift size={16} className="text-primary" />
+            <p className="text-xs font-bold text-foreground">
               Prêmio: <span className="text-primary">Camisa Brasil + Álbum Copa 2026</span>
             </p>
           </div>
