@@ -347,6 +347,29 @@ export default function Checkout() {
           <p className="text-muted-foreground text-[10px]">© 2026 Centauro Esportes. Todos os direitos reservados.</p>
         </div>
       </div>
+
+      {/* Store Unavailable Error Popup */}
+      <AlertDialog open={showStoreError} onOpenChange={setShowStoreError}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unidade Indisponível</AlertDialogTitle>
+            <AlertDialogDescription>
+              A unidade <strong>{nearestStore || 'Centauro mais próxima'}</strong> está indisponível para retirada presencial no momento. Por favor, selecione o envio via Correios SEDEX.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              onClick={() => {
+                setShippingMethod('sedex');
+                setShowStoreError(false);
+              }}
+              className="bg-centauro-green hover:bg-centauro-green/80"
+            >
+              Enviar por SEDEX — R$ 44,90
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
