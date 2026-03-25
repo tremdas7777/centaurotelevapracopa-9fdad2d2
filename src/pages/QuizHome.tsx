@@ -322,7 +322,7 @@ export default function QuizHome() {
                 <div className="mb-3">
                   <p className="text-xs font-bold text-foreground mb-2">Tamanho:</p>
                   <div className="flex gap-2">
-                    {['P', 'M', 'G', 'GG', 'XG'].map((size) => (
+                    {['P', 'M', 'G', 'GG', 'XG', 'XXG'].map((size) => (
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
