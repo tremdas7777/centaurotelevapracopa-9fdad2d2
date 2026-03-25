@@ -157,7 +157,7 @@ export default function QuizHome() {
   // HOME / LANDING PAGE
   if (showHome) {
     return (
-      <div className={`bg-foreground flex flex-col min-h-full min-h-screen min-h-[100svh] min-h-[100dvh] min-h-[100lvh] transition-all duration-500 ease-in-out ${homeExiting ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+      <div className={`bg-foreground flex flex-col min-h-screen min-h-[100svh] min-h-[100dvh] transition-all duration-500 ease-in-out ${homeExiting ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
         {/* Preload quiz banner */}
         <link rel="preload" as="image" href={quizBannerPreload} />
         <img src={quizBannerPreload} alt="" className="hidden" />
@@ -181,7 +181,7 @@ export default function QuizHome() {
 
         {/* Hero content with stadium as background - fills all remaining space */}
         <div
-          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-12 pb-[max(3rem,env(safe-area-inset-bottom))] -mt-12"
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-12 -mt-12"
           style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center top' }}
         >
           <div className="absolute inset-0 bg-foreground/80" />
