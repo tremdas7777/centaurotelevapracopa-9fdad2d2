@@ -159,16 +159,14 @@ export default function QuizHome() {
           </div>
         </div>
 
-        {/* Full-screen Hero - min-h-screen minus top bar */}
-        <div
-          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 min-h-screen"
-          style={{
-            backgroundImage: `url(${stadiumHero})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/85 to-foreground/95" />
+        {/* Players banner */}
+        <div className="w-full h-44 md:h-64 relative overflow-hidden">
+          <img src={quizBannerPreload} alt="Jogadores Seleção Brasileira" className="w-full h-full object-cover object-top" />
+          <div className="absolute inset-0 bg-gradient-to-b from-foreground/20 via-transparent to-foreground" />
+        </div>
+
+        {/* Full-screen Hero */}
+        <div className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-12 bg-foreground">
           <div className="relative z-10 max-w-lg mx-auto flex flex-col items-center">
 
             <p className="text-xs font-bold text-centauro-green uppercase tracking-widest mb-2">⚽ Promoção Copa do Mundo 2026</p>
@@ -183,8 +181,8 @@ export default function QuizHome() {
 
             <Button
               onClick={() => { if (!hasTrackedQuizStart.current) { trackEvent('quiz_started'); hasTrackedQuizStart.current = true; } setShowHome(false); }}
-              className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-14 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider w-full max-w-sm animate-pulse-glow"
-              style={{ boxShadow: '0 8px 30px hsl(145 63% 42% / 0.5)', animation: 'pulse-glow-green 2s ease-in-out infinite' }}
+              className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-14 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider w-full max-w-sm"
+              style={{ animation: 'pulse-glow-green 2s ease-in-out infinite' }}
             >
               PARTICIPAR AGORA
             </Button>
