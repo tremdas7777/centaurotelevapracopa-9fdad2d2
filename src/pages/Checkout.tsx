@@ -26,6 +26,7 @@ export default function Checkout() {
   const [nome, setNome] = useState(prefilledName);
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
+  const [cpf, setCpf] = useState('');
   const [cep, setCep] = useState('');
   const [endereco, setEndereco] = useState('');
   const [numero, setNumero] = useState('');
@@ -80,6 +81,14 @@ export default function Checkout() {
     if (digits.length <= 2) return `(${digits}`;
     if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
     return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+  };
+
+  const formatCpf = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+    if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
   };
 
   const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,7 +156,7 @@ export default function Checkout() {
             amount: shippingCost || 44.90,
             buyerName: nome,
             buyerEmail: email,
-            buyerDocument: '',
+            buyerDocument: cpf,
             buyerPhone: telefone,
           },
         });
@@ -182,7 +191,7 @@ export default function Checkout() {
             amount: shippingCost || 44.90,
             buyerName: nome,
             buyerEmail: email,
-            buyerDocument: '',
+            buyerDocument: cpf,
             buyerPhone: telefone,
           },
         });
@@ -204,7 +213,7 @@ export default function Checkout() {
     }
   };
 
-  const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
+  const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cpf.replace(/\D/g, '').length === 11 && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
 
   return (
     <div className="min-h-screen bg-background" style={{ fontFamily: "'Rubik', 'Inter', system-ui, sans-serif" }}>
@@ -308,6 +317,19 @@ export default function Checkout() {
                   maxLength={15}
                 />
               </div>
+            </div>
+
+            {/* CPF */}
+            <div>
+              <label className="text-xs font-bold text-foreground mb-1.5 block">CPF</label>
+              <Input
+                placeholder="000.000.000-00"
+                value={cpf}
+                onChange={(e) => setCpf(formatCpf(e.target.value))}
+                className="py-5"
+                inputMode="numeric"
+                maxLength={14}
+              />
             </div>
 
             {/* CEP */}
