@@ -172,13 +172,11 @@ export default function QuizHome() {
 
         {/* Hero content with stadium as background */}
         <div
-          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 -mt-10"
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-12 -mt-10"
           style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
         >
           <div className="absolute inset-0 bg-foreground/80" />
           <div className="relative z-10 max-w-lg mx-auto flex flex-col items-center">
-
-            <p className="text-xs font-bold text-centauro-green uppercase tracking-widest mb-2">⚽ Promoção Copa do Mundo 2026</p>
 
             <h1 className="text-3xl md:text-5xl font-black text-primary-foreground leading-[1.1] mb-4 tracking-tight">
               Prove que você é o maior torcedor do Brasil
