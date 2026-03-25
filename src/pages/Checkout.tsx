@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { CheckCircle, Truck, Shield, Lock, Ticket, Clock, Users } from 'lucide-react';
+import { CheckCircle, Truck, Shield, Lock, Ticket, Clock, Users, Store, Package } from 'lucide-react';
 import centauroLogo from '@/assets/centauro-logo.webp';
 import cbfLogo from '@/assets/cbf-logo.webp';
 import camisaImg from '@/assets/camisa-brasil-hero.webp';
@@ -27,8 +27,12 @@ export default function Checkout() {
   const [cidade, setCidade] = useState('');
   const [estado, setEstado] = useState('');
   const [cepLoading, setCepLoading] = useState(false);
+  const [shippingMethod, setShippingMethod] = useState<'sedex' | 'retirada' | null>(null);
   const [timeLeft, setTimeLeft] = useState(1800);
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
+
+  const cepValid = cep.replace(/\D/g, '').length === 8 && !!endereco;
+  const shippingCost = shippingMethod === 'sedex' ? 44.90 : shippingMethod === 'retirada' ? 0 : null;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -87,7 +91,7 @@ export default function Checkout() {
     window.location.href = checkoutUrl;
   };
 
-  const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado;
+  const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
 
   return (
     <div className="min-h-screen bg-background">
@@ -142,10 +146,14 @@ export default function Checkout() {
             </div>
             <span className="text-xs font-black text-centauro-gold">INCLUSO</span>
           </div>
-          {cep.replace(/\D/g, '').length === 8 && endereco && (
+          {cepValid && shippingMethod && (
             <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-              <span className="text-sm font-bold text-foreground">Taxa de Envio</span>
-              <span className="text-lg font-black text-centauro-green">R$ 44,90</span>
+              <span className="text-sm font-bold text-foreground">
+                {shippingMethod === 'sedex' ? 'Frete SEDEX' : 'Retirada na Loja'}
+              </span>
+              <span className="text-lg font-black text-centauro-green">
+                {shippingMethod === 'sedex' ? 'R$ 44,90' : 'GRÁTIS'}
+              </span>
             </div>
           )}
         </Card>
@@ -249,33 +257,55 @@ export default function Checkout() {
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">Bairro</label>
-                <Input
-                  placeholder="Bairro"
-                  value={bairro}
-                  onChange={(e) => setBairro(e.target.value)}
-                  className="py-5"
-                />
+                <Input placeholder="Bairro" value={bairro} onChange={(e) => setBairro(e.target.value)} className="py-5" />
               </div>
               <div>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">Cidade</label>
-                <Input
-                  placeholder="Cidade"
-                  value={cidade}
-                  onChange={(e) => setCidade(e.target.value)}
-                  className="py-5"
-                />
+                <Input placeholder="Cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} className="py-5" />
               </div>
               <div>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">Estado</label>
-                <Input
-                  placeholder="UF"
-                  value={estado}
-                  onChange={(e) => setEstado(e.target.value.toUpperCase().slice(0, 2))}
-                  className="py-5"
-                  maxLength={2}
-                />
+                <Input placeholder="UF" value={estado} onChange={(e) => setEstado(e.target.value.toUpperCase().slice(0, 2))} className="py-5" maxLength={2} />
               </div>
             </div>
+
+            {/* Shipping Method Selection */}
+            {cepValid && (
+              <div>
+                <label className="text-xs font-bold text-foreground mb-2 block">Método de Envio</label>
+                <div className="space-y-3">
+                  <div
+                    onClick={() => setShippingMethod('sedex')}
+                    className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'sedex' ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground/30'}`}
+                  >
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingMethod === 'sedex' ? 'border-primary' : 'border-muted-foreground/40'}`}>
+                      {shippingMethod === 'sedex' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                    </div>
+                    <Package size={20} className="text-primary" />
+                    <div className="flex-1">
+                      <p className="text-xs font-bold text-foreground">Correios SEDEX</p>
+                      <p className="text-[10px] text-muted-foreground">Prazo: 2 a 5 dias úteis</p>
+                    </div>
+                    <span className="text-sm font-black text-foreground">R$ 44,90</span>
+                  </div>
+
+                  <div
+                    onClick={() => setShippingMethod('retirada')}
+                    className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'retirada' ? 'border-centauro-green bg-centauro-green/5' : 'border-border hover:border-muted-foreground/30'}`}
+                  >
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingMethod === 'retirada' ? 'border-centauro-green' : 'border-muted-foreground/40'}`}>
+                      {shippingMethod === 'retirada' && <div className="w-2.5 h-2.5 rounded-full bg-centauro-green" />}
+                    </div>
+                    <Store size={20} className="text-centauro-green" />
+                    <div className="flex-1">
+                      <p className="text-xs font-bold text-foreground">Retirada na Loja Centauro</p>
+                      <p className="text-[10px] text-muted-foreground">Disponível a partir de 15/06 — Loja mais próxima</p>
+                    </div>
+                    <span className="text-sm font-black text-centauro-green">GRÁTIS</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </Card>
 
@@ -286,8 +316,7 @@ export default function Checkout() {
           className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-7 rounded-lg transition-transform hover:scale-[1.02] active:scale-95 mb-4"
           style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)', animation: 'pulse-glow-green 2s ease-in-out infinite' }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512" fill="currentColor" className="mr-2"><path d="M242.4 292.5C247.8 287.1 257.1 287.1 262.5 292.5L339.5 369.5C347.6 377.6 347.6 390.4 339.5 398.5C331.4 406.6 318.6 406.6 310.5 398.5L242.4 330.4C237 325 237 315.7 242.4 310.3V292.5zM311.3 113.5C303.2 105.4 303.2 92.6 311.3 84.5C319.4 76.4 332.2 76.4 340.3 84.5L417.3 161.5C422.7 166.9 422.7 176.2 417.3 181.6L340.3 258.6C332.2 266.7 319.4 266.7 311.3 258.6C303.2 250.5 303.2 237.7 311.3 229.6L350.2 190.7H293.8C288.3 190.7 283.8 186.2 283.8 180.7V172.3C283.8 166.8 288.3 162.3 293.8 162.3H350.2L311.3 113.5zM197.7 258.6C205.8 266.7 205.8 279.5 197.7 287.6C189.6 295.7 176.8 295.7 168.7 287.6L91.7 210.6C86.3 205.2 86.3 195.9 91.7 190.5L168.7 113.5C176.8 105.4 189.6 105.4 197.7 113.5C205.8 121.6 205.8 134.4 197.7 142.5L158.8 181.4H215.2C220.7 181.4 225.2 185.9 225.2 191.4V199.8C225.2 205.3 220.7 209.8 215.2 209.8H158.8L197.7 258.6z"/></svg>
-          {cep.replace(/\D/g, '').length === 8 && endereco ? 'FINALIZAR PEDIDO — R$ 44,90' : 'FINALIZAR PEDIDO'}
+          {shippingMethod === 'sedex' ? 'FINALIZAR PEDIDO — R$ 44,90' : shippingMethod === 'retirada' ? 'FINALIZAR PEDIDO — GRÁTIS' : 'FINALIZAR PEDIDO'}
         </Button>
 
         {/* Trust */}
