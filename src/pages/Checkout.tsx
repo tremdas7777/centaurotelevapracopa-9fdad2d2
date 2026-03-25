@@ -380,6 +380,29 @@ export default function Checkout() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* CEP Error Popup */}
+      <AlertDialog open={showCepError} onOpenChange={setShowCepError}>
+        <AlertDialogContent className="max-w-[calc(100%-2rem)] mx-auto rounded-xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>CEP Inválido</AlertDialogTitle>
+            <AlertDialogDescription>
+              O CEP informado não foi encontrado. Por favor, verifique o número digitado e tente novamente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              onClick={() => {
+                setShowCepError(false);
+                setCep('');
+              }}
+              className="bg-primary hover:bg-primary/80"
+            >
+              Tentar Novamente
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
