@@ -565,6 +565,107 @@ export default function AdminPanel() {
           </div>
         )}
 
+        {/* PAGAMENTOS TAB */}
+        {activeTab === 'pagamentos' && (
+          <div>
+            <h2 className="text-xl font-black text-foreground mb-1">Gateways de Pagamento</h2>
+            <p className="text-muted-foreground text-xs mb-6">Configure os gateways para gerar cobranças PIX</p>
+
+            {/* Active Gateway Selector */}
+            <Card className="p-4 mb-4 border border-border">
+              <div className="flex items-center gap-2 mb-2">
+                <QrCode size={16} className="text-centauro-green" />
+                <span className="font-black text-foreground text-sm">Gateway Ativo</span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    const updated = { ...gatewayConfig, activeGateway: 'pagouai' as const };
+                    setGatewayConfig(updated);
+                    savePaymentGatewayConfig(updated);
+                  }}
+                  className={`flex-1 px-3 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${
+                    gatewayConfig.activeGateway === 'pagouai'
+                      ? 'border-centauro-green bg-centauro-green/5 text-centauro-green'
+                      : 'border-border text-muted-foreground hover:border-muted-foreground/30'
+                  }`}
+                >
+                  Pagou.ai
+                </button>
+                <button
+                  onClick={() => {
+                    const updated = { ...gatewayConfig, activeGateway: 'none' as const };
+                    setGatewayConfig(updated);
+                    savePaymentGatewayConfig(updated);
+                  }}
+                  className={`px-3 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${
+                    gatewayConfig.activeGateway === 'none'
+                      ? 'border-destructive bg-destructive/5 text-destructive'
+                      : 'border-border text-muted-foreground hover:border-muted-foreground/30'
+                  }`}
+                >
+                  Nenhum
+                </button>
+              </div>
+            </Card>
+
+            {/* Pagou.ai Config */}
+            <Card className="p-5 border border-border">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-centauro-green/10 flex items-center justify-center">
+                  <CreditCard size={20} className="text-centauro-green" />
+                </div>
+                <div>
+                  <h3 className="font-black text-foreground text-sm">Pagou.ai</h3>
+                  <p className="text-muted-foreground text-[11px]">Gateway de pagamento PIX</p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Chave Secreta (Secret Key)</label>
+                  <Input
+                    type="password"
+                    value={gatewayConfig.pagouai.secretKey}
+                    onChange={(e) => setGatewayConfig(prev => ({
+                      ...prev,
+                      pagouai: { ...prev.pagouai, secretKey: e.target.value }
+                    }))}
+                    placeholder="sk_live_..."
+                    className="font-mono text-xs mt-1"
+                  />
+                  <p className="text-[9px] text-muted-foreground mt-1">Pagou.ai → Configurações → Credenciais de API → Chave Secreta</p>
+                </div>
+
+                <Button
+                  onClick={() => {
+                    savePaymentGatewayConfig(gatewayConfig);
+                    setGatewayMessage('Configuração da Pagou.ai salva com sucesso!');
+                    setTimeout(() => setGatewayMessage(''), 3000);
+                  }}
+                  className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs"
+                >
+                  <Save size={14} className="mr-1.5" /> Salvar Configuração
+                </Button>
+                <StatusMessage msg={gatewayMessage} />
+              </div>
+            </Card>
+
+            <div className="bg-centauro-gold/10 p-3.5 rounded-md border border-centauro-gold/20 mt-4">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <Info size={13} className="text-centauro-gold" />
+                <h3 className="font-bold text-foreground text-[11px]">Como funciona</h3>
+              </div>
+              <ul className="text-[10px] text-muted-foreground space-y-0.5 pl-5 list-disc">
+                <li>O gateway ativo será usado para gerar o QR Code PIX no checkout</li>
+                <li>A chave secreta é enviada de forma segura via servidor</li>
+                <li>Futuramente você poderá adicionar outros gateways e alternar entre eles</li>
+                <li><strong>Pagou.ai:</strong> Obtenha suas credenciais em Configurações → Credenciais de API</li>
+              </ul>
+            </div>
+          </div>
+        )}
+
         {/* CHECKOUT TAB */}
         {activeTab === 'checkout' && (
           <div className="space-y-4">
