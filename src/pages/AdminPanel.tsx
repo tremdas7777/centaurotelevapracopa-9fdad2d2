@@ -106,7 +106,7 @@ export default function AdminPanel() {
 
   const handleSaveUtmify = () => {
     saveUtmifyConfig(utmifyConfig);
-    setUtmifyMessage('Token UTMify salvo com sucesso!');
+    setUtmifyMessage('Token Utmify salvo com sucesso!');
     setTimeout(() => setUtmifyMessage(''), 3000);
   };
 
@@ -482,8 +482,8 @@ export default function AdminPanel() {
         {/* UTMIFY TAB */}
         {activeTab === 'utmify' && (
           <div>
-            <h2 className="text-xl font-black text-foreground mb-1">Integração UTMify</h2>
-            <p className="text-muted-foreground text-xs mb-6">Rastreie suas vendas com a UTMify</p>
+            <h2 className="text-xl font-black text-foreground mb-1">Integração Utmify</h2>
+            <p className="text-muted-foreground text-xs mb-6">Rastreie suas vendas com a Utmify</p>
 
             <Card className="p-5 border border-border">
               <div className="flex items-center gap-3 mb-3">
@@ -492,7 +492,7 @@ export default function AdminPanel() {
                 </div>
                 <div>
                   <h3 className="font-black text-foreground text-sm">Tokens da API</h3>
-                  <p className="text-muted-foreground text-[11px]">Configure até 2 tokens UTMify para envio simultâneo</p>
+                  <p className="text-muted-foreground text-[11px]">Configure até 2 tokens Utmify para envio simultâneo</p>
                 </div>
               </div>
 
@@ -504,7 +504,7 @@ export default function AdminPanel() {
                     type="password"
                     value={utmifyConfig.apiToken}
                     onChange={(e) => setUtmifyConfig(prev => ({ ...prev, apiToken: e.target.value }))}
-                    placeholder="Cole aqui o Token 1 da UTMify"
+                    placeholder="Cole aqui o Token 1 da Utmify"
                     className="font-mono text-xs"
                   />
                   <Button
