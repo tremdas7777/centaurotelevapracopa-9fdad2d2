@@ -191,7 +191,7 @@ export default function Checkout() {
             amount: shippingCost || 44.90,
             buyerName: nome,
             buyerEmail: email,
-            buyerDocument: '',
+            buyerDocument: cpf,
             buyerPhone: telefone,
           },
         });
