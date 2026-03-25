@@ -1,28 +1,73 @@
-// Pixel management - injects Facebook, TikTok, and Google Ads pixels
+// Pixel management - supports multiple pixels per platform
+
+export interface FacebookPixelEntry {
+  id: string;
+  pixelId: string;
+  accessToken: string;
+}
+
+export interface TikTokPixelEntry {
+  id: string;
+  pixelId: string;
+  accessToken: string;
+}
+
+export interface GoogleAdsEntry {
+  id: string;
+  adsId: string;
+  adsLabel: string;
+}
 
 export interface PixelConfig {
-  facebookPixelId: string;
-  facebookAccessToken: string;
-  tiktokPixelId: string;
-  tiktokAccessToken: string;
-  googleAdsId: string;
-  googleAdsLabel: string;
+  // Legacy single-pixel fields (kept for backward compat on load)
+  facebookPixelId?: string;
+  facebookAccessToken?: string;
+  tiktokPixelId?: string;
+  tiktokAccessToken?: string;
+  googleAdsId?: string;
+  googleAdsLabel?: string;
+  // New multi-pixel arrays
+  facebookPixels: FacebookPixelEntry[];
+  tiktokPixels: TikTokPixelEntry[];
+  googleAdsPixels: GoogleAdsEntry[];
   utmifyHtml?: string;
 }
 
 const STORAGE_KEY = 'pixel_config';
 
+function migrateConfig(raw: any): PixelConfig {
+  const cfg: PixelConfig = {
+    facebookPixels: raw.facebookPixels || [],
+    tiktokPixels: raw.tiktokPixels || [],
+    googleAdsPixels: raw.googleAdsPixels || [],
+    utmifyHtml: raw.utmifyHtml || '',
+  };
+
+  // Migrate legacy single fields into arrays if arrays are empty
+  if (cfg.facebookPixels.length === 0 && raw.facebookPixelId) {
+    cfg.facebookPixels.push({ id: crypto.randomUUID(), pixelId: raw.facebookPixelId, accessToken: raw.facebookAccessToken || '' });
+  }
+  if (cfg.tiktokPixels.length === 0 && raw.tiktokPixelId) {
+    cfg.tiktokPixels.push({ id: crypto.randomUUID(), pixelId: raw.tiktokPixelId, accessToken: raw.tiktokAccessToken || '' });
+  }
+  if (cfg.googleAdsPixels.length === 0 && raw.googleAdsId) {
+    cfg.googleAdsPixels.push({ id: crypto.randomUUID(), adsId: raw.googleAdsId, adsLabel: raw.googleAdsLabel || '' });
+  }
+
+  return cfg;
+}
+
 const DEFAULT_CONFIG: PixelConfig = {
-  facebookPixelId: '', facebookAccessToken: '',
-  tiktokPixelId: '', tiktokAccessToken: '',
-  googleAdsId: '', googleAdsLabel: '',
+  facebookPixels: [],
+  tiktokPixels: [],
+  googleAdsPixels: [],
   utmifyHtml: '',
 };
 
 export function getPixelConfig(): PixelConfig {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? { ...DEFAULT_CONFIG, ...JSON.parse(raw) } : DEFAULT_CONFIG;
+    return raw ? migrateConfig(JSON.parse(raw)) : DEFAULT_CONFIG;
   } catch {
     return DEFAULT_CONFIG;
   }
@@ -41,10 +86,11 @@ export function injectPixels(config?: PixelConfig) {
   const cfg = config || getPixelConfig();
   removeExistingPixels();
 
-  // Facebook Pixel (client-side)
-  if (cfg.facebookPixelId) {
+  // Facebook Pixels
+  cfg.facebookPixels.forEach((fb, i) => {
+    if (!fb.pixelId) return;
     const script = document.createElement('script');
-    script.setAttribute('data-pixel-injected', 'facebook');
+    script.setAttribute('data-pixel-injected', `facebook-${i}`);
     script.innerHTML = `
       !function(f,b,e,v,n,t,s)
       {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -54,37 +100,37 @@ export function injectPixels(config?: PixelConfig) {
       t.src=v;s=b.getElementsByTagName(e)[0];
       s.parentNode.insertBefore(t,s)}(window, document,'script',
       'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '${cfg.facebookPixelId}');
+      fbq('init', '${fb.pixelId}');
       fbq('track', 'PageView');
     `;
     document.head.appendChild(script);
 
     const noscript = document.createElement('noscript');
-    noscript.setAttribute('data-pixel-injected', 'facebook-ns');
-    noscript.innerHTML = `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${cfg.facebookPixelId}&ev=PageView&noscript=1"/>`;
+    noscript.setAttribute('data-pixel-injected', `facebook-ns-${i}`);
+    noscript.innerHTML = `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${fb.pixelId}&ev=PageView&noscript=1"/>`;
     document.head.appendChild(noscript);
-  }
+  });
 
-  // TikTok Pixel (client-side)
-  if (cfg.tiktokPixelId) {
+  // TikTok Pixels
+  cfg.tiktokPixels.forEach((tt, i) => {
+    if (!tt.pixelId) return;
     const script = document.createElement('script');
-    script.setAttribute('data-pixel-injected', 'tiktok');
+    script.setAttribute('data-pixel-injected', `tiktok-${i}`);
     script.innerHTML = `
       !function (w, d, t) {
         w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e};ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};
-        ttq.load('${cfg.tiktokPixelId}');
+        ttq.load('${tt.pixelId}');
         ttq.page();
       }(window, document, 'ttq');
     `;
     document.head.appendChild(script);
-  }
+  });
 
   // Utmify HTML pixel
   if (cfg.utmifyHtml) {
     const container = document.createElement('div');
     container.setAttribute('data-pixel-injected', 'utmify-html');
     container.innerHTML = cfg.utmifyHtml;
-    // Move scripts to proper elements so they execute
     container.querySelectorAll('script').forEach(oldScript => {
       const newScript = document.createElement('script');
       Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
@@ -92,7 +138,6 @@ export function injectPixels(config?: PixelConfig) {
       newScript.setAttribute('data-pixel-injected', 'utmify-html');
       document.head.appendChild(newScript);
     });
-    // Append non-script elements
     Array.from(container.children).forEach(child => {
       if (child.tagName !== 'SCRIPT') {
         (child as HTMLElement).setAttribute('data-pixel-injected', 'utmify-html');
@@ -101,37 +146,39 @@ export function injectPixels(config?: PixelConfig) {
     });
   }
 
-  // Google Ads (gtag.js)
-  if (cfg.googleAdsId) {
+  // Google Ads
+  cfg.googleAdsPixels.forEach((ga, i) => {
+    if (!ga.adsId) return;
     const gtagScript = document.createElement('script');
-    gtagScript.setAttribute('data-pixel-injected', 'google-ads-lib');
+    gtagScript.setAttribute('data-pixel-injected', `google-ads-lib-${i}`);
     gtagScript.async = true;
-    gtagScript.src = `https://www.googletagmanager.com/gtag/js?id=${cfg.googleAdsId}`;
+    gtagScript.src = `https://www.googletagmanager.com/gtag/js?id=${ga.adsId}`;
     document.head.appendChild(gtagScript);
 
     const gtagInit = document.createElement('script');
-    gtagInit.setAttribute('data-pixel-injected', 'google-ads-init');
+    gtagInit.setAttribute('data-pixel-injected', `google-ads-init-${i}`);
     gtagInit.innerHTML = `
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', '${cfg.googleAdsId}');
+      gtag('config', '${ga.adsId}');
     `;
     document.head.appendChild(gtagInit);
-  }
+  });
 }
 
-// Fire conversion events (client-side + server-side via CAPI)
+// Fire conversion events for ALL configured pixels
 export function fireConversionEvent(eventName: string, data?: Record<string, unknown>) {
   const cfg = getPixelConfig();
 
-  // Facebook - client pixel
-  if (cfg.facebookPixelId && typeof (window as any).fbq === 'function') {
+  // Facebook - client pixel (fires for all)
+  if (cfg.facebookPixels.some(fb => fb.pixelId) && typeof (window as any).fbq === 'function') {
     (window as any).fbq('track', eventName, data);
   }
 
-  // Facebook - Conversions API (server-side via browser)
-  if (cfg.facebookPixelId && cfg.facebookAccessToken) {
+  // Facebook - Conversions API for each pixel with token
+  cfg.facebookPixels.forEach(fb => {
+    if (!fb.pixelId || !fb.accessToken) return;
     const eventData = {
       data: [{
         event_name: eventName,
@@ -141,24 +188,25 @@ export function fireConversionEvent(eventName: string, data?: Record<string, unk
         user_data: { client_user_agent: navigator.userAgent },
         custom_data: data,
       }],
-      access_token: cfg.facebookAccessToken,
+      access_token: fb.accessToken,
     };
-    fetch(`https://graph.facebook.com/v19.0/${cfg.facebookPixelId}/events`, {
+    fetch(`https://graph.facebook.com/v19.0/${fb.pixelId}/events`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(eventData),
     }).catch(err => console.error('Facebook CAPI error:', err));
-  }
+  });
 
   // TikTok - client pixel
-  if (cfg.tiktokPixelId && typeof (window as any).ttq?.track === 'function') {
+  if (cfg.tiktokPixels.some(tt => tt.pixelId) && typeof (window as any).ttq?.track === 'function') {
     (window as any).ttq.track(eventName === 'Purchase' ? 'CompletePayment' : eventName, data);
   }
 
-  // TikTok - Events API (server-side via browser)
-  if (cfg.tiktokPixelId && cfg.tiktokAccessToken) {
+  // TikTok - Events API for each pixel with token
+  cfg.tiktokPixels.forEach(tt => {
+    if (!tt.pixelId || !tt.accessToken) return;
     const eventData = {
-      pixel_code: cfg.tiktokPixelId,
+      pixel_code: tt.pixelId,
       event: eventName === 'Purchase' ? 'CompletePayment' : eventName,
       timestamp: new Date().toISOString(),
       context: {
@@ -171,21 +219,22 @@ export function fireConversionEvent(eventName: string, data?: Record<string, unk
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Access-Token': cfg.tiktokAccessToken,
+        'Access-Token': tt.accessToken,
       },
       body: JSON.stringify(eventData),
     }).catch(err => console.error('TikTok Events API error:', err));
-  }
+  });
 
-  // Google Ads - conversion
-  if (cfg.googleAdsId && typeof (window as any).gtag === 'function') {
-    if (cfg.googleAdsLabel) {
+  // Google Ads - conversion for each pixel
+  cfg.googleAdsPixels.forEach(ga => {
+    if (!ga.adsId || typeof (window as any).gtag !== 'function') return;
+    if (ga.adsLabel) {
       (window as any).gtag('event', 'conversion', {
-        send_to: `${cfg.googleAdsId}/${cfg.googleAdsLabel}`,
+        send_to: `${ga.adsId}/${ga.adsLabel}`,
         ...data,
       });
     } else {
       (window as any).gtag('event', eventName === 'Purchase' ? 'conversion' : eventName, data);
     }
-  }
+  });
 }
