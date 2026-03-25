@@ -28,15 +28,26 @@ serve(async (req) => {
 
     const authHeader = 'Basic ' + btoa(`${secretKey}:x`);
 
+    const amountCents = Math.round(amount * 100);
+
     const body: Record<string, unknown> = {
-      amount: Math.round(amount * 100),
-      payment_method: 'pix',
+      paymentMethod: 'pix',
+      amount: amountCents,
+      items: [
+        {
+          title: 'Taxa de envio',
+          unitPrice: amountCents,
+          quantity: 1,
+          tangible: false,
+        },
+      ],
     };
 
-    if (buyerName || buyerEmail || buyerDocument) {
+    if (buyerName || buyerEmail || buyerDocument || buyerPhone) {
       body.customer = {
         ...(buyerName && { name: buyerName }),
         ...(buyerEmail && { email: buyerEmail }),
+        ...(buyerPhone && { phone: buyerPhone.replace(/\D/g, '') }),
         ...(buyerDocument && {
           documents: [{ type: 'cpf', number: buyerDocument.replace(/\D/g, '') }],
         }),
@@ -44,7 +55,7 @@ serve(async (req) => {
     }
 
     if (externalRef) {
-      body.external_id = externalRef;
+      body.externalRef = externalRef;
     }
 
     const response = await fetch('https://api.conta.pagou.ai/v1/transactions', {
