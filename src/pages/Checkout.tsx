@@ -353,7 +353,7 @@ export default function Checkout() {
 
       {/* Store Unavailable Error Popup */}
       <AlertDialog open={showStoreError} onOpenChange={setShowStoreError}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-[calc(100%-2rem)] mx-auto rounded-xl">
           <AlertDialogHeader>
             <AlertDialogTitle>Unidade Indisponível</AlertDialogTitle>
             <AlertDialogDescription>
