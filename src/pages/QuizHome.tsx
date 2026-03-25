@@ -159,22 +159,21 @@ export default function QuizHome() {
           </div>
         </div>
 
-        {/* Combined banners - players fading into stadium */}
-        <div className="w-full relative overflow-hidden" style={{ height: '340px' }}>
-          {/* Stadium as base layer */}
+        {/* Combined banners - players (same size as quiz) fading into stadium */}
+        <div className="w-full relative overflow-hidden" style={{ height: '260px' }}>
+          {/* Stadium as base layer, positioned at bottom */}
           <div className="absolute inset-0">
             <img src={stadiumHero} alt="" className="w-full h-full object-cover object-center" />
             <div className="absolute inset-0 bg-foreground/60" />
           </div>
-          {/* Players on top, fading out at bottom to reveal stadium */}
-          <div className="absolute inset-0">
-            <img src={quizBannerPreload} alt="Jogadores Seleção Brasileira" className="w-full h-full object-cover object-[center_30%]" />
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 35%, hsl(0 0% 13% / 0.6) 65%, transparent 100%)' }} />
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(0,0,0,0) 50%, transparent 60%, hsl(0 0% 13% / 0) 60%)' }} />
+          {/* Players on top, same h-40 as quiz, fading into stadium */}
+          <div className="absolute top-0 left-0 right-0 h-40 md:h-64">
+            <img src={quizBannerPreload} alt="Jogadores Seleção Brasileira" className="w-full h-full object-cover object-top" />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 50%, hsl(0 0% 13% / 0.5) 75%, transparent 100%)' }} />
           </div>
-          {/* Mask: fade players image to transparent at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 h-1/2" style={{
-            background: 'linear-gradient(to bottom, transparent 0%, hsl(0 0% 13% / 0.7) 60%, hsl(0 0% 13%) 100%)'
+          {/* Bottom fade to dark */}
+          <div className="absolute bottom-0 left-0 right-0 h-1/3" style={{
+            background: 'linear-gradient(to bottom, transparent 0%, hsl(0 0% 13% / 0.8) 60%, hsl(0 0% 13%) 100%)'
           }} />
         </div>
 
