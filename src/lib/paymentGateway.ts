@@ -4,21 +4,28 @@ export interface PagouAiConfig {
 }
 
 export interface PaymentGatewayConfig {
-  activeGateway: 'pagouai' | 'none';
+  activeGateway: 'pagouai';
   pagouai: PagouAiConfig;
 }
 
 const STORAGE_KEY = 'paymentGatewayConfig';
 
 const defaultConfig: PaymentGatewayConfig = {
-  activeGateway: 'none',
+  activeGateway: 'pagouai',
   pagouai: { secretKey: '', enabled: false },
 };
 
 export function getPaymentGatewayConfig(): PaymentGatewayConfig {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return { ...defaultConfig, ...JSON.parse(saved) };
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Migrate old configs that had 'none' as activeGateway
+      if (parsed.activeGateway === 'none') {
+        parsed.activeGateway = 'pagouai';
+      }
+      return { ...defaultConfig, ...parsed };
+    }
   } catch {}
   return defaultConfig;
 }

@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { secretKey, amount, buyerName, buyerEmail, buyerDocument, externalRef } = await req.json();
+    const { secretKey, amount, buyerName, buyerEmail, buyerDocument, buyerPhone, externalRef } = await req.json();
 
     if (!secretKey || !amount) {
       return new Response(JSON.stringify({ error: 'secretKey e amount são obrigatórios' }), {
@@ -20,10 +21,15 @@ serve(async (req) => {
       });
     }
 
+    // Initialize Supabase client to save order
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     const authHeader = 'Basic ' + btoa(`${secretKey}:x`);
 
     const body: Record<string, unknown> = {
-      amount: Math.round(amount * 100), // centavos
+      amount: Math.round(amount * 100),
       payment_method: 'pix',
     };
 
@@ -60,7 +66,35 @@ serve(async (req) => {
       });
     }
 
-    return new Response(JSON.stringify(data), {
+    // Extract PIX data from response - try common field names
+    const pixCode = data.pix_qr_code || data.qr_code || data.pix?.qr_code || data.pix?.emv || data.boleto_url || '';
+    const pixQrCodeBase64 = data.pix_qr_code_url || data.qr_code_url || data.pix?.qr_code_url || data.pix?.qr_code_base64 || '';
+
+    // Save order to database
+    const { data: orderData, error: orderError } = await supabase.from('orders').insert({
+      external_id: data.id || data.tid || externalRef || null,
+      gateway: 'pagouai',
+      status: data.status || 'pending',
+      amount_cents: Math.round(amount * 100),
+      buyer_name: buyerName || null,
+      buyer_email: buyerEmail || null,
+      buyer_document: buyerDocument ? buyerDocument.replace(/\D/g, '') : null,
+      buyer_phone: buyerPhone || null,
+      pix_code: pixCode,
+      pix_qr_code_base64: pixQrCodeBase64,
+      gateway_response: data,
+    }).select().single();
+
+    if (orderError) {
+      console.error('Order save error:', orderError);
+    }
+
+    return new Response(JSON.stringify({
+      ...data,
+      order_id: orderData?.id || null,
+      pix_code: pixCode,
+      pix_qr_code_base64: pixQrCodeBase64,
+    }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
