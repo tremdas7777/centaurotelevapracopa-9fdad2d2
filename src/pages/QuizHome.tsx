@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import CentauroHeader from '@/components/CentauroHeader';
 import LoadingAnimation from '@/components/LoadingAnimation';
-import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Gift, ShoppingCart, Star, Ticket, Plane, MapPin } from 'lucide-react';
+import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Gift, ShoppingCart, Star, Ticket, Plane, MapPin, Zap, X, Check, CircleDot } from 'lucide-react';
 import { trackEvent } from '@/lib/funnelTracking';
 import { fireConversionEvent } from '@/lib/pixelManager';
 import { fireSaleWebhook } from '@/lib/webhookManager';
@@ -12,7 +12,7 @@ import albumImg from '@/assets/album-copa-hero.webp';
 import centauroLogo from '@/assets/centauro-logo.webp';
 import stadiumHero from '@/assets/stadium-hero.webp';
 import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.webp';
-import cbfLogo from '@/assets/centauro-cbf-logo-transparent.webp';
+import cbfLogo from '@/assets/cbf-logo.webp';
 import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
 import { playCorrectSound, playWrongSound, playRevealSound } from '@/lib/quizSounds';
 
@@ -168,7 +168,7 @@ export default function QuizHome() {
           <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/85 to-foreground/95" />
           <div className="relative z-10 max-w-lg mx-auto flex flex-col items-center">
 
-            <p className="text-xs font-bold text-centauro-green uppercase tracking-widest mb-2">⚽ Promoção Copa do Mundo 2026</p>
+            <p className="text-xs font-bold text-centauro-green uppercase tracking-widest mb-2 flex items-center justify-center gap-1.5"><CircleDot size={14} /> Promoção Copa do Mundo 2026</p>
 
             <h1 className="text-3xl md:text-5xl font-black text-primary-foreground leading-[1.1] mb-4 tracking-tight">
               Prove que você é o maior torcedor do Brasil
@@ -229,10 +229,10 @@ export default function QuizHome() {
             <div className="border-t border-primary-foreground/20 pt-4 mb-5">
               <h4 className="font-bold text-sm mb-2">Segurança e Confiança</h4>
               <div className="grid grid-cols-2 gap-1.5">
-                <span className="text-xs opacity-80">✓ SSL 256-bit Cifrado</span>
-                <span className="text-xs opacity-80">✓ Garantia de 30 dias</span>
-                <span className="text-xs opacity-80">✓ Suporte 24/7</span>
-                <span className="text-xs opacity-80">✓ Dados Protegidos</span>
+                <span className="text-xs opacity-80 flex items-center gap-1"><Check size={12} /> SSL 256-bit Cifrado</span>
+                <span className="text-xs opacity-80 flex items-center gap-1"><Check size={12} /> Garantia de 30 dias</span>
+                <span className="text-xs opacity-80 flex items-center gap-1"><Check size={12} /> Suporte 24/7</span>
+                <span className="text-xs opacity-80 flex items-center gap-1"><Check size={12} /> Dados Protegidos</span>
               </div>
             </div>
 
@@ -486,8 +486,8 @@ export default function QuizHome() {
                   + Sorteio de 2 Ingressos VIP Copa 2026
                 </p>
               </div>
-              <p className="text-primary-foreground/40 text-[10px] font-medium mt-2">
-                ⏰ Oferta válida por {formatTime(timeLeft)}
+              <p className="text-primary-foreground/40 text-[10px] font-medium mt-2 flex items-center justify-center gap-1">
+                <Clock size={10} /> Oferta válida por {formatTime(timeLeft)}
               </p>
             </div>
           </div>
@@ -555,7 +555,7 @@ export default function QuizHome() {
         {/* Header: Flag + Question counter + Timer */}
         <div className="flex justify-between items-center mb-5">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">🇧🇷</span>
+            <img src={cbfLogo} alt="CBF" className="h-7 object-contain" />
             <span className="text-sm font-bold text-foreground">
               Pergunta {currentQuestion + 1} de {quizQuestions.length}
             </span>
@@ -570,7 +570,7 @@ export default function QuizHome() {
         <Card className="p-5 md:p-7 border border-border shadow-sm mb-5">
           {/* Difficulty badge */}
           <span className="inline-flex items-center gap-1 bg-centauro-green/15 text-centauro-green text-xs font-bold px-2.5 py-1 rounded-full mb-4">
-            ⚡ {currentQuestion < 3 ? 'Fácil' : currentQuestion < 6 ? 'Médio' : 'Difícil'}
+            <Zap size={12} /> {currentQuestion < 3 ? 'Fácil' : currentQuestion < 6 ? 'Médio' : 'Difícil'}
           </span>
 
           <h2 className="text-xl md:text-2xl font-black text-foreground mb-6 leading-tight">
@@ -631,7 +631,7 @@ export default function QuizHome() {
               ? 'bg-centauro-green/10 border-centauro-green text-centauro-green'
               : 'bg-destructive/10 border-destructive text-destructive'
           }`}>
-            {isCorrect ? '✓ Correto! Muito bem!' : '✗ Não foi dessa vez!'}
+            <span className="inline-flex items-center gap-1.5">{isCorrect ? <><Check size={16} /> Correto! Muito bem!</> : <><X size={16} /> Não foi dessa vez!</>}</span>
           </div>
         )}
 
@@ -642,7 +642,7 @@ export default function QuizHome() {
               onClick={handleNextQuestion}
               className="bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-black text-sm px-8 py-5 rounded-xl transition-transform hover:scale-[1.02] w-full max-w-sm"
             >
-              {currentQuestion === quizQuestions.length - 1 ? '🏆 VER MEUS PRÊMIOS' : 'PRÓXIMA →'}
+              {currentQuestion === quizQuestions.length - 1 ? <span className="inline-flex items-center gap-1.5"><Trophy size={16} /> VER MEUS PRÊMIOS</span> : 'PRÓXIMA →'}
             </Button>
           </div>
         )}
@@ -681,10 +681,10 @@ export default function QuizHome() {
           <div className="border-t border-primary-foreground/20 pt-4 mb-5">
             <h4 className="font-bold text-sm mb-2">Segurança e Confiança</h4>
             <div className="grid grid-cols-2 gap-1.5">
-              <span className="text-xs opacity-80">✓ SSL 256-bit Cifrado</span>
-              <span className="text-xs opacity-80">✓ Garantia de 30 dias</span>
-              <span className="text-xs opacity-80">✓ Suporte 24/7</span>
-              <span className="text-xs opacity-80">✓ Dados Protegidos</span>
+              <span className="text-xs opacity-80 flex items-center gap-1"><Check size={12} /> SSL 256-bit Cifrado</span>
+              <span className="text-xs opacity-80 flex items-center gap-1"><Check size={12} /> Garantia de 30 dias</span>
+              <span className="text-xs opacity-80 flex items-center gap-1"><Check size={12} /> Suporte 24/7</span>
+              <span className="text-xs opacity-80 flex items-center gap-1"><Check size={12} /> Dados Protegidos</span>
             </div>
           </div>
 

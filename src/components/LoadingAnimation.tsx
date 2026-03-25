@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Star, Trophy, Sparkles, PartyPopper } from 'lucide-react';
 
 interface LoadingAnimationProps {
   onComplete: () => void;
@@ -39,8 +39,8 @@ export default function LoadingAnimation({ onComplete }: LoadingAnimationProps) 
       <div className="relative z-10 text-center px-6">
         {!showSuccess ? (
           <>
-            <div className="mb-10 text-7xl" style={{ animation: 'pulse 1.5s ease-in-out infinite' }}>
-              ⚽
+            <div className="mb-10" style={{ animation: 'pulse 1.5s ease-in-out infinite' }}>
+              <CircleDot className="w-16 h-16 text-primary-foreground mx-auto" />
             </div>
 
             <h2 className="text-3xl md:text-4xl font-black text-primary-foreground mb-8 tracking-tight">
@@ -66,20 +66,24 @@ export default function LoadingAnimation({ onComplete }: LoadingAnimationProps) 
         ) : (
           <>
             <div className="fixed inset-0 pointer-events-none">
-              {[...Array(30)].map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute animate-float-up text-2xl"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: '100%',
-                    animationDelay: `${Math.random() * 0.5}s`,
-                    animationDuration: `${2 + Math.random()}s`,
-                  }}
-                >
-                  {['🎉', '🎊', '⭐', '🏆'][Math.floor(Math.random() * 4)]}
-                </div>
-              ))}
+              {[...Array(30)].map((_, i) => {
+                const icons = [Star, Trophy, Sparkles, PartyPopper];
+                const Icon = icons[i % 4];
+                return (
+                  <div
+                    key={i}
+                    className="absolute animate-float-up"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: '100%',
+                      animationDelay: `${Math.random() * 0.5}s`,
+                      animationDuration: `${2 + Math.random()}s`,
+                    }}
+                  >
+                    <Icon size={20} className="text-primary-foreground/60" />
+                  </div>
+                );
+              })}
             </div>
 
             <div className="animate-bounce">
