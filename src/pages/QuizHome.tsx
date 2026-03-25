@@ -160,18 +160,19 @@ export default function QuizHome() {
         </div>
 
         {/* Players banner - same size as quiz */}
-        <div className="w-full h-40 md:h-64 relative overflow-hidden">
+        <div className="w-full h-40 md:h-64 relative overflow-hidden z-10">
           <img
             src={quizBannerPreload}
             alt="Jogadores Seleção Brasileira"
             className="w-full h-full object-cover object-top block"
-            style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 72%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 0%, black 72%, transparent 100%)' }}
+            style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 60%, rgba(0,0,0,0.92) 76%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 0%, black 60%, rgba(0,0,0,0.92) 76%, transparent 100%)' }}
           />
+          <div className="absolute inset-x-0 bottom-0 h-16 md:h-24 bg-gradient-to-b from-transparent via-foreground/25 to-foreground/70" />
         </div>
 
         {/* Hero content with stadium as background */}
         <div
-          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 -mt-8"
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 -mt-10"
           style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
         >
           <div className="absolute inset-0 bg-foreground/80" />
