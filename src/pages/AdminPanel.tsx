@@ -275,17 +275,22 @@ export default function AdminPanel() {
                     <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#1877F2]"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                   </div>
                   <div>
-                    <h3 className="font-black text-foreground text-sm">Facebook Pixel</h3>
-                    <p className="text-muted-foreground text-[11px]">Meta Ads - Rastreamento de conversões</p>
+                    <h3 className="font-black text-foreground text-sm">Facebook / Meta Pixel</h3>
+                    <p className="text-muted-foreground text-[11px]">Pixel + Conversions API (CAPI)</p>
                   </div>
                 </div>
-                <Input
-                  value={pixelConfig.facebookPixelId}
-                  onChange={(e) => setPixelConfig(prev => ({ ...prev, facebookPixelId: e.target.value }))}
-                  placeholder="Ex: 123456789012345"
-                  className="font-mono text-xs"
-                />
-                <p className="text-[10px] text-muted-foreground mt-1.5">Encontre seu Pixel ID em: Meta Business Suite → Eventos → Pixels</p>
+                <div className="space-y-2">
+                  <div>
+                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Pixel ID</label>
+                    <Input value={pixelConfig.facebookPixelId} onChange={(e) => setPixelConfig(prev => ({ ...prev, facebookPixelId: e.target.value }))} placeholder="Ex: 123456789012345" className="font-mono text-xs mt-1" />
+                    <p className="text-[9px] text-muted-foreground mt-1">Meta Business Suite → Gerenciador de Eventos → Fontes de dados → ID do Pixel</p>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Access Token (CAPI)</label>
+                    <Input type="password" value={pixelConfig.facebookAccessToken} onChange={(e) => setPixelConfig(prev => ({ ...prev, facebookAccessToken: e.target.value }))} placeholder="Token da Conversions API" className="font-mono text-xs mt-1" />
+                    <p className="text-[9px] text-muted-foreground mt-1">Gerenciador de Eventos → Configurações → Gerar token de acesso. Envia eventos server-side (CAPI)</p>
+                  </div>
+                </div>
               </Card>
 
               {/* TikTok Pixel */}
@@ -296,16 +301,21 @@ export default function AdminPanel() {
                   </div>
                   <div>
                     <h3 className="font-black text-foreground text-sm">TikTok Pixel</h3>
-                    <p className="text-muted-foreground text-[11px]">TikTok Ads - Rastreamento de conversões</p>
+                    <p className="text-muted-foreground text-[11px]">Pixel + Events API server-side</p>
                   </div>
                 </div>
-                <Input
-                  value={pixelConfig.tiktokPixelId}
-                  onChange={(e) => setPixelConfig(prev => ({ ...prev, tiktokPixelId: e.target.value }))}
-                  placeholder="Ex: C1234567890"
-                  className="font-mono text-xs"
-                />
-                <p className="text-[10px] text-muted-foreground mt-1.5">Encontre seu Pixel ID em: TikTok Ads Manager → Ativos → Eventos</p>
+                <div className="space-y-2">
+                  <div>
+                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Pixel ID</label>
+                    <Input value={pixelConfig.tiktokPixelId} onChange={(e) => setPixelConfig(prev => ({ ...prev, tiktokPixelId: e.target.value }))} placeholder="Ex: CXXXXXXXXXXXXXXX" className="font-mono text-xs mt-1" />
+                    <p className="text-[9px] text-muted-foreground mt-1">TikTok Ads Manager → Ativos → Eventos → Web Events → Pixel ID</p>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Access Token</label>
+                    <Input type="password" value={pixelConfig.tiktokAccessToken} onChange={(e) => setPixelConfig(prev => ({ ...prev, tiktokAccessToken: e.target.value }))} placeholder="Token da Events API" className="font-mono text-xs mt-1" />
+                    <p className="text-[9px] text-muted-foreground mt-1">TikTok Ads Manager → Ativos → Eventos → Configurações → Gerar Access Token</p>
+                  </div>
+                </div>
               </Card>
 
               {/* Google Ads */}
@@ -316,16 +326,21 @@ export default function AdminPanel() {
                   </div>
                   <div>
                     <h3 className="font-black text-foreground text-sm">Google Ads</h3>
-                    <p className="text-muted-foreground text-[11px]">Google Ads - Tag de conversão</p>
+                    <p className="text-muted-foreground text-[11px]">Google Tag (gtag.js) + Conversão</p>
                   </div>
                 </div>
-                <Input
-                  value={pixelConfig.googleAdsId}
-                  onChange={(e) => setPixelConfig(prev => ({ ...prev, googleAdsId: e.target.value }))}
-                  placeholder="Ex: AW-123456789"
-                  className="font-mono text-xs"
-                />
-                <p className="text-[10px] text-muted-foreground mt-1.5">Encontre seu ID em: Google Ads → Ferramentas → Conversões → Tag</p>
+                <div className="space-y-2">
+                  <div>
+                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">ID de Conversão</label>
+                    <Input value={pixelConfig.googleAdsId} onChange={(e) => setPixelConfig(prev => ({ ...prev, googleAdsId: e.target.value }))} placeholder="Ex: AW-123456789" className="font-mono text-xs mt-1" />
+                    <p className="text-[9px] text-muted-foreground mt-1">Google Ads → Ferramentas → Medição → Conversões → Tag de configuração</p>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Rótulo de Conversão</label>
+                    <Input value={pixelConfig.googleAdsLabel} onChange={(e) => setPixelConfig(prev => ({ ...prev, googleAdsLabel: e.target.value }))} placeholder="Ex: AbCdEfGhIjKlMnOp" className="font-mono text-xs mt-1" />
+                    <p className="text-[9px] text-muted-foreground mt-1">Google Ads → Conversões → Detalhes da conversão → Rótulo da conversão</p>
+                  </div>
+                </div>
               </Card>
             </div>
 
@@ -340,10 +355,11 @@ export default function AdminPanel() {
                 <h3 className="font-bold text-foreground text-[11px]">Como funciona</h3>
               </div>
               <ul className="text-[10px] text-muted-foreground space-y-0.5 pl-5 list-disc">
-                <li>Os pixels são injetados automaticamente em todas as páginas</li>
-                <li>Eventos de PageView são disparados ao carregar</li>
+                <li><strong>Pixel ID:</strong> Dispara eventos no navegador (PageView, Purchase)</li>
+                <li><strong>Access Token / CAPI:</strong> Envia eventos server-side para maior precisão</li>
+                <li>O token é opcional, mas recomendado para contornar bloqueadores de anúncios</li>
                 <li>Evento de conversão é disparado ao clicar no checkout</li>
-                <li>Deixe o campo vazio para desativar um pixel</li>
+                <li>Deixe campos vazios para desativar uma plataforma</li>
               </ul>
             </div>
           </div>
