@@ -463,7 +463,12 @@ export default function Checkout() {
               </div>
               <div data-field-error={showFieldErrors && !estado ? 'true' : undefined}>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">Estado</label>
-                <Input placeholder="UF" value={estado} onChange={(e) => setEstado(e.target.value.toUpperCase().slice(0, 2))} className={`py-5 ${showFieldErrors && !estado ? 'border-destructive focus-visible:ring-destructive' : ''}`} maxLength={2} />
+                <select value={estado} onChange={(e) => setEstado(e.target.value)} className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${showFieldErrors && !estado ? 'border-destructive focus:ring-destructive' : ''}`}>
+                  <option value="">UF</option>
+                  {["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"].map(uf => (
+                    <option key={uf} value={uf}>{uf}</option>
+                  ))}
+                </select>
                 {showFieldErrors && !estado && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
               </div>
             </div>
