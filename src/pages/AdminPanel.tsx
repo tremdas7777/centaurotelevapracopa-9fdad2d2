@@ -54,7 +54,7 @@ export default function AdminPanel() {
       <div className="min-h-screen bg-secondary flex items-center justify-center p-4">
         <Card className="max-w-md w-full p-8 border border-border shadow-sm">
           <div className="text-center mb-8">
-            <img src={centauroLogo} alt="Centauro" className="h-8 mx-auto mb-4" />
+            
             <h1 className="text-2xl font-black text-foreground">Painel Admin</h1>
             <p className="text-muted-foreground text-xs mt-1">Copa 2026 - Gerenciamento</p>
           </div>
