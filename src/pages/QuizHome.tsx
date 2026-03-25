@@ -272,6 +272,13 @@ export default function QuizHome() {
           </div>
         </div>
 
+        {/* DEV: botão flutuante para pular direto ao checkout */}
+        <button
+          onClick={() => { setShowHome(false); setQuizComplete(true); }}
+          className="fixed bottom-4 right-4 z-[9999] bg-destructive text-destructive-foreground text-xs font-bold px-4 py-2 rounded-full shadow-lg opacity-70 hover:opacity-100"
+        >
+          ⚡ Ir ao Checkout
+        </button>
       </div>
     );
   }
