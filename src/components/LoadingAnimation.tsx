@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CheckCircle, Star, Trophy, Sparkles, PartyPopper } from 'lucide-react';
+import { CheckCircle, Star, Trophy, Sparkles, PartyPopper, CircleDot } from 'lucide-react';
 
 interface LoadingAnimationProps {
   onComplete: () => void;
