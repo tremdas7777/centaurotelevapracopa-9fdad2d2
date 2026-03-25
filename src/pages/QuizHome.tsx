@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import CentauroHeader from '@/components/CentauroHeader';
 import LoadingAnimation from '@/components/LoadingAnimation';
 import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Gift, ShoppingCart, Star, Ticket, Plane, MapPin } from 'lucide-react';
+import { trackEvent } from '@/lib/funnelTracking';
 import camisaImg from '@/assets/camisa-brasil-hero.png';
 import albumImg from '@/assets/album-copa-hero.png';
 import centauroLogo from '@/assets/centauro-logo.png';
@@ -81,6 +82,18 @@ export default function QuizHome() {
   const [timeLeft, setTimeLeft] = useState(300);
   const [selectedSize, setSelectedSize] = useState('M');
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
+  const hasTrackedVisitor = useRef(false);
+  const hasTrackedQuizStart = useRef(false);
+  const hasTrackedQuizComplete = useRef(false);
+  const hasTrackedCheckout = useRef(false);
+
+  // Track visitor on mount
+  useEffect(() => {
+    if (!hasTrackedVisitor.current) {
+      trackEvent('visitor');
+      hasTrackedVisitor.current = true;
+    }
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -126,6 +139,10 @@ export default function QuizHome() {
   };
 
   const handleGoToCheckout = () => {
+    if (!hasTrackedCheckout.current) {
+      trackEvent('checkout');
+      hasTrackedCheckout.current = true;
+    }
     const checkoutUrl = localStorage.getItem('checkoutUrl') || 'https://seu-checkout.com/taxa-envio';
     window.location.href = checkoutUrl;
   };
