@@ -570,7 +570,7 @@ export default function QuizHome() {
 
           {/* Address / CPF Dialog */}
           <Dialog open={showAddressDialog} onOpenChange={setShowAddressDialog}>
-             <DialogContent className="max-w-[calc(100%-2.5rem)] sm:max-w-md mx-auto rounded-2xl p-5">
+             <DialogContent className="max-w-[calc(100%-2.5rem)] sm:max-w-md mx-auto rounded-2xl p-5 max-h-[85dvh] overflow-y-auto fixed top-[5dvh] translate-y-0 data-[state=open]:slide-in-from-bottom-0">
               <DialogHeader>
                 <DialogTitle className="text-center text-xl font-black text-foreground">
                   {showCepInput ? `Olá, ${firstNameDisplay || 'Cliente'}! 👋` : 'Identificação'}
@@ -587,6 +587,8 @@ export default function QuizHome() {
                       placeholder="000.000.000-00"
                       value={cpfValue}
                       onChange={handleCpfChange}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       className={`text-center text-lg tracking-widest ${cpfError ? 'border-destructive' : ''}`}
                       maxLength={14}
                     />
