@@ -438,13 +438,6 @@ export default function Checkout() {
               </div>
             </div>
 
-            {/* Bairro (full width, below Endereço) */}
-            <div data-field-error={showFieldErrors && !bairro ? 'true' : undefined}>
-              <label className="text-xs font-bold text-foreground mb-1.5 block">Bairro</label>
-              <Input placeholder="Bairro" value={bairro} onChange={(e) => setBairro(e.target.value)} className={`py-5 ${showFieldErrors && !bairro ? 'border-destructive focus-visible:ring-destructive' : ''}`} />
-              {showFieldErrors && !bairro && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
-            </div>
-
             {/* Complemento */}
             <div>
               <label className="text-xs font-bold text-foreground mb-1.5 block">Complemento <span className="text-muted-foreground font-normal">(opcional)</span></label>
@@ -456,15 +449,20 @@ export default function Checkout() {
               />
             </div>
 
-            {/* Cidade + UF (below Complemento) */}
-            <div className="grid grid-cols-[1fr_80px] gap-4">
+            {/* Bairro + Cidade + Estado */}
+            <div className="grid grid-cols-[1fr_1fr_80px] gap-4">
+              <div data-field-error={showFieldErrors && !bairro ? 'true' : undefined}>
+                <label className="text-xs font-bold text-foreground mb-1.5 block">Bairro</label>
+                <Input placeholder="Bairro" value={bairro} onChange={(e) => setBairro(e.target.value)} className={`py-5 ${showFieldErrors && !bairro ? 'border-destructive focus-visible:ring-destructive' : ''}`} />
+                {showFieldErrors && !bairro && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
+              </div>
               <div data-field-error={showFieldErrors && !cidade ? 'true' : undefined}>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">Cidade</label>
                 <Input placeholder="Cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} className={`py-5 ${showFieldErrors && !cidade ? 'border-destructive focus-visible:ring-destructive' : ''}`} />
                 {showFieldErrors && !cidade && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
               </div>
               <div data-field-error={showFieldErrors && !estado ? 'true' : undefined}>
-                <label className="text-xs font-bold text-foreground mb-1.5 block">UF</label>
+                <label className="text-xs font-bold text-foreground mb-1.5 block">Estado</label>
                 <Input placeholder="UF" value={estado} onChange={(e) => setEstado(e.target.value.toUpperCase().slice(0, 2))} className={`py-5 ${showFieldErrors && !estado ? 'border-destructive focus-visible:ring-destructive' : ''}`} maxLength={2} />
                 {showFieldErrors && !estado && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
               </div>
