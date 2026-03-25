@@ -183,8 +183,8 @@ export default function QuizHome() {
 
             <Button
               onClick={() => { if (!hasTrackedQuizStart.current) { trackEvent('quiz_started'); hasTrackedQuizStart.current = true; } setShowHome(false); }}
-              className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-14 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider w-full max-w-sm"
-              style={{ boxShadow: '0 8px 30px hsl(145 63% 42% / 0.5)' }}
+              className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-14 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider w-full max-w-sm animate-pulse-glow"
+              style={{ boxShadow: '0 8px 30px hsl(145 63% 42% / 0.5)', animation: 'pulse-glow-green 2s ease-in-out infinite' }}
             >
               PARTICIPAR AGORA
             </Button>

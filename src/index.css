@@ -78,6 +78,11 @@
   50% { box-shadow: 0 0 30px hsl(0 100% 45% / 0.6); }
 }
 
+@keyframes pulse-glow-green {
+  0%, 100% { box-shadow: 0 8px 20px hsl(145 63% 42% / 0.3); }
+  50% { box-shadow: 0 8px 35px hsl(145 63% 42% / 0.6); }
+}
+
 @keyframes float-up {
   0% { transform: translateY(0) rotate(0deg); opacity: 1; }
   100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
