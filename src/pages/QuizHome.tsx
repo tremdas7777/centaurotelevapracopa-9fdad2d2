@@ -195,7 +195,7 @@ export default function QuizHome() {
           <div className="max-w-lg mx-auto text-center">
             <img src={centauroLogo} alt="Centauro" className="h-4 mx-auto mb-2 opacity-15 brightness-0 invert" />
             <p className="text-primary-foreground/20 text-[9px]">
-              © 2026 Centauro Esportes S.A. · CNPJ 06.347.409/0001-90 · Todos os direitos reservados
+              © 2026 SBF Comércio de Produtos Esportivos S.A. · CNPJ 06.347.409/0001-90 · Todos os direitos reservados
             </p>
           </div>
         </footer>
@@ -623,11 +623,11 @@ export default function QuizHome() {
             <h4 className="font-bold text-sm mb-2">Contato</h4>
             <div className="flex items-center gap-2 mb-1.5">
               <Mail size={14} className="opacity-80" />
-              <span className="text-xs opacity-80">contato@centaurocopa2026.com.br</span>
+              <span className="text-xs opacity-80">sac@centauro.com.br</span>
             </div>
             <div className="flex items-center gap-2 mb-1.5">
               <Phone size={14} className="opacity-80" />
-              <span className="text-xs opacity-80">+55 (11) 4002-8922</span>
+              <span className="text-xs opacity-80">+55 (11) 3003-4916</span>
             </div>
             <div className="flex items-center gap-2">
               <MapPinIcon size={14} className="opacity-80" />
@@ -637,7 +637,7 @@ export default function QuizHome() {
 
           <div className="mb-5">
             <h4 className="font-bold text-sm mb-2">Informação Legal</h4>
-            <p className="text-xs opacity-80"><strong>CNPJ:</strong> 06.347.409/0001-12</p>
+            <p className="text-xs opacity-80"><strong>CNPJ:</strong> 06.347.409/0001-90</p>
             <p className="text-xs opacity-80"><strong>Razão Social:</strong> SBF Comércio de Produtos Esportivos S.A.</p>
           </div>
 
