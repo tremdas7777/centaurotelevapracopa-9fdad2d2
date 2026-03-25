@@ -1,6 +1,6 @@
 import centauroLogo from "@/assets/centauro-logo.webp";
 import cbfLogo from "@/assets/cbf-logo.webp";
-import quizBanner from "@/assets/quiz-banner-sm.webp";
+import quizBanner from "@/assets/quiz-banner-hq.webp";
 
 export default function CentauroHeader() {
   return (

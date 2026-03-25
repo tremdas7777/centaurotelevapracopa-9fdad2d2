@@ -13,7 +13,7 @@ import centauroLogo from '@/assets/centauro-logo.webp';
 import stadiumHero from '@/assets/stadium-hero.webp';
 import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.webp';
 import cbfLogo from '@/assets/cbf-logo.webp';
-import quizBannerPreload from '@/assets/quiz-banner-md.webp';
+import quizBannerPreload from '@/assets/quiz-banner-hq.webp';
 import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
 import { playCorrectSound, playWrongSound, playRevealSound } from '@/lib/quizSounds';
 
