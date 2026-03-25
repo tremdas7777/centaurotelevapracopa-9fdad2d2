@@ -102,11 +102,7 @@ export default function PixPopup({ open, onOpenChange, pixCode, pixQrCodeBase64,
               </div>
               <Button
                 onClick={handleCopy}
-                className={`w-full font-bold text-sm py-5 transition-all ${
-                  copied
-                    ? 'bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground'
-                    : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-                }`}
+                className="w-full font-bold text-sm py-5 transition-all bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground"
               >
                 {copied ? (
                   <>
