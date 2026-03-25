@@ -100,6 +100,46 @@ export default function QuizHome() {
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
   const [showAddressDialog, setShowAddressDialog] = useState(false);
   const [cpfValue, setCpfValue] = useState('');
+  const [cpfError, setCpfError] = useState('');
+
+  const formatCpf = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+    if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+  };
+
+  const validateCpf = (cpf: string): boolean => {
+    const digits = cpf.replace(/\D/g, '');
+    if (digits.length !== 11) return false;
+    if (/^(\d)\1{10}$/.test(digits)) return false;
+    let sum = 0;
+    for (let i = 0; i < 9; i++) sum += parseInt(digits[i]) * (10 - i);
+    let rest = (sum * 10) % 11;
+    if (rest === 10) rest = 0;
+    if (rest !== parseInt(digits[9])) return false;
+    sum = 0;
+    for (let i = 0; i < 10; i++) sum += parseInt(digits[i]) * (11 - i);
+    rest = (sum * 10) % 11;
+    if (rest === 10) rest = 0;
+    return rest === parseInt(digits[10]);
+  };
+
+  const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCpf(e.target.value);
+    setCpfValue(formatted);
+    setCpfError('');
+  };
+
+  const handleCpfSubmit = () => {
+    if (!validateCpf(cpfValue)) {
+      setCpfError('CPF inválido. Verifique e tente novamente.');
+      return;
+    }
+    setCpfError('');
+    setShowCepInput(true);
+  };
   const [showCepInput, setShowCepInput] = useState(false);
   const [cepValue, setCepValue] = useState('');
   const [freteRevealed, setFreteRevealed] = useState(false);
@@ -503,14 +543,17 @@ export default function QuizHome() {
                     <Input
                       placeholder="000.000.000-00"
                       value={cpfValue}
-                      onChange={(e) => setCpfValue(e.target.value)}
-                      className="text-center font-mono text-lg"
+                      onChange={handleCpfChange}
+                      className={`text-center font-mono text-lg ${cpfError ? 'border-destructive' : ''}`}
                       maxLength={14}
                     />
+                    {cpfError && (
+                      <p className="text-destructive text-xs font-semibold mt-2">{cpfError}</p>
+                    )}
                     <Button
-                      onClick={() => { setShowCepInput(true); }}
+                      onClick={handleCpfSubmit}
                       className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-5"
-                      disabled={cpfValue.length < 11}
+                      disabled={cpfValue.replace(/\D/g, '').length < 11}
                     >
                       Buscar meus dados
                     </Button>
