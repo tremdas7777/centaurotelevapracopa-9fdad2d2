@@ -125,7 +125,7 @@ export default function QuizHome() {
         {/* Centauro Top Bar */}
         <div className="bg-primary py-3 px-4">
           <div className="max-w-4xl mx-auto flex items-center justify-center">
-            <img src={centauroCopaLogo} alt="Centauro Copa do Mundo" className="h-14 md:h-20 object-contain drop-shadow-lg" />
+            <img src={centauroCopaLogo} alt="Centauro Copa do Mundo" className="h-14 md:h-20 object-contain drop-shadow-lg brightness-0 invert" />
           </div>
         </div>
 
