@@ -164,12 +164,14 @@ export default function QuizHome() {
           <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/85 to-foreground/95" />
           <div className="relative z-10 max-w-lg mx-auto flex flex-col items-center">
 
+            <p className="text-xs font-bold text-centauro-green uppercase tracking-widest mb-2">⚽ Promoção Copa do Mundo 2026</p>
+
             <h1 className="text-3xl md:text-5xl font-black text-primary-foreground leading-[1.1] mb-4 tracking-tight">
-              Você conhece a Seleção Brasileira?
+              Ganhe a Camisa Oficial do Brasil + Álbum da Copa
             </h1>
 
             <p className="text-sm md:text-lg text-primary-foreground/70 mb-8 leading-relaxed max-w-md">
-              Responda 8 perguntas rápidas e concorra a prêmios exclusivos da Copa 2026
+              Acerte 5 de 8 perguntas sobre a Seleção e <strong className="text-primary-foreground">leve seus prêmios pagando apenas o frete</strong>
             </p>
 
             <Button
@@ -180,7 +182,7 @@ export default function QuizHome() {
               COMEÇAR QUIZ
             </Button>
 
-            <p className="text-primary-foreground/30 text-[11px] mt-3 font-semibold">Gratuito · Menos de 2 minutos · Sem cadastro</p>
+            <p className="text-primary-foreground/30 text-[11px] mt-3 font-semibold">100% Gratuito · 2 minutos · Resultado na hora</p>
 
             {/* Minimal social proof */}
             <div className="flex items-center gap-1.5 mt-6 text-primary-foreground/40 text-[11px] font-bold">
