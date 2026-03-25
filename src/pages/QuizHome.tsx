@@ -159,18 +159,18 @@ export default function QuizHome() {
           </div>
         </div>
 
-        {/* Players banner */}
+        {/* Players banner with smooth fade to dark */}
         <div className="w-full h-56 md:h-72 relative overflow-hidden">
           <img src={quizBannerPreload} alt="Jogadores Seleção Brasileira" className="w-full h-full object-cover object-[center_30%]" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-foreground" />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 30%, hsl(0 0% 13% / 0.3) 50%, hsl(0 0% 13% / 0.7) 70%, hsl(0 0% 13%) 90%, hsl(0 0% 13%) 100%)' }} />
         </div>
 
         {/* Hero content with stadium background - fills remaining viewport */}
         <div
-          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 -mt-6"
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 -mt-10"
           style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
         >
-          <div className="absolute inset-0 bg-foreground/85" />
+          <div className="absolute inset-0 bg-foreground/90" />
           <div className="relative z-10 max-w-lg mx-auto flex flex-col items-center">
 
             <p className="text-xs font-bold text-centauro-green uppercase tracking-widest mb-2">⚽ Promoção Copa do Mundo 2026</p>
