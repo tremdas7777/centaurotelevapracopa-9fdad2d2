@@ -5,6 +5,8 @@ import CentauroHeader from '@/components/CentauroHeader';
 import LoadingAnimation from '@/components/LoadingAnimation';
 import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Gift, ShoppingCart, Star, Ticket, Plane, MapPin } from 'lucide-react';
 import { trackEvent } from '@/lib/funnelTracking';
+import { fireConversionEvent } from '@/lib/pixelManager';
+import { fireSaleWebhook } from '@/lib/webhookManager';
 import camisaImg from '@/assets/camisa-brasil-hero.png';
 import albumImg from '@/assets/album-copa-hero.png';
 import centauroLogo from '@/assets/centauro-logo.png';
@@ -141,6 +143,8 @@ export default function QuizHome() {
   const handleGoToCheckout = () => {
     if (!hasTrackedCheckout.current) {
       trackEvent('checkout');
+      fireConversionEvent('Purchase', { value: 49.90, currency: 'BRL' });
+      fireSaleWebhook({ source: 'quiz-copa-2026' });
       hasTrackedCheckout.current = true;
     }
     const checkoutUrl = localStorage.getItem('checkoutUrl') || 'https://seu-checkout.com/taxa-envio';
