@@ -8,7 +8,7 @@ import camisaImg from '@/assets/camisa-brasil-hero.png';
 import albumImg from '@/assets/album-copa-hero.png';
 import centauroLogo from '@/assets/centauro-logo.png';
 import stadiumHero from '@/assets/stadium-hero.jpg';
-import trophyImg from '@/assets/world-cup-trophy.png';
+import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.png';
 import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
 
 interface Question {
@@ -142,7 +142,7 @@ export default function QuizHome() {
         >
           <div className="absolute inset-0 bg-foreground/70" />
           <div className="relative z-10 max-w-2xl mx-auto">
-            <img src={trophyImg} alt="Copa do Mundo 2026" className="h-24 md:h-32 mx-auto mb-6 drop-shadow-2xl" width={512} height={512} />
+            <img src={centauroWorldcupLogo} alt="Centauro x FIFA World Cup 2026" className="h-20 md:h-28 mx-auto mb-6 drop-shadow-2xl" width={1024} height={512} />
             <h1 className="text-4xl md:text-6xl font-black text-primary-foreground leading-tight mb-4 tracking-tight">
               Teste seus conhecimentos
             </h1>
