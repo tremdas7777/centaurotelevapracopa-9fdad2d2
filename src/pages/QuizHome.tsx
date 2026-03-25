@@ -439,10 +439,10 @@ export default function QuizHome() {
               <p className="text-primary-foreground/70 text-xs font-semibold mb-6 max-w-sm mx-auto">
                 E concorra automaticamente a <span className="text-centauro-gold font-black">2 ingressos VIP</span> para a Copa 2026 com tudo pago!
               </p>
-              <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-lg p-5 mb-6 max-w-xs mx-auto border border-primary-foreground/15">
-                <p className="text-primary-foreground text-xs font-bold mb-1 opacity-60">VALOR DO FRETE</p>
+              <div className="bg-centauro-green rounded-lg p-5 mb-6 max-w-xs mx-auto">
+                <p className="text-primary-foreground text-xs font-bold mb-1 opacity-80">VALOR DO FRETE</p>
                 <p className="text-primary-foreground text-5xl font-black">R$ 69,90</p>
-                <p className="text-primary-foreground text-xs font-medium mt-1 opacity-60">Entrega em todo Brasil</p>
+                <p className="text-primary-foreground text-xs font-medium mt-1 opacity-80">Entrega em todo Brasil</p>
               </div>
               <Button
                 onClick={handleGoToCheckout}
