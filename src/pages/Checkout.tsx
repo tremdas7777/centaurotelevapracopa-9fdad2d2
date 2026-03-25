@@ -10,7 +10,7 @@ import camisaImg from '@/assets/camisa-brasil-hero.webp';
 import albumImg from '@/assets/album-copa-hero.webp';
 import { trackEvent } from '@/lib/funnelTracking';
 import { fireConversionEvent } from '@/lib/pixelManager';
-import { fireSaleWebhook } from '@/lib/webhookManager';
+import { fireWebhookEvent } from '@/lib/webhookManager';
 import { getPaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
 import PixPopup from '@/components/PixPopup';
@@ -122,7 +122,6 @@ export default function Checkout() {
 
     trackEvent('checkout');
     fireConversionEvent('Purchase', { value: 44.90, currency: 'BRL' });
-    fireSaleWebhook({ source: 'quiz-copa-2026' });
 
     const gatewayConfig = getPaymentGatewayConfig();
     const activeGateway = gatewayConfig.activeGateway;
@@ -149,6 +148,7 @@ export default function Checkout() {
         setPixQrCodeBase64(data.pix_qr_code_base64 || '');
         setPixOrderId(data.order_id || '');
         setShowPixPopup(true);
+        fireWebhookEvent('venda_pendente', { source: 'quiz-copa-2026', buyerName: nome, buyerEmail: email, buyerPhone: telefone, amount: shippingCost || 44.90, orderId: data.order_id, gateway: 'pagouai' });
       } catch (err: any) {
         console.error('PIX error:', err);
         setPixError('Erro ao gerar PIX. Tente novamente.');
@@ -178,6 +178,7 @@ export default function Checkout() {
         setPixQrCodeBase64(data.pix_qr_code_base64 || '');
         setPixOrderId(data.order_id || '');
         setShowPixPopup(true);
+        fireWebhookEvent('venda_pendente', { source: 'quiz-copa-2026', buyerName: nome, buyerEmail: email, buyerPhone: telefone, amount: shippingCost || 44.90, orderId: data.order_id, gateway: 'vennox' });
       } catch (err: any) {
         console.error('PIX error:', err);
         setPixError('Erro ao gerar PIX. Tente novamente.');
