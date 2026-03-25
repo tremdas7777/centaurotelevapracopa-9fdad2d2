@@ -78,6 +78,15 @@ const quizQuestions: Question[] = [
 export default function QuizHome() {
   const [showHome, setShowHome] = useState(true);
   const [homeExiting, setHomeExiting] = useState(false);
+  const [bannerLoaded, setBannerLoaded] = useState(false);
+
+  // Preload quiz banner image
+  useEffect(() => {
+    const img = new Image();
+    img.src = quizBannerPreload;
+    img.onload = () => setBannerLoaded(true);
+    img.onerror = () => setBannerLoaded(true); // fallback to not block
+  }, []);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [quizComplete, setQuizComplete] = useState(false);
