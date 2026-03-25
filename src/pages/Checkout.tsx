@@ -26,6 +26,7 @@ export default function Checkout() {
   const [nome, setNome] = useState(prefilledName);
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
+  const [cpf, setCpf] = useState('');
   const [cep, setCep] = useState('');
   const [endereco, setEndereco] = useState('');
   const [numero, setNumero] = useState('');
