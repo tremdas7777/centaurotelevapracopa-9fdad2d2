@@ -122,7 +122,7 @@ export default function QuizHome() {
         setShowResult(false);
         setIsCorrect(false);
       } else {
-        setShowAnimation(true);
+        if (!hasTrackedQuizComplete.current) { trackEvent('quiz_completed'); hasTrackedQuizComplete.current = true; } setShowAnimation(true);
       }
     }, 1000);
   };
@@ -134,7 +134,7 @@ export default function QuizHome() {
       setShowResult(false);
       setIsCorrect(false);
     } else {
-      setShowAnimation(true);
+      if (!hasTrackedQuizComplete.current) { trackEvent('quiz_completed'); hasTrackedQuizComplete.current = true; } setShowAnimation(true);
     }
   };
 
@@ -179,7 +179,7 @@ export default function QuizHome() {
               Responda 8 perguntas sobre a <span className="text-centauro-gold font-black">Seleção Brasileira</span>
             </p>
             <Button
-              onClick={() => setShowHome(false)}
+              onClick={() => { if (!hasTrackedQuizStart.current) { trackEvent('quiz_started'); hasTrackedQuizStart.current = true; } setShowHome(false); }}
               className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-12 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider"
               style={{ boxShadow: '0 8px 30px hsl(145 63% 42% / 0.5)' }}
             >
