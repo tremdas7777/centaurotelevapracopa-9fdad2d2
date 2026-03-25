@@ -29,7 +29,7 @@ export default function AdminPanel() {
   const [stats, setStats] = useState({ visitors: 0, quizStarted: 0, quizCompleted: 0, checkout: 0, activeNow: 0 });
 
   // Pixel state
-  const [pixelConfig, setPixelConfig] = useState<PixelConfig>({ facebookPixelId: '', facebookAccessToken: '', tiktokPixelId: '', tiktokAccessToken: '', googleAdsId: '', googleAdsLabel: '' });
+  const [pixelConfig, setPixelConfig] = useState<PixelConfig>({ facebookPixels: [], tiktokPixels: [], googleAdsPixels: [], utmifyHtml: '' });
   const [pixelMessage, setPixelMessage] = useState('');
 
   // External checkout toggle
