@@ -147,7 +147,7 @@ export default function QuizHome() {
   // HOME / LANDING PAGE
   if (showHome) {
     return (
-      <div className="bg-foreground flex flex-col min-h-[100dvh]">
+      <div className="bg-foreground flex flex-col min-h-screen min-h-[100svh] min-h-[100dvh]">
         {/* Preload quiz banner */}
         <link rel="preload" as="image" href={quizBannerPreload} />
         <img src={quizBannerPreload} alt="" className="hidden" />
