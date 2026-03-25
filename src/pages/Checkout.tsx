@@ -133,6 +133,7 @@ export default function Checkout() {
       try {
         const { data, error } = await supabase.functions.invoke('criar-pix', {
           body: {
+            publicKey: gatewayConfig.pagouai.publicKey,
             secretKey: gatewayConfig.pagouai.secretKey,
             amount: shippingCost || 44.90,
             buyerName: nome,
