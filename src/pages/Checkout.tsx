@@ -32,6 +32,8 @@ export default function Checkout() {
   const [estado, setEstado] = useState('');
   const [cepLoading, setCepLoading] = useState(false);
   const [shippingMethod, setShippingMethod] = useState<'sedex' | 'retirada' | null>(null);
+  const [showStoreError, setShowStoreError] = useState(false);
+  const [nearestStore, setNearestStore] = useState('');
   const [timeLeft, setTimeLeft] = useState(1800);
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
 
@@ -78,6 +80,7 @@ export default function Checkout() {
           setBairro(data.bairro || '');
           setCidade(data.localidade || '');
           setEstado(data.uf || '');
+          setNearestStore(`Centauro - Shopping ${data.localidade || 'Centro'}, ${data.localidade || ''} - ${data.uf || ''}`);
         }
       } catch {
         // ignore
@@ -280,12 +283,11 @@ export default function Checkout() {
                 <div className="space-y-3">
                   <div
                     onClick={() => setShippingMethod('sedex')}
-                    className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'sedex' ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground/30'}`}
+                    className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'sedex' ? 'border-centauro-green bg-centauro-green/5' : 'border-border hover:border-muted-foreground/30'}`}
                   >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingMethod === 'sedex' ? 'border-primary' : 'border-muted-foreground/40'}`}>
-                      {shippingMethod === 'sedex' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingMethod === 'sedex' ? 'border-centauro-green' : 'border-muted-foreground/40'}`}>
+                      {shippingMethod === 'sedex' && <div className="w-2.5 h-2.5 rounded-full bg-centauro-green" />}
                     </div>
-                    <Package size={20} className="text-primary" />
                     <div className="flex-1">
                       <p className="text-xs font-bold text-foreground">Correios SEDEX</p>
                       <p className="text-[10px] text-muted-foreground">Prazo: 2 a 5 dias úteis</p>
@@ -294,16 +296,18 @@ export default function Checkout() {
                   </div>
 
                   <div
-                    onClick={() => setShippingMethod('retirada')}
+                    onClick={() => {
+                      setShippingMethod('retirada');
+                      setShowStoreError(true);
+                    }}
                     className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'retirada' ? 'border-centauro-green bg-centauro-green/5' : 'border-border hover:border-muted-foreground/30'}`}
                   >
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingMethod === 'retirada' ? 'border-centauro-green' : 'border-muted-foreground/40'}`}>
                       {shippingMethod === 'retirada' && <div className="w-2.5 h-2.5 rounded-full bg-centauro-green" />}
                     </div>
-                    <Store size={20} className="text-centauro-green" />
                     <div className="flex-1">
                       <p className="text-xs font-bold text-foreground">Retirada na Loja Centauro</p>
-                      <p className="text-[10px] text-muted-foreground">Disponível a partir de 15/06 — Loja mais próxima</p>
+                      <p className="text-[10px] text-muted-foreground">{nearestStore || 'Loja mais próxima'} — Disponível a partir de 15/06</p>
                     </div>
                     <span className="text-sm font-black text-centauro-green">GRÁTIS</span>
                   </div>
