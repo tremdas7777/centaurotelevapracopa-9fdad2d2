@@ -397,7 +397,7 @@ export default function QuizHome() {
                   <p className="font-bold text-foreground text-sm">Taxa de Envio</p>
                   <p className="text-xs text-muted-foreground">Entrega em 7-10 dias úteis</p>
                 </div>
-                <p className="font-black text-primary text-lg">R$ 69,90</p>
+                <p className="font-black text-centauro-green text-lg">R$ 69,90</p>
               </div>
             </div>
             <div className="bg-secondary p-5 rounded-md text-center">
@@ -433,7 +433,7 @@ export default function QuizHome() {
                 className="w-full max-w-sm bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-6 rounded-lg transition-transform hover:scale-[1.02] active:scale-95"
                 style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)' }}
               >
-                ✅ GARANTIR PRÊMIOS E CONCORRER →
+                GARANTIR PRÊMIOS E CONCORRER →
               </Button>
               <div className="flex items-center justify-center gap-1.5 mt-4">
                 <Ticket size={12} className="text-centauro-gold" />
