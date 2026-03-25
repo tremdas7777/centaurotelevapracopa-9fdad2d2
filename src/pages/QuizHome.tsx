@@ -182,7 +182,7 @@ export default function QuizHome() {
               COMEÇAR QUIZ
             </Button>
 
-            <p className="text-primary-foreground/30 text-[11px] mt-3 font-semibold">Gratuito · Menos de 2 minutos · Sem cadastro</p>
+            <p className="text-primary-foreground/30 text-[11px] mt-3 font-semibold">100% Gratuito · 2 minutos · Resultado na hora</p>
 
             {/* Minimal social proof */}
             <div className="flex items-center gap-1.5 mt-6 text-primary-foreground/40 text-[11px] font-bold">
