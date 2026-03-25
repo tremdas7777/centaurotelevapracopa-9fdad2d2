@@ -153,7 +153,7 @@ export default function QuizHome() {
   const handleGoToCheckout = () => {
     if (!hasTrackedCheckout.current) {
       trackEvent('checkout');
-      fireConversionEvent('Purchase', { value: 49.90, currency: 'BRL' });
+      fireConversionEvent('Purchase', { value: 44.90, currency: 'BRL' });
       fireSaleWebhook({ source: 'quiz-copa-2026' });
       hasTrackedCheckout.current = true;
     }
