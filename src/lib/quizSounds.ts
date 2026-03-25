@@ -1,18 +1,56 @@
 let ctx: AudioContext | null = null;
+let unlocked = false;
 
 function getAudioContext(): AudioContext {
   if (!ctx || ctx.state === 'closed') {
     ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-  }
-  if (ctx.state === 'suspended') {
-    ctx.resume();
+    unlocked = false;
   }
   return ctx;
+}
+
+/**
+ * Must be called from a direct user gesture (click/tap) handler
+ * to unlock audio on iOS Safari.
+ */
+export function unlockAudio() {
+  if (unlocked) return;
+  try {
+    const audioCtx = getAudioContext();
+    // iOS requires playing a silent buffer inside a user gesture
+    const buffer = audioCtx.createBuffer(1, 1, 22050);
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioCtx.destination);
+    source.start(0);
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    unlocked = true;
+  } catch (e) {
+    console.warn('Audio unlock failed:', e);
+  }
+}
+
+// Auto-unlock on first user interaction
+if (typeof window !== 'undefined') {
+  const handler = () => {
+    unlockAudio();
+    window.removeEventListener('touchstart', handler, true);
+    window.removeEventListener('touchend', handler, true);
+    window.removeEventListener('click', handler, true);
+  };
+  window.addEventListener('touchstart', handler, true);
+  window.addEventListener('touchend', handler, true);
+  window.addEventListener('click', handler, true);
 }
 
 function playTone(frequency: number, duration: number, type: OscillatorType = 'sine', volume = 0.3) {
   try {
     const audioCtx = getAudioContext();
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = type;
