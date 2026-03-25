@@ -142,7 +142,7 @@ export default function QuizHome() {
         >
           <div className="absolute inset-0 bg-foreground/70" />
           <div className="relative z-10 max-w-2xl mx-auto">
-            <img src={centauroWorldcupLogo} alt="Centauro x FIFA World Cup 2026" className="h-20 md:h-28 mx-auto mb-6 drop-shadow-2xl" width={1024} height={512} />
+            <img src={centauroWorldcupLogo} alt="Centauro x FIFA World Cup 2026" className="w-64 md:w-80 mx-auto mb-6 drop-shadow-2xl object-contain" />
             <h1 className="text-4xl md:text-6xl font-black text-primary-foreground leading-tight mb-4 tracking-tight">
               Teste seus conhecimentos
             </h1>
