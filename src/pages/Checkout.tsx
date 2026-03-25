@@ -29,6 +29,7 @@ export default function Checkout() {
   const [telefone, setTelefone] = useState('');
   const [cpf, setCpf] = useState('');
   const [cpfError, setCpfError] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [cep, setCep] = useState('');
   const [endereco, setEndereco] = useState('');
   const [numero, setNumero] = useState('');
