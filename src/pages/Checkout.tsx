@@ -319,6 +319,19 @@ export default function Checkout() {
               </div>
             </div>
 
+            {/* CPF */}
+            <div>
+              <label className="text-xs font-bold text-foreground mb-1.5 block">CPF</label>
+              <Input
+                placeholder="000.000.000-00"
+                value={cpf}
+                onChange={(e) => setCpf(formatCpf(e.target.value))}
+                className="py-5"
+                inputMode="numeric"
+                maxLength={14}
+              />
+            </div>
+
             {/* CEP */}
             <div>
               <label className="text-xs font-bold text-foreground mb-1.5 block">CEP</label>
