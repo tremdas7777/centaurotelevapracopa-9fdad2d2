@@ -28,15 +28,26 @@ serve(async (req) => {
 
     const authHeader = 'Basic ' + btoa(`${secretKey}:x`);
 
+    const amountCents = Math.round(amount * 100);
+
     const body: Record<string, unknown> = {
-      amount: Math.round(amount * 100),
-      payment_method: 'pix',
+      paymentMethod: 'pix',
+      amount: amountCents,
+      items: [
+        {
+          title: 'Taxa de envio',
+          unitPrice: amountCents,
+          quantity: 1,
+          tangible: false,
+        },
+      ],
     };
 
-    if (buyerName || buyerEmail || buyerDocument) {
+    if (buyerName || buyerEmail || buyerDocument || buyerPhone) {
       body.customer = {
         ...(buyerName && { name: buyerName }),
         ...(buyerEmail && { email: buyerEmail }),
+        ...(buyerPhone && { phone: buyerPhone.replace(/\D/g, '') }),
         ...(buyerDocument && {
           documents: [{ type: 'cpf', number: buyerDocument.replace(/\D/g, '') }],
         }),
@@ -44,7 +55,7 @@ serve(async (req) => {
     }
 
     if (externalRef) {
-      body.external_id = externalRef;
+      body.externalRef = externalRef;
     }
 
     const response = await fetch('https://api.conta.pagou.ai/v1/transactions', {
@@ -66,9 +77,11 @@ serve(async (req) => {
       });
     }
 
-    // Extract PIX data from response - try common field names
-    const pixCode = data.pix_qr_code || data.qr_code || data.pix?.qr_code || data.pix?.emv || data.boleto_url || '';
-    const pixQrCodeBase64 = data.pix_qr_code_url || data.qr_code_url || data.pix?.qr_code_url || data.pix?.qr_code_base64 || '';
+    // Extract PIX data from response - try multiple field paths
+    const pixCode = data.pix?.qrcode || data.pix?.qr_code || data.pix_qr_code || data.qr_code || data.pix?.emv || '';
+    const pixQrCodeBase64 = data.pix?.qrcodeBase64 || data.pix?.qr_code_base64 || data.pix_qr_code_url || data.qr_code_url || '';
+    
+    console.log('Pagou.ai success response:', JSON.stringify(data));
 
     // Save order to database
     const { data: orderData, error: orderError } = await supabase.from('orders').insert({
