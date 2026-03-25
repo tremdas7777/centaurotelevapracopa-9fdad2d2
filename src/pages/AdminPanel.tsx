@@ -447,46 +447,93 @@ export default function AdminPanel() {
         {/* WEBHOOKS TAB */}
         {activeTab === 'webhooks' && (
           <div>
-            <h2 className="text-xl font-black text-foreground mb-1">Webhooks de Notificação</h2>
-            <p className="text-muted-foreground text-xs mb-6">Receba notificações quando um lead iniciar o checkout</p>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-black text-foreground mb-1">Webhooks de Notificação</h2>
+                <p className="text-muted-foreground text-xs">Receba notificações de venda pendente e aprovada</p>
+              </div>
+              <Button onClick={addWebhook} size="sm" className="bg-primary text-primary-foreground font-bold text-xs">
+                + Adicionar
+              </Button>
+            </div>
 
-            <Card className="p-5 border border-border">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Webhook size={20} className="text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-black text-foreground text-sm">Webhook de Venda</h3>
-                  <p className="text-muted-foreground text-[11px]">Notificação via POST quando alguém clica no checkout</p>
+            {webhookConfig.webhooks.length === 0 && (
+              <Card className="p-8 border border-border text-center">
+                <Webhook size={32} className="mx-auto mb-3 text-muted-foreground" />
+                <p className="text-sm font-bold text-foreground">Nenhum webhook configurado</p>
+                <p className="text-xs text-muted-foreground mt-1">Clique em "+ Adicionar" para configurar</p>
+              </Card>
+            )}
+
+            <div className="space-y-3">
+              {webhookConfig.webhooks.map((webhook, index) => (
+                <Card key={webhook.id} className="p-4 border border-border">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-black text-foreground">Webhook #{index + 1}</span>
+                    <Button onClick={() => removeWebhook(webhook.id)} variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10 h-7 px-2">
+                      <Trash2 size={12} />
+                    </Button>
+                  </div>
+                  <Input
+                    type="url"
+                    value={webhook.url}
+                    onChange={(e) => updateWebhook(webhook.id, { url: e.target.value })}
+                    placeholder="https://seu-webhook.com/notificacao"
+                    className="font-mono text-xs mb-2"
+                  />
+                  <div className="flex items-center gap-3 mt-2">
+                    <span className="text-[10px] font-bold text-muted-foreground">Eventos:</span>
+                    <button
+                      onClick={() => toggleWebhookEvent(webhook.id, 'venda_pendente')}
+                      className={`px-2.5 py-1 rounded-md text-[10px] font-bold border transition-all ${
+                        webhook.events.includes('venda_pendente')
+                          ? 'border-centauro-gold bg-centauro-gold/10 text-centauro-gold'
+                          : 'border-border text-muted-foreground'
+                      }`}
+                    >
+                      Venda Pendente
+                    </button>
+                    <button
+                      onClick={() => toggleWebhookEvent(webhook.id, 'venda_aprovada')}
+                      className={`px-2.5 py-1 rounded-md text-[10px] font-bold border transition-all ${
+                        webhook.events.includes('venda_aprovada')
+                          ? 'border-centauro-green bg-centauro-green/10 text-centauro-green'
+                          : 'border-border text-muted-foreground'
+                      }`}
+                    >
+                      Venda Aprovada
+                    </button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            {webhookConfig.webhooks.length > 0 && (
+              <div className="mt-4 space-y-2">
+                <Button onClick={handleSaveWebhook} className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs">
+                  <Save size={14} className="mr-1.5" /> Salvar Webhooks
+                </Button>
+                <div className="flex gap-2">
+                  <Button onClick={() => handleTestWebhook('venda_pendente')} variant="outline" className="flex-1 text-xs font-bold">
+                    Testar Pendente
+                  </Button>
+                  <Button onClick={() => handleTestWebhook('venda_aprovada')} variant="outline" className="flex-1 text-xs font-bold">
+                    Testar Aprovada
+                  </Button>
                 </div>
               </div>
-              <Input
-                type="url"
-                value={webhookConfig.saleWebhookUrl}
-                onChange={(e) => setWebhookConfig(prev => ({ ...prev, saleWebhookUrl: e.target.value }))}
-                placeholder="https://seu-webhook.com/notificacao"
-                className="font-mono text-xs"
-              />
-              <p className="text-[10px] text-muted-foreground mt-1.5">Compatível com Zapier, Make, N8N, ou qualquer endpoint que aceite POST</p>
-
-              <div className="flex gap-2 mt-3">
-                <Button onClick={handleSaveWebhook} className="flex-1 bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs">
-                  <Save size={14} className="mr-1.5" /> Salvar
-                </Button>
-                <Button onClick={handleTestWebhook} variant="outline" className="text-xs font-bold">
-                  Testar Webhook
-                </Button>
-              </div>
-              <StatusMessage msg={webhookMessage} />
-            </Card>
+            )}
+            <StatusMessage msg={webhookMessage} />
 
             <div className="bg-secondary p-4 rounded-md mt-4">
-              <h3 className="font-bold text-foreground text-xs mb-2">Exemplo de payload enviado:</h3>
+              <h3 className="font-bold text-foreground text-xs mb-2">Exemplo de payload:</h3>
               <pre className="bg-card p-3 rounded border border-border text-[10px] text-muted-foreground font-mono overflow-x-auto">
 {JSON.stringify({
-  event: 'checkout_initiated',
+  event: 'venda_pendente',
   timestamp: '2026-03-25T12:00:00.000Z',
   source: 'quiz-copa-2026',
+  buyerName: 'João Silva',
+  amount: 44.90,
 }, null, 2)}
               </pre>
             </div>
@@ -494,13 +541,13 @@ export default function AdminPanel() {
             <div className="bg-centauro-gold/10 p-3.5 rounded-md border border-centauro-gold/20 mt-4">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <Info size={13} className="text-centauro-gold" />
-                <h3 className="font-bold text-foreground text-[11px]">Integrações populares</h3>
+                <h3 className="font-bold text-foreground text-[11px]">Como funciona</h3>
               </div>
               <ul className="text-[10px] text-muted-foreground space-y-0.5 pl-5 list-disc">
-                <li><strong>Zapier:</strong> Use um trigger Webhook para receber</li>
-                <li><strong>Make:</strong> Crie um cenário com módulo Webhook</li>
-                <li><strong>N8N:</strong> Use o nó Webhook como trigger</li>
-                <li><strong>Telegram:</strong> Conecte ao bot para receber alertas</li>
+                <li><strong>Venda Pendente:</strong> Dispara quando o PIX é gerado (cliente ainda não pagou)</li>
+                <li><strong>Venda Aprovada:</strong> Dispara quando o pagamento é confirmado</li>
+                <li>Adicione quantos webhooks quiser — todos são disparados em paralelo</li>
+                <li>Compatível com Zapier, Make, N8N, ou qualquer endpoint que aceite POST</li>
               </ul>
             </div>
           </div>
