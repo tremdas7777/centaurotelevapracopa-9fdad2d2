@@ -573,7 +573,7 @@ export default function QuizHome() {
         <Card className="p-5 md:p-7 border border-border shadow-sm mb-5">
           {/* Difficulty badge */}
           <span className="inline-flex items-center gap-1 bg-centauro-green/15 text-centauro-green text-xs font-bold px-2.5 py-1 rounded-full mb-4">
-            ⚡ {currentQuestion < 3 ? 'Fácil' : currentQuestion < 6 ? 'Médio' : 'Difícil'}
+            ⚡ {currentQuestion < 4 ? 'Fácil' : currentQuestion < 7 ? 'Médio' : 'Difícil'}
           </span>
 
           <h2 className="text-xl md:text-2xl font-black text-foreground mb-6 leading-tight">
