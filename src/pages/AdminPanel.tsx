@@ -580,34 +580,12 @@ export default function AdminPanel() {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => {
-                    const updated = { ...gatewayConfig, activeGateway: 'pagouai' as const };
-                    setGatewayConfig(updated);
-                    savePaymentGatewayConfig(updated);
-                  }}
-                  className={`flex-1 px-3 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${
-                    gatewayConfig.activeGateway === 'pagouai'
-                      ? 'border-centauro-green bg-centauro-green/5 text-centauro-green'
-                      : 'border-border text-muted-foreground hover:border-muted-foreground/30'
-                  }`}
+                  className="flex-1 px-3 py-2.5 rounded-lg text-xs font-bold border-2 transition-all border-centauro-green bg-centauro-green/5 text-centauro-green"
                 >
                   Pagou.ai
                 </button>
-                <button
-                  onClick={() => {
-                    const updated = { ...gatewayConfig, activeGateway: 'none' as const };
-                    setGatewayConfig(updated);
-                    savePaymentGatewayConfig(updated);
-                  }}
-                  className={`px-3 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${
-                    gatewayConfig.activeGateway === 'none'
-                      ? 'border-destructive bg-destructive/5 text-destructive'
-                      : 'border-border text-muted-foreground hover:border-muted-foreground/30'
-                  }`}
-                >
-                  Nenhum
-                </button>
               </div>
+              <p className="text-[9px] text-muted-foreground mt-2">Mais gateways serão adicionados em breve</p>
             </Card>
 
             {/* Pagou.ai Config */}
