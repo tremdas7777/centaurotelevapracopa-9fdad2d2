@@ -122,7 +122,6 @@ export default function Checkout() {
 
     trackEvent('checkout');
     fireConversionEvent('Purchase', { value: 44.90, currency: 'BRL' });
-    fireSaleWebhook({ source: 'quiz-copa-2026' });
 
     const gatewayConfig = getPaymentGatewayConfig();
     const activeGateway = gatewayConfig.activeGateway;
