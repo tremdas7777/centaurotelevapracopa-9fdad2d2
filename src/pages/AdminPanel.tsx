@@ -619,6 +619,20 @@ export default function AdminPanel() {
 
               <div className="space-y-3">
                 <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Chave Pública (Public Key)</label>
+                  <Input
+                    type="text"
+                    value={gatewayConfig.pagouai.publicKey}
+                    onChange={(e) => setGatewayConfig(prev => ({
+                      ...prev,
+                      pagouai: { ...prev.pagouai, publicKey: e.target.value }
+                    }))}
+                    placeholder="pk_live_..."
+                    className="font-mono text-xs mt-1"
+                  />
+                  <p className="text-[9px] text-muted-foreground mt-1">Pagou.ai → Configurações → Credenciais de API → Chave Pública</p>
+                </div>
+                <div>
                   <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Chave Secreta (Secret Key)</label>
                   <Input
                     type="password"
