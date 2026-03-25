@@ -314,6 +314,7 @@ export default function Checkout() {
                     <span className="text-sm font-black text-foreground">GRÁTIS</span>
                   </div>
                   )}
+                </div>
               </div>
             )}
           </div>
