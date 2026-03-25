@@ -520,7 +520,7 @@ export default function QuizHome() {
   const progressPercent = ((currentQuestion + 1) / quizQuestions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background animate-fade-in" style={{ animation: 'fade-in 0.5s ease-out' }}>
       <CentauroHeader />
 
       <div className="max-w-xl mx-auto px-4 py-6">
