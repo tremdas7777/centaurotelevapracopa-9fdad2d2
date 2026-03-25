@@ -36,7 +36,7 @@ export default function AdminPanel() {
   const [externalCheckout, setExternalCheckout] = useState(false);
 
   // Webhook state
-  const [webhookConfig, setWebhookConfig] = useState<WebhookConfig>({ saleWebhookUrl: '' });
+  const [webhookConfig, setWebhookConfig] = useState<WebhookConfig>(getWebhookConfig());
   const [webhookMessage, setWebhookMessage] = useState('');
 
   // Utmify state
