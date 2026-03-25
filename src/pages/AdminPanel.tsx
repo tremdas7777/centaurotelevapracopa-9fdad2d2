@@ -80,7 +80,21 @@ export default function AdminPanel() {
     setTimeout(() => setPixelMessage(''), 3000);
   };
 
-  const handleSaveWebhook = () => {
+  const handleSaveUtmify = () => {
+    saveUtmifyConfig(utmifyConfig);
+    setUtmifyMessage('Token UTMify salvo com sucesso!');
+    setTimeout(() => setUtmifyMessage(''), 3000);
+  };
+
+  const handleTestUtmify = async () => {
+    setUtmifyTesting(true);
+    setUtmifyMessage('');
+    const result = await testUtmifyToken(utmifyConfig.apiToken);
+    setUtmifyMessage(result.message);
+    setUtmifyTesting(false);
+    setTimeout(() => setUtmifyMessage(''), 5000);
+  };
+
     saveWebhookConfig(webhookConfig);
     setWebhookMessage('Webhook salvo com sucesso!');
     setTimeout(() => setWebhookMessage(''), 3000);
