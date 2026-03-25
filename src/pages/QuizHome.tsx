@@ -148,7 +148,7 @@ export default function QuizHome() {
   // HOME / LANDING PAGE
   if (showHome) {
     return (
-      <div className="bg-foreground flex flex-col min-h-screen min-h-[100svh] min-h-[100dvh]">
+      <div className={`bg-foreground flex flex-col min-h-screen min-h-[100svh] min-h-[100dvh] transition-all duration-500 ease-in-out ${homeExiting ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
         {/* Preload quiz banner */}
         <link rel="preload" as="image" href={quizBannerPreload} />
         <img src={quizBannerPreload} alt="" className="hidden" />
@@ -187,7 +187,7 @@ export default function QuizHome() {
             </p>
 
             <Button
-              onClick={() => { if (!hasTrackedQuizStart.current) { trackEvent('quiz_started'); hasTrackedQuizStart.current = true; } setShowHome(false); }}
+              onClick={() => { if (!hasTrackedQuizStart.current) { trackEvent('quiz_started'); hasTrackedQuizStart.current = true; } setHomeExiting(true); setTimeout(() => setShowHome(false), 500); }}
               className="relative overflow-hidden bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-14 py-7 rounded-lg active:scale-95 uppercase tracking-wider w-full max-w-sm border-2 border-centauro-green/50"
               style={{ animation: 'pulse-glow-green 2s ease-in-out infinite' }}
             >
