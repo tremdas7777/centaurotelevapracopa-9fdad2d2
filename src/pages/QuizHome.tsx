@@ -159,26 +159,22 @@ export default function QuizHome() {
           </div>
         </div>
 
-        {/* Players banner + stadium blend */}
-        <div className="relative">
-          <div className="w-full h-40 md:h-64 relative overflow-hidden z-10">
-            <img
-              src={quizBannerPreload}
-              alt="Jogadores Seleção Brasileira"
-              className="w-full h-full object-cover object-top block"
-              style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 72%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 0%, black 72%, transparent 100%)' }}
-            />
-          </div>
-
-          <div className="w-full h-28 md:h-40 relative overflow-hidden -mt-10 md:-mt-16">
-            <img src={stadiumHero} alt="" className="w-full h-full object-cover object-center" />
-            <div className="absolute inset-0 bg-foreground/75" />
-          </div>
+        {/* Players banner - same size as quiz */}
+        <div className="w-full h-40 md:h-64 relative overflow-hidden">
+          <img
+            src={quizBannerPreload}
+            alt="Jogadores Seleção Brasileira"
+            className="w-full h-full object-cover object-top block"
+            style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 72%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 0%, black 72%, transparent 100%)' }}
+          />
         </div>
 
-        {/* Hero content */}
-        <div className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 bg-foreground -mt-1">
-          <div className="absolute inset-0 bg-foreground" />
+        {/* Hero content with stadium as background */}
+        <div
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 -mt-8"
+          style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+        >
+          <div className="absolute inset-0 bg-foreground/80" />
           <div className="relative z-10 max-w-lg mx-auto flex flex-col items-center">
 
             <p className="text-xs font-bold text-centauro-green uppercase tracking-widest mb-2">⚽ Promoção Copa do Mundo 2026</p>
