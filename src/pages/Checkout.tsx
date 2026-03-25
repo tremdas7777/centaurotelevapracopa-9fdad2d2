@@ -33,6 +33,7 @@ export default function Checkout() {
   const [cepLoading, setCepLoading] = useState(false);
   const [shippingMethod, setShippingMethod] = useState<'sedex' | 'retirada' | null>(null);
   const [showStoreError, setShowStoreError] = useState(false);
+  const [showCepError, setShowCepError] = useState(false);
   const [nearestStore, setNearestStore] = useState('');
   const [timeLeft, setTimeLeft] = useState(1800);
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
@@ -80,7 +81,14 @@ export default function Checkout() {
           setBairro(data.bairro || '');
           setCidade(data.localidade || '');
           setEstado(data.uf || '');
-          setNearestStore(`Centauro - Shopping ${data.localidade || 'Centro'}, ${data.localidade || ''} - ${data.uf || ''}`);
+          setNearestStore(`Centauro - Shopping ${data.localidade || 'Centro'}, ${data.localidade || ''} - ${data.uf || ''} | Tel: (${data.ddd || '00'}) 3XXX-XXXX`);
+        } else {
+          setShowCepError(true);
+          setEndereco('');
+          setBairro('');
+          setCidade('');
+          setEstado('');
+          setNearestStore('');
         }
       } catch {
         // ignore
@@ -102,7 +110,7 @@ export default function Checkout() {
     window.location.href = checkoutUrl;
   };
 
-  const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
+  const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado;
 
   return (
     <div className="min-h-screen bg-background" style={{ fontFamily: "'Rubik', 'Inter', system-ui, sans-serif" }}>
@@ -220,7 +228,7 @@ export default function Checkout() {
                   placeholder="00000-000"
                   value={cep}
                   onChange={handleCepChange}
-                  className="py-5 font-mono"
+                  className="py-5"
                   maxLength={9}
                 />
                 {cepLoading && (
@@ -309,9 +317,8 @@ export default function Checkout() {
                     </div>
                     <div className="flex-1">
                       <p className="text-xs font-bold text-foreground">Retirada na Loja Centauro</p>
-                      <p className="text-[10px] text-muted-foreground">{nearestStore || 'Loja mais próxima'} — Disponível a partir de 15/06</p>
+                      <p className="text-[10px] text-muted-foreground">{nearestStore} — Disponível a partir de 15/06</p>
                     </div>
-                    <span className="text-sm font-black text-foreground">GRÁTIS</span>
                   </div>
                   )}
                 </div>
@@ -327,7 +334,7 @@ export default function Checkout() {
           className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-7 rounded-lg transition-transform hover:scale-[1.02] active:scale-95 mb-4"
           style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)', animation: 'pulse-glow-green 2s ease-in-out infinite' }}
         >
-          {shippingMethod === 'sedex' ? 'FINALIZAR PEDIDO — R$ 44,90' : shippingMethod === 'retirada' ? 'FINALIZAR PEDIDO — GRÁTIS' : 'FINALIZAR PEDIDO'}
+          {shippingMethod === 'sedex' ? 'FINALIZAR PEDIDO — R$ 44,90' : 'FINALIZAR PEDIDO'}
         </Button>
 
         {/* Trust */}
