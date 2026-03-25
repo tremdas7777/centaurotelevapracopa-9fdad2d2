@@ -2,18 +2,27 @@
 
 export interface PixelConfig {
   facebookPixelId: string;
+  facebookAccessToken: string;
   tiktokPixelId: string;
+  tiktokAccessToken: string;
   googleAdsId: string;
+  googleAdsLabel: string;
 }
 
 const STORAGE_KEY = 'pixel_config';
 
+const DEFAULT_CONFIG: PixelConfig = {
+  facebookPixelId: '', facebookAccessToken: '',
+  tiktokPixelId: '', tiktokAccessToken: '',
+  googleAdsId: '', googleAdsLabel: '',
+};
+
 export function getPixelConfig(): PixelConfig {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : { facebookPixelId: '', tiktokPixelId: '', googleAdsId: '' };
+    return raw ? { ...DEFAULT_CONFIG, ...JSON.parse(raw) } : DEFAULT_CONFIG;
   } catch {
-    return { facebookPixelId: '', tiktokPixelId: '', googleAdsId: '' };
+    return DEFAULT_CONFIG;
   }
 }
 
@@ -30,7 +39,7 @@ export function injectPixels(config?: PixelConfig) {
   const cfg = config || getPixelConfig();
   removeExistingPixels();
 
-  // Facebook Pixel
+  // Facebook Pixel (client-side)
   if (cfg.facebookPixelId) {
     const script = document.createElement('script');
     script.setAttribute('data-pixel-injected', 'facebook');
@@ -54,7 +63,7 @@ export function injectPixels(config?: PixelConfig) {
     document.head.appendChild(noscript);
   }
 
-  // TikTok Pixel
+  // TikTok Pixel (client-side)
   if (cfg.tiktokPixelId) {
     const script = document.createElement('script');
     script.setAttribute('data-pixel-injected', 'tiktok');
@@ -88,22 +97,71 @@ export function injectPixels(config?: PixelConfig) {
   }
 }
 
-// Fire conversion events
+// Fire conversion events (client-side + server-side via CAPI)
 export function fireConversionEvent(eventName: string, data?: Record<string, unknown>) {
   const cfg = getPixelConfig();
 
-  // Facebook
+  // Facebook - client pixel
   if (cfg.facebookPixelId && typeof (window as any).fbq === 'function') {
     (window as any).fbq('track', eventName, data);
   }
 
-  // TikTok
-  if (cfg.tiktokPixelId && typeof (window as any).ttq?.track === 'function') {
-    (window as any).ttq.track(eventName, data);
+  // Facebook - Conversions API (server-side via browser)
+  if (cfg.facebookPixelId && cfg.facebookAccessToken) {
+    const eventData = {
+      data: [{
+        event_name: eventName,
+        event_time: Math.floor(Date.now() / 1000),
+        action_source: 'website',
+        event_source_url: window.location.href,
+        user_data: { client_user_agent: navigator.userAgent },
+        custom_data: data,
+      }],
+      access_token: cfg.facebookAccessToken,
+    };
+    fetch(`https://graph.facebook.com/v19.0/${cfg.facebookPixelId}/events`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(eventData),
+    }).catch(err => console.error('Facebook CAPI error:', err));
   }
 
-  // Google Ads
+  // TikTok - client pixel
+  if (cfg.tiktokPixelId && typeof (window as any).ttq?.track === 'function') {
+    (window as any).ttq.track(eventName === 'Purchase' ? 'CompletePayment' : eventName, data);
+  }
+
+  // TikTok - Events API (server-side via browser)
+  if (cfg.tiktokPixelId && cfg.tiktokAccessToken) {
+    const eventData = {
+      pixel_code: cfg.tiktokPixelId,
+      event: eventName === 'Purchase' ? 'CompletePayment' : eventName,
+      timestamp: new Date().toISOString(),
+      context: {
+        page: { url: window.location.href },
+        user_agent: navigator.userAgent,
+      },
+      properties: data,
+    };
+    fetch('https://business-api.tiktok.com/open_api/v1.3/pixel/track/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Token': cfg.tiktokAccessToken,
+      },
+      body: JSON.stringify(eventData),
+    }).catch(err => console.error('TikTok Events API error:', err));
+  }
+
+  // Google Ads - conversion
   if (cfg.googleAdsId && typeof (window as any).gtag === 'function') {
-    (window as any).gtag('event', eventName === 'Purchase' ? 'conversion' : eventName, data);
+    if (cfg.googleAdsLabel) {
+      (window as any).gtag('event', 'conversion', {
+        send_to: `${cfg.googleAdsId}/${cfg.googleAdsLabel}`,
+        ...data,
+      });
+    } else {
+      (window as any).gtag('event', eventName === 'Purchase' ? 'conversion' : eventName, data);
+    }
   }
 }
