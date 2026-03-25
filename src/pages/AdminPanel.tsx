@@ -36,7 +36,6 @@ export default function AdminPanel() {
   const [utmifyConfig, setUtmifyConfig] = useState<UtmifyConfig>({ apiToken: '' });
   const [utmifyMessage, setUtmifyMessage] = useState('');
   const [utmifyTesting, setUtmifyTesting] = useState(false);
-  const [webhookMessage, setWebhookMessage] = useState('');
 
   useEffect(() => {
     const saved = localStorage.getItem('checkoutUrl');
