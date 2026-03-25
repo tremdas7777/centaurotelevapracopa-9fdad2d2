@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -132,14 +133,27 @@ export default function QuizHome() {
     setCpfError('');
   };
 
-  const handleCpfSubmit = () => {
+  const [cpfLoading, setCpfLoading] = useState(false);
+
+  const handleCpfSubmit = async () => {
     if (!validateCpf(cpfValue)) {
       setCpfError('CPF inválido. Verifique e tente novamente.');
       return;
     }
     setCpfError('');
-    // TODO: integrar API de CPF para puxar nome real
-    setClientName('Cliente');
+    setCpfLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('consulta-cpf', {
+        body: { cpf: cpfValue },
+      });
+      if (error) throw error;
+      setClientName(data?.nome || 'Cliente');
+    } catch (err) {
+      console.error('Erro ao consultar CPF:', err);
+      setClientName('Cliente');
+    } finally {
+      setCpfLoading(false);
+    }
     setShowCepInput(true);
   };
   const [showCepInput, setShowCepInput] = useState(false);
