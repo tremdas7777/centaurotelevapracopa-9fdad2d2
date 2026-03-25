@@ -169,22 +169,38 @@ export default function QuizHome() {
             backgroundPosition: 'center',
           }}
         >
-          <div className="absolute inset-0 bg-foreground/70" />
+          <div className="absolute inset-0 bg-foreground/80" />
           <div className="relative z-10 max-w-2xl mx-auto">
-            
-            <h1 className="text-4xl md:text-6xl font-black text-primary-foreground leading-tight mb-4 tracking-tight">
-              Teste seus conhecimentos
+
+            {/* Urgency badge */}
+            <div className="inline-flex items-center gap-2 bg-centauro-gold/20 border border-centauro-gold/40 rounded-full px-4 py-1.5 mb-6">
+              <span className="w-2 h-2 rounded-full bg-centauro-green animate-pulse" />
+              <span className="text-centauro-gold text-xs font-bold uppercase tracking-wider">Vagas limitadas — Copa 2026</span>
+            </div>
+
+            <h1 className="text-3xl md:text-5xl font-black text-primary-foreground leading-[1.1] mb-5 tracking-tight">
+              Prove que você é o <span className="text-centauro-gold">maior torcedor</span> do Brasil e <span className="text-centauro-green">veja a Seleção de perto!</span>
             </h1>
-            <p className="text-lg md:text-2xl font-semibold text-primary-foreground/80 mb-10">
-              Responda 8 perguntas sobre a <span className="text-centauro-gold font-black">Seleção Brasileira</span>
+
+            <p className="text-base md:text-xl font-semibold text-primary-foreground/80 mb-4 leading-relaxed">
+              Responda <span className="text-primary-foreground font-black">8 perguntas rápidas</span> sobre a Seleção Brasileira e desbloqueie prêmios exclusivos — incluindo a chance de <span className="text-centauro-gold font-black">assistir a Copa 2026 ao vivo</span>.
             </p>
+
+            {/* Social proof */}
+            <div className="flex items-center justify-center gap-4 mb-8 text-primary-foreground/60 text-xs font-bold">
+              <span className="flex items-center gap-1.5"><Users size={14} className="text-centauro-green" /> 2.847 já participaram</span>
+              <span className="hidden md:flex items-center gap-1.5"><Trophy size={14} className="text-centauro-gold" /> 94% de aprovação</span>
+            </div>
+
             <Button
               onClick={() => { if (!hasTrackedQuizStart.current) { trackEvent('quiz_started'); hasTrackedQuizStart.current = true; } setShowHome(false); }}
-              className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-12 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider"
+              className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-14 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider"
               style={{ boxShadow: '0 8px 30px hsl(145 63% 42% / 0.5)' }}
             >
-              Começar Agora
+              🏆 Quero Participar
             </Button>
+
+            <p className="text-primary-foreground/40 text-[11px] mt-4 font-semibold">100% gratuito · Leva menos de 2 minutos</p>
           </div>
         </div>
 
