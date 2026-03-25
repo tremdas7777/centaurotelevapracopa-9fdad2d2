@@ -188,10 +188,18 @@ export default function QuizHome() {
 
             <Button
               onClick={() => { if (!hasTrackedQuizStart.current) { trackEvent('quiz_started'); hasTrackedQuizStart.current = true; } setShowHome(false); }}
-              className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-14 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider w-full max-w-sm"
+              className="relative overflow-hidden bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-14 py-7 rounded-lg active:scale-95 uppercase tracking-wider w-full max-w-sm border-2 border-centauro-green/50"
               style={{ animation: 'pulse-glow-green 2s ease-in-out infinite' }}
             >
-              PARTICIPAR AGORA
+              <span
+                className="absolute inset-0 opacity-30"
+                style={{
+                  background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0) 30%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 70%, transparent 100%)',
+                  backgroundSize: '200% 100%',
+                  animation: 'shimmer 2.5s linear infinite',
+                }}
+              />
+              <span className="relative z-10">PARTICIPAR AGORA</span>
             </Button>
 
             <p className="text-primary-foreground/30 text-[11px] mt-3 font-semibold">100% Gratuito · 2 minutos · Resultado na hora</p>
