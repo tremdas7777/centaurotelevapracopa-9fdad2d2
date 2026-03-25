@@ -7,7 +7,7 @@ export default function CentauroHeader() {
       {/* Top bar with logo */}
       <div className="bg-primary py-3 px-4">
         <div className="max-w-4xl mx-auto flex items-center justify-center">
-          <img src={centauroLogo} alt="Centauro Esportes" className="h-8 md:h-10 object-contain brightness-0 invert" />
+          <img src={centauroLogo} alt="Centauro Esportes" className="h-12 md:h-16 object-contain brightness-0 invert" />
         </div>
       </div>
 
