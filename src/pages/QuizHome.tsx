@@ -183,7 +183,7 @@ export default function QuizHome() {
               className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-14 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider w-full max-w-sm"
               style={{ boxShadow: '0 8px 30px hsl(145 63% 42% / 0.5)' }}
             >
-              COMEÇAR QUIZ
+              PARTICIPAR AGORA
             </Button>
 
             <p className="text-primary-foreground/30 text-[11px] mt-3 font-semibold">100% Gratuito · 2 minutos · Resultado na hora</p>
