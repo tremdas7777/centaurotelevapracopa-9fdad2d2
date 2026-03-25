@@ -1,23 +1,41 @@
 
 
-## Plan: Support 2 UTMify Tokens
+## Plano: Trocar API de consulta CPF
 
-### What changes
-1. **`src/lib/utmifyManager.ts`** — Change `UtmifyConfig` to hold `apiToken1` and `apiToken2` (both strings). Update `sendUtmifySale` to send to both tokens (fire-and-forget). Update `testUtmifyToken` to accept a token string (no change needed, already does). Add a helper to test both tokens individually.
+### Problema
+A API atual (`apicpf.com`) não funciona bem. O usuário quer usar a nova API: `https://base2.sistemafull.site:80/api/cpfx?CPF=XXXXXXXXXXX`
 
-2. **`src/pages/AdminPanel.tsx`** — Update the UTMify tab to show two labeled token inputs ("Token 1" and "Token 2"), each with its own "Testar" button and status message. The "Salvar" button saves both at once. Update state initialization to use new config shape.
-
-### Technical details
-
-**UtmifyConfig new shape:**
-```ts
-interface UtmifyConfig {
-  apiToken: string;   // kept for backward compat, mapped to token1
-  apiToken2: string;
+### Resposta da nova API
+```json
+{
+  "CPF": "85954158541",
+  "NOME": "ANDRE LUAN LEANDRO BRAGA",
+  "NASCIMENTO": "16/06/2000",
+  "MAE": "CASSIA MARGARETE LEANDRO BRAGA",
+  "SEXO": "Masculino"
 }
 ```
 
-**sendUtmifySale:** sends the sale payload to both tokens in parallel (skipping empty ones).
+### O que muda
 
-**Admin UI:** Two input fields side by side or stacked, each with individual test buttons showing per-token results.
+**1. Edge Function `supabase/functions/consulta-cpf/index.ts`**
+- Trocar a chamada de `api.apicpf.com` para `https://base2.sistemafull.site:80/api/cpfx?CPF={cpf}`
+- Essa API nao precisa de token/API key -- é pública (query param apenas)
+- Remover dependência do `CPF_API_KEY`
+- Converter o nome retornado (todo maiúsculo) para formato "Primeira Letra Maiúscula" (ex: "ANDRE LUAN" → "Andre Luan")
+- Retornar `{ nome: "Andre Luan Leandro Braga" }`
+
+**2. Frontend (`src/pages/QuizHome.tsx`)**
+- Nenhuma mudança necessária -- já chama a edge function e usa `data.nome`
+
+### Detalhes técnicos
+
+Função de capitalização no edge function:
+```typescript
+function toTitleCase(str: string): string {
+  return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+}
+```
+
+A edge function continuará fazendo proxy para não expor a URL da API diretamente no frontend.
 
