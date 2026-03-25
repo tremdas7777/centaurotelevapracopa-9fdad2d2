@@ -428,7 +428,7 @@ export default function QuizHome() {
             </div>
             <div className="bg-secondary p-5 rounded-md text-center">
               <p className="text-muted-foreground text-xs font-medium mb-1">Economia total</p>
-              <p className="text-3xl font-black text-foreground mb-0.5">R$ 370,00</p>
+              <p className="text-3xl font-black text-foreground mb-0.5">R$ 439,80</p>
               <p className="text-sm font-bold text-centauro-green">de desconto nos seus prêmios!</p>
             </div>
           </Card>
