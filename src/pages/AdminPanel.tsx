@@ -3,16 +3,17 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { Eye, EyeOff, LogOut, Save, Link2, Info, BarChart3, ShoppingCart, TrendingUp, Users, CheckCircle, ArrowDown, Trash2, Code, Webhook, Bell, Zap, Loader2, ExternalLink } from 'lucide-react';
+import { Eye, EyeOff, LogOut, Save, Link2, Info, BarChart3, ShoppingCart, TrendingUp, Users, CheckCircle, ArrowDown, Trash2, Code, Webhook, Bell, Zap, Loader2, ExternalLink, CreditCard, QrCode } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { getFunnelStats, clearFunnelEvents } from '@/lib/funnelTracking';
 import { getPixelConfig, savePixelConfig, type PixelConfig } from '@/lib/pixelManager';
 import { getWebhookConfig, saveWebhookConfig, type WebhookConfig } from '@/lib/webhookManager';
 import { getUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
+import { getPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
 
 const ADMIN_PASSWORD = 'escalabahia';
 
-type Tab = 'analytics' | 'pixels' | 'webhooks' | 'utmify' | 'checkout';
+type Tab = 'analytics' | 'pixels' | 'webhooks' | 'utmify' | 'checkout' | 'pagamentos';
 
 export default function AdminPanel() {
   const [password, setPassword] = useState('');
@@ -43,6 +44,10 @@ export default function AdminPanel() {
   const [utmifyTesting, setUtmifyTesting] = useState(false);
   const [utmifyTesting2, setUtmifyTesting2] = useState(false);
 
+  // Payment gateway state
+  const [gatewayConfig, setGatewayConfig] = useState<PaymentGatewayConfig>(getPaymentGatewayConfig());
+  const [gatewayMessage, setGatewayMessage] = useState('');
+
   useEffect(() => {
     const saved = localStorage.getItem('checkoutUrl');
     if (saved) { setCheckoutUrl(saved); setNewCheckoutUrl(saved); }
@@ -50,6 +55,7 @@ export default function AdminPanel() {
     setPixelConfig(getPixelConfig());
     setWebhookConfig(getWebhookConfig());
     setUtmifyConfig(getUtmifyConfig());
+    setGatewayConfig(getPaymentGatewayConfig());
   }, []);
 
   useEffect(() => {
