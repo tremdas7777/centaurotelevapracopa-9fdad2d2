@@ -79,8 +79,19 @@
 }
 
 @keyframes pulse-glow-green {
-  0%, 100% { box-shadow: 0 8px 25px hsl(145 63% 42% / 0.4), 0 0 60px hsl(145 63% 42% / 0.15); }
-  50% { box-shadow: 0 8px 45px hsl(145 63% 42% / 0.7), 0 0 80px hsl(145 63% 42% / 0.3); }
+  0%, 100% { 
+    box-shadow: 0 0 20px hsl(145 63% 42% / 0.4), 0 0 60px hsl(145 63% 42% / 0.15), inset 0 0 20px hsl(145 63% 42% / 0.1);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 40px hsl(145 63% 42% / 0.7), 0 0 100px hsl(145 63% 42% / 0.3), inset 0 0 30px hsl(145 63% 42% / 0.15);
+    transform: scale(1.03);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
 }
 
 @keyframes float-up {
