@@ -28,6 +28,7 @@ export default function Checkout() {
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [cpf, setCpf] = useState('');
+  const [cpfError, setCpfError] = useState('');
   const [cep, setCep] = useState('');
   const [endereco, setEndereco] = useState('');
   const [numero, setNumero] = useState('');
@@ -93,6 +94,33 @@ export default function Checkout() {
     if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
     if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
     return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+  };
+
+  const validateCpf = (value: string): boolean => {
+    const digits = value.replace(/\D/g, '');
+    if (digits.length !== 11) return false;
+    if (/^(\d)\1{10}$/.test(digits)) return false;
+    let sum = 0;
+    for (let i = 0; i < 9; i++) sum += parseInt(digits[i]) * (10 - i);
+    let rest = (sum * 10) % 11;
+    if (rest === 10) rest = 0;
+    if (rest !== parseInt(digits[9])) return false;
+    sum = 0;
+    for (let i = 0; i < 10; i++) sum += parseInt(digits[i]) * (11 - i);
+    rest = (sum * 10) % 11;
+    if (rest === 10) rest = 0;
+    return rest === parseInt(digits[10]);
+  };
+
+  const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCpf(e.target.value);
+    setCpf(formatted);
+    const digits = formatted.replace(/\D/g, '');
+    if (digits.length === 11) {
+      setCpfError(validateCpf(formatted) ? '' : 'CPF inválido. Verifique os números.');
+    } else {
+      setCpfError('');
+    }
   };
 
   const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -217,7 +245,7 @@ export default function Checkout() {
     }
   };
 
-  const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cpf.replace(/\D/g, '').length === 11 && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
+  const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cpf.replace(/\D/g, '').length === 11 && !cpfError && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
 
   return (
     <div className="min-h-screen bg-background" style={{ fontFamily: "'Rubik', 'Inter', system-ui, sans-serif" }}>
@@ -329,13 +357,15 @@ export default function Checkout() {
               <Input
                 placeholder="000.000.000-00"
                 value={cpf}
-                onChange={(e) => setCpf(formatCpf(e.target.value))}
-                className="py-5"
+                onChange={handleCpfChange}
+                className={`py-5 ${cpfError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                 inputMode="numeric"
                 maxLength={14}
               />
+              {cpfError && (
+                <p className="text-destructive text-xs font-semibold mt-1.5">{cpfError}</p>
+              )}
             </div>
-
             {/* CEP */}
             <div>
               <label className="text-xs font-bold text-foreground mb-1.5 block">CEP</label>
