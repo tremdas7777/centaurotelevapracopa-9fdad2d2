@@ -126,7 +126,15 @@ export default function Checkout() {
     const gatewayConfig = getPaymentGatewayConfig();
     const activeGateway = gatewayConfig.activeGateway;
 
-    if (activeGateway === 'pagouai' && gatewayConfig.pagouai.secretKey) {
+    const hasPagouaiKeys = !!gatewayConfig.pagouai.secretKey;
+    const hasVennoxKeys = !!gatewayConfig.vennox.secretKey && !!gatewayConfig.vennox.companyId;
+
+    if (activeGateway === 'pagouai') {
+      if (!hasPagouaiKeys) {
+        setPixError('Gateway Pagou.ai não configurado. Configure as chaves no painel admin.');
+        setTimeout(() => setPixError(''), 5000);
+        return;
+      }
       setPixLoading(true);
       setPixError('');
       try {
@@ -156,7 +164,12 @@ export default function Checkout() {
       } finally {
         setPixLoading(false);
       }
-    } else if (activeGateway === 'vennox' && gatewayConfig.vennox.secretKey) {
+    } else if (activeGateway === 'vennox') {
+      if (!hasVennoxKeys) {
+        setPixError('Gateway Vennox não configurado. Configure as chaves no painel admin.');
+        setTimeout(() => setPixError(''), 5000);
+        return;
+      }
       setPixLoading(true);
       setPixError('');
       try {
@@ -186,9 +199,6 @@ export default function Checkout() {
       } finally {
         setPixLoading(false);
       }
-    } else {
-      const checkoutUrl = localStorage.getItem('checkoutUrl') || 'https://seu-checkout.com/taxa-envio';
-      window.location.href = checkoutUrl;
     }
   };
 
