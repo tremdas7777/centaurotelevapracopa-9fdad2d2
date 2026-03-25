@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { CheckCircle, Truck, Shield, Lock, CreditCard, Ticket, Clock, Users } from 'lucide-react';
+import { CheckCircle, Truck, Shield, Lock, Ticket, Clock, Users } from 'lucide-react';
 import centauroLogo from '@/assets/centauro-logo.webp';
 import cbfLogo from '@/assets/cbf-logo.webp';
 import camisaImg from '@/assets/camisa-brasil-hero.webp';
