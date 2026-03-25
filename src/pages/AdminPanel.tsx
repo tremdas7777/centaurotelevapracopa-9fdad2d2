@@ -39,7 +39,7 @@ export default function AdminPanel() {
   const [webhookConfig, setWebhookConfig] = useState<WebhookConfig>({ saleWebhookUrl: '' });
   const [webhookMessage, setWebhookMessage] = useState('');
 
-  // UTMify state
+  // Utmify state
   const [utmifyConfig, setUtmifyConfig] = useState<UtmifyConfig>({ apiToken: '', apiToken2: '' });
   const [utmifyMessage, setUtmifyMessage] = useState('');
   const [utmifyMessage2, setUtmifyMessage2] = useState('');
