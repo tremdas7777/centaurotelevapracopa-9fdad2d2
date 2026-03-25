@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import CentauroHeader from '@/components/CentauroHeader';
 import LoadingAnimation from '@/components/LoadingAnimation';
 import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Gift, ShoppingCart, Star, Ticket, Plane, MapPin } from 'lucide-react';
+import { trackEvent } from '@/lib/funnelTracking';
 import camisaImg from '@/assets/camisa-brasil-hero.png';
 import albumImg from '@/assets/album-copa-hero.png';
 import centauroLogo from '@/assets/centauro-logo.png';
@@ -81,6 +82,18 @@ export default function QuizHome() {
   const [timeLeft, setTimeLeft] = useState(300);
   const [selectedSize, setSelectedSize] = useState('M');
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
+  const hasTrackedVisitor = useRef(false);
+  const hasTrackedQuizStart = useRef(false);
+  const hasTrackedQuizComplete = useRef(false);
+  const hasTrackedCheckout = useRef(false);
+
+  // Track visitor on mount
+  useEffect(() => {
+    if (!hasTrackedVisitor.current) {
+      trackEvent('visitor');
+      hasTrackedVisitor.current = true;
+    }
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -109,7 +122,7 @@ export default function QuizHome() {
         setShowResult(false);
         setIsCorrect(false);
       } else {
-        setShowAnimation(true);
+        if (!hasTrackedQuizComplete.current) { trackEvent('quiz_completed'); hasTrackedQuizComplete.current = true; } setShowAnimation(true);
       }
     }, 1000);
   };
@@ -121,11 +134,15 @@ export default function QuizHome() {
       setShowResult(false);
       setIsCorrect(false);
     } else {
-      setShowAnimation(true);
+      if (!hasTrackedQuizComplete.current) { trackEvent('quiz_completed'); hasTrackedQuizComplete.current = true; } setShowAnimation(true);
     }
   };
 
   const handleGoToCheckout = () => {
+    if (!hasTrackedCheckout.current) {
+      trackEvent('checkout');
+      hasTrackedCheckout.current = true;
+    }
     const checkoutUrl = localStorage.getItem('checkoutUrl') || 'https://seu-checkout.com/taxa-envio';
     window.location.href = checkoutUrl;
   };
@@ -162,7 +179,7 @@ export default function QuizHome() {
               Responda 8 perguntas sobre a <span className="text-centauro-gold font-black">Seleção Brasileira</span>
             </p>
             <Button
-              onClick={() => setShowHome(false)}
+              onClick={() => { if (!hasTrackedQuizStart.current) { trackEvent('quiz_started'); hasTrackedQuizStart.current = true; } setShowHome(false); }}
               className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-12 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider"
               style={{ boxShadow: '0 8px 30px hsl(145 63% 42% / 0.5)' }}
             >
