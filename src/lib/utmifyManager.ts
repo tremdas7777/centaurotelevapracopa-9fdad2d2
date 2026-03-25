@@ -1,11 +1,12 @@
 export interface UtmifyConfig {
   apiToken: string;
+  apiToken2: string;
 }
 
 const STORAGE_KEY = 'utmify_config';
 const API_URL = 'https://api.utmify.com.br/api-credentials/orders';
 
-const DEFAULT_CONFIG: UtmifyConfig = { apiToken: '' };
+const DEFAULT_CONFIG: UtmifyConfig = { apiToken: '', apiToken2: '' };
 
 export function getUtmifyConfig(): UtmifyConfig {
   try {
@@ -88,8 +89,24 @@ export async function testUtmifyToken(token: string): Promise<{ success: boolean
     const text = await response.text().catch(() => '');
     return { success: false, message: `Erro ${response.status}: ${text || 'Resposta inesperada'}` };
   } catch (error) {
-    // CORS errors appear as network errors - this is expected for browser-side calls
     return { success: false, message: 'Erro de conexão. A API pode estar bloqueando requisições do navegador (CORS). O token foi salvo e será usado server-side.' };
+  }
+}
+
+async function sendToToken(token: string, payload: Record<string, unknown>): Promise<boolean> {
+  if (!token) return false;
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-token': token,
+      },
+      body: JSON.stringify(payload),
+    });
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -102,61 +119,50 @@ export async function sendUtmifySale(data: {
   trackingParameters?: Record<string, string | null>;
 }): Promise<boolean> {
   const config = getUtmifyConfig();
-  if (!config.apiToken) return false;
+  const tokens = [config.apiToken, config.apiToken2].filter(Boolean);
+  if (tokens.length === 0) return false;
 
-  try {
-    const payload = {
-      orderId: data.orderId,
-      platform: 'quiz-copa-2026',
-      paymentMethod: 'pix',
-      status: 'paid',
-      createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19),
-      approvedDate: new Date().toISOString().replace('T', ' ').substring(0, 19),
-      refundedAt: null,
-      customer: {
-        name: data.customerName,
-        email: data.customerEmail,
-        phone: null,
-        document: null,
+  const payload = {
+    orderId: data.orderId,
+    platform: 'quiz-copa-2026',
+    paymentMethod: 'pix',
+    status: 'paid',
+    createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19),
+    approvedDate: new Date().toISOString().replace('T', ' ').substring(0, 19),
+    refundedAt: null,
+    customer: {
+      name: data.customerName,
+      email: data.customerEmail,
+      phone: null,
+      document: null,
+    },
+    products: [
+      {
+        id: 'copa-2026-kit',
+        name: data.productName,
+        planId: null,
+        planName: null,
+        quantity: 1,
+        priceInCents: data.priceInCents,
       },
-      products: [
-        {
-          id: 'copa-2026-kit',
-          name: data.productName,
-          planId: null,
-          planName: null,
-          quantity: 1,
-          priceInCents: data.priceInCents,
-        },
-      ],
-      trackingParameters: {
-        src: data.trackingParameters?.src ?? null,
-        sck: data.trackingParameters?.sck ?? null,
-        utm_source: data.trackingParameters?.utm_source ?? null,
-        utm_campaign: data.trackingParameters?.utm_campaign ?? null,
-        utm_medium: data.trackingParameters?.utm_medium ?? null,
-        utm_content: data.trackingParameters?.utm_content ?? null,
-        utm_term: data.trackingParameters?.utm_term ?? null,
-      },
-      commission: {
-        totalPriceInCents: data.priceInCents,
-        gatewayFeeInCents: 0,
-        userCommissionInCents: data.priceInCents,
-        currency: 'BRL',
-      },
-    };
+    ],
+    trackingParameters: {
+      src: data.trackingParameters?.src ?? null,
+      sck: data.trackingParameters?.sck ?? null,
+      utm_source: data.trackingParameters?.utm_source ?? null,
+      utm_campaign: data.trackingParameters?.utm_campaign ?? null,
+      utm_medium: data.trackingParameters?.utm_medium ?? null,
+      utm_content: data.trackingParameters?.utm_content ?? null,
+      utm_term: data.trackingParameters?.utm_term ?? null,
+    },
+    commission: {
+      totalPriceInCents: data.priceInCents,
+      gatewayFeeInCents: 0,
+      userCommissionInCents: data.priceInCents,
+      currency: 'BRL',
+    },
+  };
 
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-token': config.apiToken,
-      },
-      body: JSON.stringify(payload),
-    });
-
-    return true;
-  } catch {
-    return false;
-  }
+  const results = await Promise.all(tokens.map(t => sendToToken(t, payload)));
+  return results.some(Boolean);
 }
