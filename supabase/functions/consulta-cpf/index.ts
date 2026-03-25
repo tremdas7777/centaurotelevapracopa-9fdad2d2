@@ -31,11 +31,22 @@ Deno.serve(async (req) => {
       });
     }
 
-    const response = await fetch(
-      `https://base2.sistemafull.site:80/api/cpfx?CPF=${cleanCpf}`
-    );
+    const apiUrl = `https://base2.sistemafull.site/api/cpfx?CPF=${cleanCpf}`;
+    console.log('Fetching:', apiUrl);
+    
+    const response = await fetch(apiUrl);
+    const text = await response.text();
+    console.log('Response status:', response.status, 'Body:', text);
 
-    const data = await response.json();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      return new Response(JSON.stringify({ error: 'Resposta inválida da API' }), {
+        status: 502,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     if (!response.ok || !data.NOME) {
       return new Response(JSON.stringify({ error: data.message || 'Erro ao consultar CPF' }), {
