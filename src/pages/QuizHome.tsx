@@ -78,6 +78,7 @@ export default function QuizHome() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300);
+  const [selectedSize, setSelectedSize] = useState('M');
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
 
   useEffect(() => {
@@ -320,8 +321,26 @@ export default function QuizHome() {
               <div className="p-5">
                 <h3 className="text-lg font-black text-foreground mb-0.5">Camisa Brasil 2026</h3>
                 <p className="text-muted-foreground text-xs mb-3">Seleção Brasileira - Edição Copa do Mundo</p>
+                <div className="mb-3">
+                  <p className="text-xs font-bold text-foreground mb-2">Tamanho:</p>
+                  <div className="flex gap-2">
+                    {['P', 'M', 'G', 'GG', 'XG'].map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`w-10 h-10 rounded-md text-xs font-black border-2 transition-all ${
+                          selectedSize === size
+                            ? 'bg-primary text-primary-foreground border-primary'
+                            : 'bg-secondary text-foreground border-border hover:border-primary/50'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <ul className="space-y-1.5 text-xs mb-4">
-                  {['Qualidade Premium', 'Bordado Oficial CBF', 'Todos os tamanhos'].map((item) => (
+                  {['Qualidade Premium', 'Bordado Oficial CBF'].map((item) => (
                     <li key={item} className="flex items-center gap-2 text-foreground">
                       <CheckCircle size={12} className="text-centauro-green shrink-0" /> {item}
                     </li>
