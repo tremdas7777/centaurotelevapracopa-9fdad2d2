@@ -868,12 +868,42 @@ export default function AdminPanel() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between pt-2 border-t border-border">
-                      <span className="text-xs font-bold text-foreground">
-                        R$ {(order.amount_cents / 100).toFixed(2).replace('.', ',')}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground">
-                        {new Date(order.created_at).toLocaleString('pt-BR')}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-foreground">
+                          R$ {(order.amount_cents / 100).toFixed(2).replace('.', ',')}
+                        </span>
+                        <Badge variant="outline" className="text-[9px]">{order.gateway}</Badge>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {order.status !== 'paid' && (
+                          <Button
+                            size="sm"
+                            className="h-6 px-2 text-[10px] font-bold bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground"
+                            onClick={async () => {
+                              const { error } = await supabase.functions.invoke('payment-webhook', {
+                                body: { orderId: order.id, action: 'approve' },
+                              });
+                              if (!error) {
+                                fireWebhookEvent('venda_aprovada', {
+                                  source: 'quiz-copa-2026',
+                                  buyerName: order.buyer_name,
+                                  buyerEmail: order.buyer_email,
+                                  buyerPhone: order.buyer_phone,
+                                  amount: order.amount_cents / 100,
+                                  orderId: order.id,
+                                  gateway: order.gateway,
+                                });
+                                fetchOrders();
+                              }
+                            }}
+                          >
+                            <CheckCircle size={10} className="mr-1" /> Aprovar
+                          </Button>
+                        )}
+                        <span className="text-[10px] text-muted-foreground">
+                          {new Date(order.created_at).toLocaleString('pt-BR')}
+                        </span>
+                      </div>
                     </div>
                   </Card>
                 ))}
