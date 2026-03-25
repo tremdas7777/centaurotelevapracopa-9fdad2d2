@@ -218,6 +218,7 @@ export default function QuizHome() {
     setShowResult(true);
     const correct = index === quizQuestions[currentQuestion].correctAnswer;
     setIsCorrect(correct);
+    unlockAudio();
     if (correct) playCorrectSound();
     else playWrongSound();
   };
