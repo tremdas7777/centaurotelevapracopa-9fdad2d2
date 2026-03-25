@@ -10,7 +10,7 @@ import camisaImg from '@/assets/camisa-brasil-hero.webp';
 import albumImg from '@/assets/album-copa-hero.webp';
 import { trackEvent } from '@/lib/funnelTracking';
 import { fireConversionEvent } from '@/lib/pixelManager';
-import { fireSaleWebhook } from '@/lib/webhookManager';
+import { fireWebhookEvent } from '@/lib/webhookManager';
 import { getPaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
 import PixPopup from '@/components/PixPopup';
