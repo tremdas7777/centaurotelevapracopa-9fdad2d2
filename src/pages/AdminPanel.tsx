@@ -3,14 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { Eye, EyeOff, LogOut, Save, Link2, Info, BarChart3, ShoppingCart, TrendingUp, Users, CheckCircle, ArrowDown, Trash2, Code, Webhook, Bell } from 'lucide-react';
+import { Eye, EyeOff, LogOut, Save, Link2, Info, BarChart3, ShoppingCart, TrendingUp, Users, CheckCircle, ArrowDown, Trash2, Code, Webhook, Bell, Zap, Loader2 } from 'lucide-react';
 import { getFunnelStats, clearFunnelEvents } from '@/lib/funnelTracking';
 import { getPixelConfig, savePixelConfig, type PixelConfig } from '@/lib/pixelManager';
 import { getWebhookConfig, saveWebhookConfig, type WebhookConfig } from '@/lib/webhookManager';
+import { getUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
 
 const ADMIN_PASSWORD = 'escalabahia';
 
-type Tab = 'analytics' | 'pixels' | 'webhooks' | 'checkout';
+type Tab = 'analytics' | 'pixels' | 'webhooks' | 'utmify' | 'checkout';
 
 export default function AdminPanel() {
   const [password, setPassword] = useState('');
@@ -31,11 +32,17 @@ export default function AdminPanel() {
   const [webhookConfig, setWebhookConfig] = useState<WebhookConfig>({ saleWebhookUrl: '' });
   const [webhookMessage, setWebhookMessage] = useState('');
 
+  // UTMify state
+  const [utmifyConfig, setUtmifyConfig] = useState<UtmifyConfig>({ apiToken: '' });
+  const [utmifyMessage, setUtmifyMessage] = useState('');
+  const [utmifyTesting, setUtmifyTesting] = useState(false);
+
   useEffect(() => {
     const saved = localStorage.getItem('checkoutUrl');
     if (saved) { setCheckoutUrl(saved); setNewCheckoutUrl(saved); }
     setPixelConfig(getPixelConfig());
     setWebhookConfig(getWebhookConfig());
+    setUtmifyConfig(getUtmifyConfig());
   }, []);
 
   useEffect(() => {
@@ -71,6 +78,21 @@ export default function AdminPanel() {
     savePixelConfig(pixelConfig);
     setPixelMessage('Pixels salvos e ativados com sucesso!');
     setTimeout(() => setPixelMessage(''), 3000);
+  };
+
+  const handleSaveUtmify = () => {
+    saveUtmifyConfig(utmifyConfig);
+    setUtmifyMessage('Token UTMify salvo com sucesso!');
+    setTimeout(() => setUtmifyMessage(''), 3000);
+  };
+
+  const handleTestUtmify = async () => {
+    setUtmifyTesting(true);
+    setUtmifyMessage('');
+    const result = await testUtmifyToken(utmifyConfig.apiToken);
+    setUtmifyMessage(result.message);
+    setUtmifyTesting(false);
+    setTimeout(() => setUtmifyMessage(''), 5000);
   };
 
   const handleSaveWebhook = () => {
@@ -146,6 +168,7 @@ export default function AdminPanel() {
     { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={14} /> },
     { id: 'pixels', label: 'Pixels', icon: <Code size={14} /> },
     { id: 'webhooks', label: 'Webhooks', icon: <Bell size={14} /> },
+    { id: 'utmify', label: 'UTMify', icon: <Zap size={14} /> },
     { id: 'checkout', label: 'Checkout', icon: <Link2 size={14} /> },
   ];
 
@@ -422,6 +445,83 @@ export default function AdminPanel() {
                 <li><strong>Make:</strong> Crie um cenário com módulo Webhook</li>
                 <li><strong>N8N:</strong> Use o nó Webhook como trigger</li>
                 <li><strong>Telegram:</strong> Conecte ao bot para receber alertas</li>
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* UTMIFY TAB */}
+        {activeTab === 'utmify' && (
+          <div>
+            <h2 className="text-xl font-black text-foreground mb-1">Integração UTMify</h2>
+            <p className="text-muted-foreground text-xs mb-6">Rastreie suas vendas com a UTMify</p>
+
+            <Card className="p-5 border border-border">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-centauro-green/10 flex items-center justify-center">
+                  <Zap size={20} className="text-centauro-green" />
+                </div>
+                <div>
+                  <h3 className="font-black text-foreground text-sm">Token da API</h3>
+                  <p className="text-muted-foreground text-[11px]">Credencial de API gerada na plataforma UTMify</p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">API Token</label>
+                  <Input
+                    type="password"
+                    value={utmifyConfig.apiToken}
+                    onChange={(e) => setUtmifyConfig(prev => ({ ...prev, apiToken: e.target.value }))}
+                    placeholder="Cole aqui seu token da UTMify"
+                    className="font-mono text-xs mt-1"
+                  />
+                  <p className="text-[9px] text-muted-foreground mt-1">
+                    UTMify → Integrações → Webhooks → Credenciais de API → Adicionar Credencial
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button onClick={handleSaveUtmify} className="flex-1 bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs">
+                    <Save size={14} className="mr-1.5" /> Salvar Token
+                  </Button>
+                  <Button
+                    onClick={handleTestUtmify}
+                    variant="outline"
+                    className="text-xs font-bold"
+                    disabled={utmifyTesting || !utmifyConfig.apiToken}
+                  >
+                    {utmifyTesting ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Zap size={14} className="mr-1.5" />}
+                    {utmifyTesting ? 'Testando...' : 'Testar Integração'}
+                  </Button>
+                </div>
+
+                {utmifyMessage && (
+                  <div className={`p-2.5 rounded-md text-center text-xs font-bold ${
+                    utmifyMessage.includes('válido') || utmifyMessage.includes('sucesso') || utmifyMessage.includes('✓')
+                      ? 'bg-centauro-green/10 text-centauro-green'
+                      : utmifyMessage.includes('salvo')
+                      ? 'bg-centauro-green/10 text-centauro-green'
+                      : 'bg-destructive/10 text-destructive'
+                  }`}>
+                    {utmifyMessage}
+                  </div>
+                )}
+              </div>
+            </Card>
+
+            <div className="bg-centauro-gold/10 p-3.5 rounded-md border border-centauro-gold/20 mt-4">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <Info size={13} className="text-centauro-gold" />
+                <h3 className="font-bold text-foreground text-[11px]">Como funciona</h3>
+              </div>
+              <ul className="text-[10px] text-muted-foreground space-y-0.5 pl-5 list-disc">
+                <li><strong>Token:</strong> Gere em UTMify → Integrações → Credenciais de API</li>
+                <li><strong>Teste:</strong> Envia um pedido de teste (isTest: true) para validar o token</li>
+                <li>Eventos de venda são enviados automaticamente ao clicar no checkout</li>
+                <li>Parâmetros UTM são capturados e enviados junto com a venda</li>
+                <li>O endpoint usado é: <code className="bg-card px-1 py-0.5 rounded text-[9px]">api.utmify.com.br/api-credentials/orders</code></li>
               </ul>
             </div>
           </div>
