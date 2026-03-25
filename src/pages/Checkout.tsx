@@ -126,13 +126,15 @@ export default function Checkout() {
     const gatewayConfig = getPaymentGatewayConfig();
     const activeGateway = gatewayConfig.activeGateway;
 
-    const hasPagouaiKeys = !!gatewayConfig.pagouai.secretKey;
-    const hasVennoxKeys = !!gatewayConfig.vennox.secretKey && !!gatewayConfig.vennox.companyId;
+    console.log('Gateway config:', JSON.stringify({ activeGateway, pagouaiHasSecret: !!gatewayConfig.pagouai.secretKey?.trim(), vennoxHasSecret: !!gatewayConfig.vennox.secretKey?.trim() }));
+
+    const hasPagouaiKeys = !!gatewayConfig.pagouai.secretKey?.trim();
+    const hasVennoxKeys = !!gatewayConfig.vennox.secretKey?.trim() && !!gatewayConfig.vennox.companyId?.trim();
 
     if (activeGateway === 'pagouai') {
       if (!hasPagouaiKeys) {
-        setPixError('Gateway Pagou.ai não configurado. Configure as chaves no painel admin.');
-        setTimeout(() => setPixError(''), 5000);
+        setPixError('Gateway Pagou.ai não configurado. Vá em /admin → Pagamentos e salve as chaves.');
+        setTimeout(() => setPixError(''), 8000);
         return;
       }
       setPixLoading(true);
