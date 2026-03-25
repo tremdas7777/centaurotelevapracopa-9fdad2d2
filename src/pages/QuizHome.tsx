@@ -179,11 +179,11 @@ export default function QuizHome() {
             </div>
 
             <h1 className="text-3xl md:text-5xl font-black text-primary-foreground leading-[1.1] mb-5 tracking-tight">
-              Prove que você é o <span className="text-centauro-gold">maior torcedor</span> do Brasil e <span className="text-centauro-green">veja a Seleção de perto!</span>
+              Prove que você é o <span className="font-black">maior torcedor</span> do Brasil e <span className="font-black">veja a Seleção de perto!</span>
             </h1>
 
-            <p className="text-base md:text-xl font-semibold text-primary-foreground/80 mb-4 leading-relaxed">
-              Responda <span className="text-primary-foreground font-black">8 perguntas rápidas</span> sobre a Seleção Brasileira e desbloqueie prêmios exclusivos — incluindo a chance de <span className="text-centauro-gold font-black">assistir a Copa 2026 ao vivo</span>.
+            <p className="text-base md:text-xl font-semibold text-primary-foreground mb-4 leading-relaxed">
+              Responda <span className="font-black">8 perguntas rápidas</span> sobre a Seleção Brasileira e desbloqueie prêmios exclusivos — incluindo a chance de <span className="font-black">assistir a Copa 2026 ao vivo</span>.
             </p>
 
             {/* Social proof */}
