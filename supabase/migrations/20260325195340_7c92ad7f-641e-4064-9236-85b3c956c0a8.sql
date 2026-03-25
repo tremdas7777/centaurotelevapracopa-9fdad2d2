@@ -1,0 +1,1 @@
+CREATE POLICY "Allow public delete on orders" ON public.orders FOR DELETE TO anon USING (true);
