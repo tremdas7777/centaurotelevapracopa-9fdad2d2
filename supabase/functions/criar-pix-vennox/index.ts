@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
 serve(async (req) => {
@@ -12,22 +12,20 @@ serve(async (req) => {
   }
 
   try {
-    const { publicKey, secretKey, amount, buyerName, buyerEmail, buyerDocument, buyerPhone, externalRef } = await req.json();
+    const { secretKey, companyId, amount, buyerName, buyerEmail, buyerDocument, buyerPhone, externalRef } = await req.json();
 
-    if (!secretKey || !amount) {
-      return new Response(JSON.stringify({ error: 'secretKey e amount são obrigatórios' }), {
+    if (!secretKey || !companyId || !amount) {
+      return new Response(JSON.stringify({ error: 'secretKey, companyId e amount são obrigatórios' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Initialize Supabase client to save order
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const authHeader = 'Basic ' + btoa(`${secretKey}:x`);
-
+    const authHeader = 'Basic ' + btoa(`${secretKey}:${companyId}`);
     const amountCents = Math.round(amount * 100);
 
     const body: Record<string, unknown> = {
@@ -58,7 +56,7 @@ serve(async (req) => {
       body.externalRef = externalRef;
     }
 
-    const response = await fetch('https://api.conta.pagou.ai/v1/transactions', {
+    const response = await fetch('https://api.vennoxpay.com.br/functions/v1/transactions', {
       method: 'POST',
       headers: {
         'Authorization': authHeader,
@@ -70,25 +68,23 @@ serve(async (req) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error('Pagou.ai error:', JSON.stringify(data));
-      return new Response(JSON.stringify({ error: 'Erro na API Pagou.ai', details: data }), {
+      console.error('Vennox error:', JSON.stringify(data));
+      return new Response(JSON.stringify({ error: 'Erro na API Vennox', details: data }), {
         status: response.status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Extract PIX data from response - try multiple field paths
+    console.log('Vennox success response:', JSON.stringify(data));
+
     const pixCode = data.pix?.qrcode || data.pix?.qr_code || data.pix_qr_code || data.qr_code || data.pix?.emv || '';
     const pixQrCodeBase64 = data.pix?.qrcodeBase64 || data.pix?.qr_code_base64 || data.pix_qr_code_url || data.qr_code_url || '';
-    
-    console.log('Pagou.ai success response:', JSON.stringify(data));
 
-    // Save order to database
     const { data: orderData, error: orderError } = await supabase.from('orders').insert({
-      external_id: data.id || data.tid || externalRef || null,
-      gateway: 'pagouai',
+      external_id: data.id?.toString() || data.tid || externalRef || null,
+      gateway: 'vennox',
       status: data.status || 'pending',
-      amount_cents: Math.round(amount * 100),
+      amount_cents: amountCents,
       buyer_name: buyerName || null,
       buyer_email: buyerEmail || null,
       buyer_document: buyerDocument ? buyerDocument.replace(/\D/g, '') : null,
