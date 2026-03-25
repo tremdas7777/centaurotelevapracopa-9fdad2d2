@@ -12,7 +12,7 @@ import albumImg from '@/assets/album-copa-hero.webp';
 import centauroLogo from '@/assets/centauro-logo.webp';
 import stadiumHero from '@/assets/stadium-hero.webp';
 import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.webp';
-import worldcupTrophy from '@/assets/worldcup-trophy.webp';
+import cbfLogo from '@/assets/centauro-cbf-logo-transparent.webp';
 import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
 import { playCorrectSound, playWrongSound, playRevealSound } from '@/lib/quizSounds';
 
