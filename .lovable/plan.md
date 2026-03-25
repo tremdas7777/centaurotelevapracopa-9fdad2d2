@@ -1,22 +1,23 @@
 
 
-## Plano: Mostrar mais do banner dos jogadores apenas no desktop
+## Plan: Support 2 UTMify Tokens
 
-### O que será feito
-Na home, o banner dos jogadores atualmente tem altura `h-40 md:h-64`. Vamos aumentar a altura apenas para desktop (breakpoint `lg` ou `xl`), mantendo mobile e tablet iguais.
+### What changes
+1. **`src/lib/utmifyManager.ts`** — Change `UtmifyConfig` to hold `apiToken1` and `apiToken2` (both strings). Update `sendUtmifySale` to send to both tokens (fire-and-forget). Update `testUtmifyToken` to accept a token string (no change needed, already does). Add a helper to test both tokens individually.
 
-### Alteração técnica
+2. **`src/pages/AdminPanel.tsx`** — Update the UTMify tab to show two labeled token inputs ("Token 1" and "Token 2"), each with its own "Testar" button and status message. The "Salvar" button saves both at once. Update state initialization to use new config shape.
 
-**Arquivo:** `src/pages/QuizHome.tsx` (linha 173)
+### Technical details
 
-Alterar a classe do container do banner de:
+**UtmifyConfig new shape:**
+```ts
+interface UtmifyConfig {
+  apiToken: string;   // kept for backward compat, mapped to token1
+  apiToken2: string;
+}
 ```
-h-40 md:h-64
-```
-Para:
-```
-h-40 md:h-64 lg:h-80
-```
 
-Isso adiciona mais altura ao banner apenas em telas ≥1024px (desktop), mantendo mobile (`h-40` = 160px) e tablet (`md:h-64` = 256px) inalterados.
+**sendUtmifySale:** sends the sale payload to both tokens in parallel (skipping empty ones).
+
+**Admin UI:** Two input fields side by side or stacked, each with individual test buttons showing per-token results.
 
