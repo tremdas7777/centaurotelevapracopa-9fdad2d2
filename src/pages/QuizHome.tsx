@@ -147,7 +147,7 @@ export default function QuizHome() {
   // HOME / LANDING PAGE
   if (showHome) {
     return (
-      <div className="bg-foreground flex flex-col min-h-screen">
+      <div className="bg-foreground flex flex-col min-h-[100dvh]">
         {/* Preload quiz banner */}
         <link rel="preload" as="image" href={quizBannerPreload} />
         <img src={quizBannerPreload} alt="" className="hidden" />
@@ -165,13 +165,13 @@ export default function QuizHome() {
             src={quizBannerPreload}
             alt="Jogadores Seleção Brasileira"
             className="w-full h-full object-cover object-top block"
-            style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 45%, rgba(0,0,0,0.5) 70%, transparent 90%)', maskImage: 'linear-gradient(to bottom, black 0%, black 45%, rgba(0,0,0,0.5) 70%, transparent 90%)' }}
+            style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 65%, rgba(0,0,0,0.3) 85%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 0%, black 65%, rgba(0,0,0,0.3) 85%, transparent 100%)' }}
           />
         </div>
 
-        {/* Hero content with stadium as background */}
+        {/* Hero content with stadium as background - fills all remaining space */}
         <div
-          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-20 -mt-16 min-h-[75vh]"
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-12 -mt-12"
           style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center top' }}
         >
           <div className="absolute inset-0 bg-foreground/80" />
