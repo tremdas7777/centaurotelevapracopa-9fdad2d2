@@ -27,6 +27,7 @@ export default function Checkout() {
   const [nome, setNome] = useState(prefilledName);
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
+  const [telefoneError, setTelefoneError] = useState('');
   const [cpf, setCpf] = useState('');
   const [cpfError, setCpfError] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -260,7 +261,18 @@ export default function Checkout() {
     }
   };
 
-  const isFormValid = nome && email && !emailError && telefone.replace(/\D/g, '').length >= 10 && cpf.replace(/\D/g, '').length === 11 && !cpfError && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
+  const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatTelefone(e.target.value);
+    setTelefone(formatted);
+    const digits = formatted.replace(/\D/g, '');
+    if (digits.length > 0 && digits.length < 10) {
+      setTelefoneError('Telefone inválido. Mínimo 10 dígitos.');
+    } else {
+      setTelefoneError('');
+    }
+  };
+
+  const isFormValid = nome && email && !emailError && telefone.replace(/\D/g, '').length >= 10 && !telefoneError && cpf.replace(/\D/g, '').length === 11 && !cpfError && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
 
   return (
     <div className="min-h-screen bg-background" style={{ fontFamily: "'Rubik', 'Inter', system-ui, sans-serif" }}>
@@ -362,10 +374,14 @@ export default function Checkout() {
                 <Input
                   placeholder="(00) 00000-0000"
                   value={telefone}
-                  onChange={(e) => setTelefone(formatTelefone(e.target.value))}
-                  className="py-5"
+                  onChange={handleTelefoneChange}
+                  className={`py-5 ${telefoneError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  inputMode="numeric"
                   maxLength={15}
                 />
+                {telefoneError && (
+                  <p className="text-destructive text-xs font-semibold mt-1.5">{telefoneError}</p>
+                )}
               </div>
             </div>
 
