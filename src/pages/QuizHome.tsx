@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import CentauroHeader from '@/components/CentauroHeader';
 import LoadingAnimation from '@/components/LoadingAnimation';
-import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Gift, ShoppingCart, Star } from 'lucide-react';
+import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Gift, ShoppingCart, Star, Ticket, Plane, MapPin } from 'lucide-react';
 import camisaImg from '@/assets/camisa-brasil-hero.png';
 import albumImg from '@/assets/album-copa-hero.png';
 import centauroLogo from '@/assets/centauro-logo.png';
@@ -156,6 +156,45 @@ export default function QuizHome() {
           </p>
         </div>
 
+        {/* Contest Banner - 2 Ingressos Copa */}
+        <div className="bg-centauro-gold text-foreground py-0">
+          <div className="max-w-4xl mx-auto px-4 py-6 md:py-8">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+              <div className="flex items-center gap-3 shrink-0">
+                <div className="w-14 h-14 bg-foreground rounded-full flex items-center justify-center">
+                  <Ticket className="w-7 h-7 text-centauro-gold" />
+                </div>
+              </div>
+              <div className="text-center md:text-left flex-1">
+                <p className="text-[10px] font-bold tracking-[0.2em] uppercase opacity-70 mb-1">Bônus Exclusivo</p>
+                <h3 className="text-xl md:text-2xl font-black tracking-tight mb-1">
+                  CONCORRA A 2 INGRESSOS PARA A COPA 2026!
+                </h3>
+                <p className="text-sm font-semibold opacity-80">
+                  Ao garantir seus prêmios, você automaticamente concorre a <strong>2 ingressos VIP</strong> para assistir a Copa do Mundo 2026 com <strong>tudo pago</strong>!
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-3 mt-5">
+              <div className="bg-foreground/10 rounded-md p-3 text-center">
+                <Plane className="w-5 h-5 mx-auto mb-1 opacity-80" />
+                <p className="text-[10px] font-bold">Passagem Aérea</p>
+                <p className="text-[9px] opacity-70">Ida e Volta</p>
+              </div>
+              <div className="bg-foreground/10 rounded-md p-3 text-center">
+                <MapPin className="w-5 h-5 mx-auto mb-1 opacity-80" />
+                <p className="text-[10px] font-bold">Hospedagem</p>
+                <p className="text-[9px] opacity-70">Hotel 5 Estrelas</p>
+              </div>
+              <div className="bg-foreground/10 rounded-md p-3 text-center">
+                <Ticket className="w-5 h-5 mx-auto mb-1 opacity-80" />
+                <p className="text-[10px] font-bold">2 Ingressos VIP</p>
+                <p className="text-[9px] opacity-70">Jogo do Brasil</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="max-w-4xl mx-auto px-4 py-10">
           {/* Products */}
           <div className="flex items-center gap-2 mb-6">
@@ -253,30 +292,40 @@ export default function QuizHome() {
           </Card>
 
           {/* CTA */}
-          <div className="bg-primary rounded-xl p-8 md:p-10 text-center mb-8 relative overflow-hidden">
+          <div className="bg-foreground rounded-xl p-8 md:p-10 text-center mb-8 relative overflow-hidden">
             <div className="absolute inset-0 opacity-5">
               <div className="absolute inset-0" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.15) 20px, rgba(255,255,255,0.15) 40px)' }} />
             </div>
             <div className="relative z-10">
               <ShoppingCart className="w-10 h-10 text-primary-foreground mx-auto mb-3 opacity-80" />
-              <p className="text-primary-foreground/70 text-xs font-bold tracking-[0.2em] uppercase mb-2">
+              <p className="text-primary-foreground/60 text-xs font-bold tracking-[0.2em] uppercase mb-2">
                 Último Passo
               </p>
-              <h3 className="text-3xl md:text-4xl font-black text-primary-foreground mb-6 tracking-tight">
+              <h3 className="text-3xl md:text-4xl font-black text-primary-foreground mb-2 tracking-tight">
                 PAGUE APENAS O FRETE
               </h3>
-              <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-lg p-5 mb-6 max-w-xs mx-auto border border-primary-foreground/20">
-                <p className="text-primary-foreground text-xs font-bold mb-1 opacity-70">VALOR DO FRETE</p>
+              <p className="text-primary-foreground/70 text-xs font-semibold mb-6 max-w-sm mx-auto">
+                E concorra automaticamente a <span className="text-centauro-gold font-black">2 ingressos VIP</span> para a Copa 2026 com tudo pago!
+              </p>
+              <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-lg p-5 mb-6 max-w-xs mx-auto border border-primary-foreground/15">
+                <p className="text-primary-foreground text-xs font-bold mb-1 opacity-60">VALOR DO FRETE</p>
                 <p className="text-primary-foreground text-5xl font-black">R$ 69,90</p>
-                <p className="text-primary-foreground text-xs font-medium mt-1 opacity-70">Entrega em todo Brasil</p>
+                <p className="text-primary-foreground text-xs font-medium mt-1 opacity-60">Entrega em todo Brasil</p>
               </div>
               <Button
                 onClick={handleGoToCheckout}
-                className="w-full max-w-sm bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-black text-base py-6 rounded-lg animate-pulse-glow transition-transform hover:scale-[1.02] active:scale-95"
+                className="w-full max-w-sm bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-6 rounded-lg transition-transform hover:scale-[1.02] active:scale-95"
+                style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)' }}
               >
-                GARANTIR MEUS PRÊMIOS →
+                ✅ GARANTIR PRÊMIOS E CONCORRER →
               </Button>
-              <p className="text-primary-foreground/50 text-xs font-medium mt-4">
+              <div className="flex items-center justify-center gap-1.5 mt-4">
+                <Ticket size={12} className="text-centauro-gold" />
+                <p className="text-centauro-gold text-xs font-bold">
+                  + Sorteio de 2 Ingressos VIP Copa 2026
+                </p>
+              </div>
+              <p className="text-primary-foreground/40 text-[10px] font-medium mt-2">
                 ⏰ Oferta válida por {formatTime(timeLeft)}
               </p>
             </div>
