@@ -42,6 +42,10 @@ export default function Checkout() {
   const shippingCost = shippingMethod === 'sedex' ? 44.90 : shippingMethod === 'retirada' ? 0 : null;
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
     }, 1000);
