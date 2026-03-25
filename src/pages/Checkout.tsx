@@ -22,11 +22,12 @@ import {
 export default function Checkout() {
   const [searchParams] = useSearchParams();
   const prefilledName = searchParams.get('nome') || '';
+  const prefilledCpf = searchParams.get('cpf') || '';
 
   const [nome, setNome] = useState(prefilledName);
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
-  const [cpf, setCpf] = useState('');
+  const [cpf, setCpf] = useState(prefilledCpf ? formatCpf(prefilledCpf) : '');
   const [cep, setCep] = useState('');
   const [endereco, setEndereco] = useState('');
   const [numero, setNumero] = useState('');
