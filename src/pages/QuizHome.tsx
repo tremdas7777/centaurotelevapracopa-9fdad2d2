@@ -156,111 +156,59 @@ export default function QuizHome() {
     return (
       <div className="min-h-screen bg-foreground flex flex-col">
         {/* Centauro Top Bar */}
-        <div className="bg-primary py-3 px-4">
+        <div className="bg-primary py-2.5 px-4">
           <div className="max-w-4xl mx-auto flex items-center justify-center gap-3">
-            <img src={centauroLogo} alt="Centauro" className="h-10 md:h-14 object-contain brightness-0 invert" />
-            <span className="text-primary-foreground text-2xl md:text-3xl font-light opacity-50">×</span>
-            <img src={worldcupTrophy} alt="FIFA World Cup 2026" className="h-10 md:h-14 object-contain" />
+            <img src={centauroLogo} alt="Centauro" className="h-8 md:h-12 object-contain brightness-0 invert" />
+            <span className="text-primary-foreground text-xl font-light opacity-40">×</span>
+            <img src={worldcupTrophy} alt="FIFA World Cup 2026" className="h-8 md:h-12 object-contain" />
           </div>
         </div>
 
-        {/* Hero Section */}
+        {/* Full-screen Hero */}
         <div
-          className="relative flex-1 flex flex-col items-center justify-center text-center px-4 py-20 md:py-32"
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-16 md:py-24"
           style={{
             backgroundImage: `url(${stadiumHero})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
         >
-          <div className="absolute inset-0 bg-foreground/80" />
-          <div className="relative z-10 max-w-2xl mx-auto">
+          <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/85 to-foreground/95" />
+          <div className="relative z-10 max-w-lg mx-auto flex flex-col items-center">
 
-            {/* Urgency badge */}
-            <div className="inline-flex items-center gap-2 bg-centauro-gold/20 border border-centauro-gold/40 rounded-full px-4 py-1.5 mb-6">
-              <span className="w-2 h-2 rounded-full bg-centauro-green animate-pulse" />
-              <span className="text-centauro-gold text-xs font-bold uppercase tracking-wider">Vagas limitadas — Copa 2026</span>
-            </div>
-
-            <h1 className="text-3xl md:text-5xl font-black text-primary-foreground leading-[1.1] mb-5 tracking-tight">
-              Prove que você é o <span className="font-black">maior torcedor</span> do Brasil e <span className="font-black">veja a Seleção de perto!</span>
+            <h1 className="text-3xl md:text-5xl font-black text-primary-foreground leading-[1.1] mb-4 tracking-tight">
+              Você conhece a Seleção Brasileira?
             </h1>
 
-            <p className="text-base md:text-xl font-semibold text-primary-foreground mb-4 leading-relaxed">
-              Responda <span className="font-black">8 perguntas rápidas</span> sobre a Seleção Brasileira e desbloqueie prêmios exclusivos — incluindo a chance de <span className="font-black">assistir a Copa 2026 ao vivo</span>.
+            <p className="text-sm md:text-lg text-primary-foreground/70 mb-8 leading-relaxed max-w-md">
+              Responda 8 perguntas rápidas e concorra a prêmios exclusivos da Copa 2026
             </p>
-
-            {/* Social proof */}
-            <div className="flex items-center justify-center gap-4 mb-8 text-primary-foreground/60 text-xs font-bold">
-              <span className="flex items-center gap-1.5"><Users size={14} className="text-centauro-green" /> 2.847 já participaram</span>
-            </div>
 
             <Button
               onClick={() => { if (!hasTrackedQuizStart.current) { trackEvent('quiz_started'); hasTrackedQuizStart.current = true; } setShowHome(false); }}
-              className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-14 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider"
+              className="bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-14 py-7 rounded-lg transition-transform hover:scale-105 active:scale-95 uppercase tracking-wider w-full max-w-sm"
               style={{ boxShadow: '0 8px 30px hsl(145 63% 42% / 0.5)' }}
             >
-              🏆 Quero Participar
+              COMEÇAR QUIZ
             </Button>
 
-            <p className="text-primary-foreground/40 text-[11px] mt-4 font-semibold">100% gratuito · Leva menos de 2 minutos</p>
+            <p className="text-primary-foreground/30 text-[11px] mt-3 font-semibold">Gratuito · Menos de 2 minutos · Sem cadastro</p>
+
+            {/* Minimal social proof */}
+            <div className="flex items-center gap-1.5 mt-6 text-primary-foreground/40 text-[11px] font-bold">
+              <Users size={12} className="text-centauro-green/70" />
+              <span>2.847 pessoas já participaram</span>
+            </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="bg-foreground border-t border-primary-foreground/10">
-          <div className="max-w-5xl mx-auto px-4 py-10">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-              {/* Links */}
-              <div>
-                <h4 className="text-primary-foreground font-black text-sm mb-3">Enlaces Rápidos</h4>
-                <p className="text-primary-foreground/60 text-xs cursor-pointer hover:text-primary-foreground/80 transition-colors">Início</p>
-              </div>
-              {/* Contato */}
-              <div>
-                <h4 className="text-primary-foreground font-black text-sm mb-3">Contato</h4>
-                <div className="space-y-2">
-                  <p className="text-primary-foreground/60 text-xs flex items-center gap-2">
-                    <Mail size={12} /> suporte@centaurocopa2026.com.br
-                  </p>
-                  <p className="text-primary-foreground/60 text-xs flex items-center gap-2">
-                    <Phone size={12} /> +55 (11) 4002-8922
-                  </p>
-                  <p className="text-primary-foreground/60 text-xs flex items-center gap-2">
-                    <MapPinIcon size={12} /> São Paulo, SP - Brasil
-                  </p>
-                </div>
-              </div>
-              {/* Legal */}
-              <div>
-                <h4 className="text-primary-foreground font-black text-sm mb-3">Informação Legal</h4>
-                <p className="text-primary-foreground/60 text-xs"><strong className="text-primary-foreground/80">CNPJ:</strong> 06.347.409/0001-90</p>
-                <p className="text-primary-foreground/60 text-xs mt-1"><strong className="text-primary-foreground/80">Razão Social:</strong> Centauro Esportes S.A.</p>
-              </div>
-            </div>
-
-            {/* Trust */}
-            <div className="border-t border-primary-foreground/10 pt-6 mb-6">
-              <h4 className="text-primary-foreground/80 font-bold text-xs mb-3">Segurança e Confiança</h4>
-              <div className="flex flex-wrap gap-4">
-                {['SSL 256-bit Cifrado', 'Garantia de 30 dias', 'Suporte 24/7', 'Dados Protegidos'].map(item => (
-                  <span key={item} className="flex items-center gap-1.5 text-primary-foreground/50 text-[11px]">
-                    <CheckCircle size={12} className="text-centauro-green" /> {item}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Copyright */}
-            <div className="border-t border-primary-foreground/10 pt-5 text-center">
-              <img src={centauroLogo} alt="Centauro" className="h-5 mx-auto mb-2 opacity-20 brightness-0 invert" />
-              <p className="text-primary-foreground/30 text-[10px]">
-                © 2026 Quiz Copa do Mundo 2026 - Brasil. Todos os direitos reservados.
-              </p>
-              <p className="text-primary-foreground/30 text-[10px] mt-0.5">
-                Desenvolvido com ❤️ para os fãs do futebol brasileiro
-              </p>
-            </div>
+        {/* Minimal footer */}
+        <footer className="bg-foreground border-t border-primary-foreground/5 py-4 px-4">
+          <div className="max-w-lg mx-auto text-center">
+            <img src={centauroLogo} alt="Centauro" className="h-4 mx-auto mb-2 opacity-15 brightness-0 invert" />
+            <p className="text-primary-foreground/20 text-[9px]">
+              © 2026 Centauro Esportes S.A. · CNPJ 06.347.409/0001-90 · Todos os direitos reservados
+            </p>
           </div>
         </footer>
       </div>
