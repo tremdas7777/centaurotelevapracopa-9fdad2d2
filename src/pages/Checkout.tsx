@@ -110,7 +110,7 @@ export default function Checkout() {
     window.location.href = checkoutUrl;
   };
 
-  const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado;
+  const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
 
   return (
     <div className="min-h-screen bg-background" style={{ fontFamily: "'Rubik', 'Inter', system-ui, sans-serif" }}>
