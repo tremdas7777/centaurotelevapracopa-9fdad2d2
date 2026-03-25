@@ -159,22 +159,27 @@ export default function QuizHome() {
           </div>
         </div>
 
-        {/* Players banner with smooth fade to stadium */}
-        <div className="w-full h-40 md:h-64 relative overflow-hidden">
-          <img src={quizBannerPreload} alt="Jogadores Seleção Brasileira" className="w-full h-full object-cover object-[center_30%]" />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, hsl(0 0% 13% / 0.4) 60%, hsl(0 0% 13% / 0.8) 80%, hsl(0 0% 13%) 100%)' }} />
-        </div>
-
-        {/* Stadium banner with fade overlay */}
-        <div
-          className="relative w-full h-32 md:h-48 -mt-4 overflow-hidden"
-          style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-        >
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, hsl(0 0% 13%) 0%, hsl(0 0% 13% / 0.5) 30%, hsl(0 0% 13% / 0.3) 50%, hsl(0 0% 13% / 0.7) 75%, hsl(0 0% 13%) 100%)' }} />
+        {/* Combined banners - players fading into stadium */}
+        <div className="w-full relative overflow-hidden" style={{ height: '280px' }}>
+          {/* Stadium as base layer */}
+          <div className="absolute inset-0">
+            <img src={stadiumHero} alt="" className="w-full h-full object-cover object-center" />
+            <div className="absolute inset-0 bg-foreground/60" />
+          </div>
+          {/* Players on top, fading out at bottom to reveal stadium */}
+          <div className="absolute inset-0">
+            <img src={quizBannerPreload} alt="Jogadores Seleção Brasileira" className="w-full h-full object-cover object-[center_30%]" />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 35%, hsl(0 0% 13% / 0.6) 65%, transparent 100%)' }} />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(0,0,0,0) 50%, transparent 60%, hsl(0 0% 13% / 0) 60%)' }} />
+          </div>
+          {/* Mask: fade players image to transparent at bottom */}
+          <div className="absolute bottom-0 left-0 right-0 h-1/2" style={{
+            background: 'linear-gradient(to bottom, transparent 0%, hsl(0 0% 13% / 0.7) 60%, hsl(0 0% 13%) 100%)'
+          }} />
         </div>
 
         {/* Hero content */}
-        <div className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 bg-foreground -mt-4">
+        <div className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 bg-foreground -mt-1">
           <div className="absolute inset-0 bg-foreground" />
           <div className="relative z-10 max-w-lg mx-auto flex flex-col items-center">
 
