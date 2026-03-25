@@ -533,7 +533,7 @@ export default function AdminPanel() {
                     type="password"
                     value={utmifyConfig.apiToken2}
                     onChange={(e) => setUtmifyConfig(prev => ({ ...prev, apiToken2: e.target.value }))}
-                    placeholder="Cole aqui o Token 2 da UTMify"
+                    placeholder="Cole aqui o Token 2 da Utmify"
                     className="font-mono text-xs"
                   />
                   <Button
@@ -567,7 +567,7 @@ export default function AdminPanel() {
                 <h3 className="font-bold text-foreground text-[11px]">Como funciona</h3>
               </div>
               <ul className="text-[10px] text-muted-foreground space-y-0.5 pl-5 list-disc">
-                <li><strong>Token:</strong> Gere em UTMify → Integrações → Credenciais de API</li>
+                <li><strong>Token:</strong> Gere em Utmify → Integrações → Credenciais de API</li>
                 <li><strong>Teste:</strong> Envia um pedido de teste (isTest: true) para validar o token</li>
                 <li>Eventos de venda são enviados automaticamente ao clicar no checkout</li>
                 <li>Parâmetros UTM são capturados e enviados junto com a venda</li>
