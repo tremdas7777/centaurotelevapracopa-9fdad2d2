@@ -168,6 +168,7 @@ export default function QuizHome() {
   const [cepError, setCepError] = useState('');
   const [freteRevealed, setFreteRevealed] = useState(false);
   const [clientName, setClientName] = useState('');
+  const [firstNameDisplay, setFirstNameDisplay] = useState('');
 
   const formatCep = (value: string) => {
     const digits = value.replace(/\D/g, '').slice(0, 8);
