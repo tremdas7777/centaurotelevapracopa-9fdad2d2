@@ -95,6 +95,7 @@ export default function AdminPanel() {
     setTimeout(() => setUtmifyMessage(''), 5000);
   };
 
+  const handleSaveWebhook = () => {
     saveWebhookConfig(webhookConfig);
     setWebhookMessage('Webhook salvo com sucesso!');
     setTimeout(() => setWebhookMessage(''), 3000);
