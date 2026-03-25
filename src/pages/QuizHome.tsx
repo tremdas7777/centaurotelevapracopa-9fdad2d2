@@ -543,7 +543,14 @@ export default function QuizHome() {
                 Resgate imediato da camisa e álbum + concorra ao <span className="text-centauro-gold font-black">sorteio de 2 ingressos VIP</span> para a Copa 2026! Sorteio: 15/06/2026
               </p>
               <Button
-                onClick={() => setShowAddressDialog(true)}
+                onClick={() => {
+                  const isExternal = localStorage.getItem('externalCheckout') === 'true';
+                  if (isExternal) {
+                    handleGoToCheckout();
+                  } else {
+                    setShowAddressDialog(true);
+                  }
+                }}
                 className="w-full max-w-sm bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-6 rounded-lg transition-transform hover:scale-[1.02] active:scale-95"
                 style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)', animation: 'pulse-glow-green 2s ease-in-out infinite' }}
               >

@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { Eye, EyeOff, LogOut, Save, Link2, Info, BarChart3, ShoppingCart, TrendingUp, Users, CheckCircle, ArrowDown, Trash2, Code, Webhook, Bell, Zap, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, LogOut, Save, Link2, Info, BarChart3, ShoppingCart, TrendingUp, Users, CheckCircle, ArrowDown, Trash2, Code, Webhook, Bell, Zap, Loader2, ExternalLink } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 import { getFunnelStats, clearFunnelEvents } from '@/lib/funnelTracking';
 import { getPixelConfig, savePixelConfig, type PixelConfig } from '@/lib/pixelManager';
 import { getWebhookConfig, saveWebhookConfig, type WebhookConfig } from '@/lib/webhookManager';
@@ -28,6 +29,9 @@ export default function AdminPanel() {
   const [pixelConfig, setPixelConfig] = useState<PixelConfig>({ facebookPixelId: '', facebookAccessToken: '', tiktokPixelId: '', tiktokAccessToken: '', googleAdsId: '', googleAdsLabel: '' });
   const [pixelMessage, setPixelMessage] = useState('');
 
+  // External checkout toggle
+  const [externalCheckout, setExternalCheckout] = useState(false);
+
   // Webhook state
   const [webhookConfig, setWebhookConfig] = useState<WebhookConfig>({ saleWebhookUrl: '' });
   const [webhookMessage, setWebhookMessage] = useState('');
@@ -42,6 +46,7 @@ export default function AdminPanel() {
   useEffect(() => {
     const saved = localStorage.getItem('checkoutUrl');
     if (saved) { setCheckoutUrl(saved); setNewCheckoutUrl(saved); }
+    setExternalCheckout(localStorage.getItem('externalCheckout') === 'true');
     setPixelConfig(getPixelConfig());
     setWebhookConfig(getWebhookConfig());
     setUtmifyConfig(getUtmifyConfig());
@@ -558,6 +563,26 @@ export default function AdminPanel() {
           <Card className="border border-border p-5">
             <h1 className="text-xl font-black text-foreground mb-1">Gerenciar Checkout</h1>
             <p className="text-muted-foreground text-xs mb-6">Copa 2026 - Link de Pagamento</p>
+
+            {/* External Checkout Toggle */}
+            <div className="bg-secondary p-4 rounded-md mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ExternalLink size={14} className="text-muted-foreground" />
+                <div>
+                  <h3 className="font-bold text-foreground text-xs">Checkout Externo</h3>
+                  <p className="text-[10px] text-muted-foreground">
+                    {externalCheckout ? 'O botão "Garantir Meus Prêmios" redireciona para o link externo' : 'Usando checkout interno do quiz'}
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={externalCheckout}
+                onCheckedChange={(checked) => {
+                  setExternalCheckout(checked);
+                  localStorage.setItem('externalCheckout', String(checked));
+                }}
+              />
+            </div>
 
             <div className="bg-secondary p-4 rounded-md mb-4">
               <div className="flex items-center gap-2 mb-2">
