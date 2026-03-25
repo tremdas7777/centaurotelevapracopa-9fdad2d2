@@ -128,7 +128,7 @@ export default function QuizHome() {
       setShowResult(false);
       setIsCorrect(false);
     } else {
-      if (!hasTrackedQuizComplete.current) { trackEvent('quiz_completed'); hasTrackedQuizComplete.current = true; } setShowAnimation(true);
+      if (!hasTrackedQuizComplete.current) { trackEvent('quiz_completed'); hasTrackedQuizComplete.current = true; } playRevealSound(); setShowAnimation(true);
     }
   };
 
