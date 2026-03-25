@@ -91,6 +91,10 @@ export default function Checkout() {
   };
 
   const handleSubmit = () => {
+    if (shippingMethod === 'retirada') {
+      setShowStoreError(true);
+      return;
+    }
     trackEvent('checkout');
     fireConversionEvent('Purchase', { value: 44.90, currency: 'BRL' });
     fireSaleWebhook({ source: 'quiz-copa-2026' });
@@ -101,7 +105,7 @@ export default function Checkout() {
   const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" style={{ fontFamily: "'Rubik', 'Inter', system-ui, sans-serif" }}>
       {/* Header */}
       <div className="bg-primary py-4 px-4">
         <div className="max-w-4xl mx-auto flex items-center justify-center -translate-x-2">
@@ -292,14 +296,12 @@ export default function Checkout() {
                       <p className="text-xs font-bold text-foreground">Correios SEDEX</p>
                       <p className="text-[10px] text-muted-foreground">Prazo: 2 a 5 dias úteis</p>
                     </div>
-                    <span className="text-sm font-black text-foreground">R$ 44,90</span>
+                    <span className="text-sm font-black text-centauro-green">R$ 44,90</span>
                   </div>
 
+                  {nearestStore && (
                   <div
-                    onClick={() => {
-                      setShippingMethod('retirada');
-                      setShowStoreError(true);
-                    }}
+                    onClick={() => setShippingMethod('retirada')}
                     className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'retirada' ? 'border-centauro-green bg-centauro-green/5' : 'border-border hover:border-muted-foreground/30'}`}
                   >
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingMethod === 'retirada' ? 'border-centauro-green' : 'border-muted-foreground/40'}`}>
@@ -309,8 +311,9 @@ export default function Checkout() {
                       <p className="text-xs font-bold text-foreground">Retirada na Loja Centauro</p>
                       <p className="text-[10px] text-muted-foreground">{nearestStore || 'Loja mais próxima'} — Disponível a partir de 15/06</p>
                     </div>
-                    <span className="text-sm font-black text-centauro-green">GRÁTIS</span>
+                    <span className="text-sm font-black text-foreground">GRÁTIS</span>
                   </div>
+                  )}
                 </div>
               </div>
             )}
