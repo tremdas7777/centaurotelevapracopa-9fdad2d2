@@ -414,10 +414,10 @@ export default function QuizHome() {
               <div className="border-t border-border" />
               <div className="flex items-center justify-between p-3.5 bg-centauro-gold/10 rounded-md border border-centauro-gold/30">
                 <div>
-                  <p className="font-bold text-foreground text-sm flex items-center gap-1.5">
-                    <Ticket size={14} className="text-centauro-gold" /> Sorteio 2 Ingressos VIP Copa
+                <p className="font-bold text-foreground text-sm flex items-center gap-1.5">
+                    <Ticket size={14} className="text-centauro-gold" /> Sorteio: 2 Ingressos VIP Copa
                   </p>
-                  <p className="text-xs text-muted-foreground">Passagem + Hotel + Ingressos</p>
+                  <p className="text-xs text-muted-foreground">Passagem + Hotel + Ingressos • Sorteio em 15/06/2026</p>
                 </div>
                 <p className="font-black text-centauro-gold text-sm">INCLUSO</p>
               </div>
@@ -451,7 +451,7 @@ export default function QuizHome() {
                 PAGUE APENAS O FRETE
               </h3>
               <p className="text-primary-foreground/70 text-xs font-semibold mb-6 max-w-sm mx-auto">
-                E concorra automaticamente a <span className="text-centauro-gold font-black">2 ingressos VIP</span> para a Copa 2026 com tudo pago!
+                Resgate imediato da camisa e álbum + concorra ao <span className="text-centauro-gold font-black">sorteio de 2 ingressos VIP</span> para a Copa 2026! Sorteio: 15/06/2026
               </p>
               <div className="bg-centauro-green rounded-lg p-5 mb-6 max-w-xs mx-auto">
                 <p className="text-primary-foreground text-xs font-bold mb-1 opacity-80">VALOR DO FRETE</p>
@@ -468,7 +468,7 @@ export default function QuizHome() {
               <div className="flex items-center justify-center gap-1.5 mt-4">
                 <Ticket size={12} className="text-centauro-gold" />
                 <p className="text-centauro-gold text-xs font-bold">
-                  + Sorteio de 2 Ingressos VIP Copa 2026
+                  + Sorteio de 2 Ingressos VIP Copa 2026 (Data: 15/06/2026)
                 </p>
               </div>
               <p className="text-primary-foreground/40 text-[10px] font-medium mt-2">
@@ -480,7 +480,7 @@ export default function QuizHome() {
           {/* Trust badges */}
           <div className="grid grid-cols-3 gap-3 mb-8">
             {[
-              { icon: CheckCircle, color: 'text-centauro-green', title: 'Garantido', desc: 'Todos ganham' },
+              { icon: CheckCircle, color: 'text-centauro-green', title: 'Resgate Imediato', desc: 'Camisa + Álbum' },
               { icon: Truck, color: 'text-primary', title: 'Entrega', desc: '3-5 dias úteis' },
               { icon: Shield, color: 'text-foreground', title: 'Seguro', desc: 'Compra protegida' },
             ].map(({ icon: Icon, color, title, desc }) => (
