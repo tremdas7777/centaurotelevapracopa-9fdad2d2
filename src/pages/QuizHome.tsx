@@ -172,7 +172,7 @@ export default function QuizHome() {
 
           <div className="w-full h-28 md:h-40 relative overflow-hidden -mt-10 md:-mt-16">
             <img src={stadiumHero} alt="" className="w-full h-full object-cover object-center" />
-            <div className="absolute inset-0 bg-gradient-to-b from-foreground/20 via-foreground/35 to-foreground/85" />
+            <div className="absolute inset-0 bg-foreground/75" />
           </div>
         </div>
 
