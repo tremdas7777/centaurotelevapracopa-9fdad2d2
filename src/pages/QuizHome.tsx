@@ -96,6 +96,11 @@ export default function QuizHome() {
   const [timeLeft, setTimeLeft] = useState(1800);
   const [selectedSize, setSelectedSize] = useState('M');
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
+  const [showAddressDialog, setShowAddressDialog] = useState(false);
+  const [cpfValue, setCpfValue] = useState('');
+  const [showCepInput, setShowCepInput] = useState(false);
+  const [cepValue, setCepValue] = useState('');
+  const [freteRevealed, setFreteRevealed] = useState(false);
   const hasTrackedVisitor = useRef(false);
   const hasTrackedQuizStart = useRef(false);
   const hasTrackedQuizComplete = useRef(false);
