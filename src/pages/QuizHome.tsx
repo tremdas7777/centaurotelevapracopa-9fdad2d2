@@ -149,12 +149,12 @@ export default function QuizHome() {
   if (showHome) {
     return (
       <div className="bg-foreground flex flex-col min-h-screen min-h-[100svh] min-h-[100dvh]">
-        {/* Same header as quiz */}
-        <CentauroHeader />
+        {/* Same banner as quiz, with fade effect */}
+        <CentauroHeader fadeBanner />
 
         {/* Hero content with stadium as background - only this transitions */}
         <div
-          className={`relative flex-1 flex flex-col items-center justify-center text-center px-5 py-12 transition-all duration-500 ease-in-out ${homeExiting ? 'opacity-0 translate-y-6' : 'opacity-100 translate-y-0'}`}
+          className={`relative flex-1 flex flex-col items-center justify-center text-center px-5 py-12 -mt-12 transition-all duration-500 ease-in-out ${homeExiting ? 'opacity-0 translate-y-6' : 'opacity-100 translate-y-0'}`}
           style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center top' }}
         >
           <div className="absolute inset-0 bg-foreground/80" />

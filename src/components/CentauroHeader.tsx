@@ -2,7 +2,11 @@ import centauroLogo from "@/assets/centauro-logo.webp";
 import cbfLogo from "@/assets/cbf-logo.webp";
 import quizBanner from "@/assets/quiz-banner-hq.webp";
 
-export default function CentauroHeader() {
+interface CentauroHeaderProps {
+  fadeBanner?: boolean;
+}
+
+export default function CentauroHeader({ fadeBanner = false }: CentauroHeaderProps) {
   return (
     <header className="relative overflow-hidden">
       {/* Top bar with logos */}
@@ -16,8 +20,16 @@ export default function CentauroHeader() {
 
       {/* Banner */}
       <div className="w-full h-40 md:h-64 relative overflow-hidden">
-        <img src={quizBanner} alt="Quiz Copa 2026" className="w-full h-full object-cover object-top" />
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/30 to-transparent" />
+        <img
+          src={quizBanner}
+          alt="Quiz Copa 2026"
+          className="w-full h-full object-cover object-top block"
+          style={fadeBanner ? {
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 65%, rgba(0,0,0,0.3) 85%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, black 0%, black 65%, rgba(0,0,0,0.3) 85%, transparent 100%)'
+          } : undefined}
+        />
+        {!fadeBanner && <div className="absolute inset-0 bg-gradient-to-t from-foreground/30 to-transparent" />}
       </div>
     </header>
   );
