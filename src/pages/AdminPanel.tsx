@@ -42,6 +42,7 @@ export default function AdminPanel() {
     if (saved) { setCheckoutUrl(saved); setNewCheckoutUrl(saved); }
     setPixelConfig(getPixelConfig());
     setWebhookConfig(getWebhookConfig());
+    setUtmifyConfig(getUtmifyConfig());
   }, []);
 
   useEffect(() => {
