@@ -80,6 +80,7 @@ const quizQuestions: Question[] = [
 ];
 
 export default function QuizHome() {
+  const navigate = useNavigate();
   const [showHome, setShowHome] = useState(true);
   const [homeExiting, setHomeExiting] = useState(false);
   const [bannerLoaded, setBannerLoaded] = useState(false);
