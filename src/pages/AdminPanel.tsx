@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { getFunnelStats, clearFunnelEvents } from '@/lib/funnelTracking';
 import { getPixelConfig, savePixelConfig, type PixelConfig } from '@/lib/pixelManager';
-import { getWebhookConfig, saveWebhookConfig, type WebhookConfig } from '@/lib/webhookManager';
+import { getWebhookConfig, saveWebhookConfig, fireWebhookEvent, type WebhookConfig, type WebhookEntry } from '@/lib/webhookManager';
 import { getUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
 import { getPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
@@ -130,32 +130,53 @@ export default function AdminPanel() {
 
   const handleSaveWebhook = () => {
     saveWebhookConfig(webhookConfig);
-    setWebhookMessage('Webhook salvo com sucesso!');
+    setWebhookMessage('Webhooks salvos com sucesso!');
     setTimeout(() => setWebhookMessage(''), 3000);
   };
 
-  const handleTestWebhook = async () => {
-    if (!webhookConfig.saleWebhookUrl) {
-      setWebhookMessage('Configure uma URL primeiro!');
+  const handleTestWebhook = async (eventType: 'venda_pendente' | 'venda_aprovada') => {
+    if (webhookConfig.webhooks.length === 0) {
+      setWebhookMessage('Adicione pelo menos um webhook primeiro!');
       setTimeout(() => setWebhookMessage(''), 3000);
       return;
     }
-    try {
-      await fetch(webhookConfig.saleWebhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          event: 'test_webhook',
-          timestamp: new Date().toISOString(),
-          message: 'Teste de webhook - Copa 2026',
-        }),
-        mode: 'no-cors',
-      });
-      setWebhookMessage('Webhook de teste enviado!');
-    } catch {
-      setWebhookMessage('Erro ao enviar webhook de teste!');
-    }
+    await fireWebhookEvent(eventType, { source: 'quiz-copa-2026', test: true });
+    setWebhookMessage(`Teste de ${eventType === 'venda_pendente' ? 'venda pendente' : 'venda aprovada'} enviado!`);
     setTimeout(() => setWebhookMessage(''), 3000);
+  };
+
+  const addWebhook = () => {
+    setWebhookConfig(prev => ({
+      ...prev,
+      webhooks: [...prev.webhooks, { id: crypto.randomUUID(), url: '', events: ['venda_pendente', 'venda_aprovada'] }],
+    }));
+  };
+
+  const removeWebhook = (id: string) => {
+    setWebhookConfig(prev => ({
+      ...prev,
+      webhooks: prev.webhooks.filter(w => w.id !== id),
+    }));
+  };
+
+  const updateWebhook = (id: string, updates: Partial<WebhookEntry>) => {
+    setWebhookConfig(prev => ({
+      ...prev,
+      webhooks: prev.webhooks.map(w => w.id === id ? { ...w, ...updates } : w),
+    }));
+  };
+
+  const toggleWebhookEvent = (id: string, event: 'venda_pendente' | 'venda_aprovada') => {
+    setWebhookConfig(prev => ({
+      ...prev,
+      webhooks: prev.webhooks.map(w => {
+        if (w.id !== id) return w;
+        const events = w.events.includes(event)
+          ? w.events.filter(e => e !== event)
+          : [...w.events, event];
+        return { ...w, events: events.length > 0 ? events : [event] };
+      }),
+    }));
   };
 
   const pct = (a: number, b: number) => (b === 0 ? 0 : Math.round((a / b) * 100));
