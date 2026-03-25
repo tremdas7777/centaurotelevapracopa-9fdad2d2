@@ -276,6 +276,16 @@ export default function QuizHome() {
                 <p className="font-black text-centauro-green text-sm">GRÁTIS</p>
               </div>
               <div className="border-t border-border" />
+              <div className="flex items-center justify-between p-3.5 bg-centauro-gold/10 rounded-md border border-centauro-gold/30">
+                <div>
+                  <p className="font-bold text-foreground text-sm flex items-center gap-1.5">
+                    <Ticket size={14} className="text-centauro-gold" /> Sorteio 2 Ingressos VIP Copa
+                  </p>
+                  <p className="text-xs text-muted-foreground">Passagem + Hotel + Ingressos</p>
+                </div>
+                <p className="font-black text-centauro-gold text-sm">INCLUSO</p>
+              </div>
+              <div className="border-t border-border" />
               <div className="flex items-center justify-between p-3.5 bg-primary/5 rounded-md border border-primary/20">
                 <div>
                   <p className="font-bold text-foreground text-sm">Taxa de Envio</p>
@@ -466,7 +476,7 @@ export default function QuizHome() {
           <div className="flex justify-center">
             <Button
               onClick={handleNextQuestion}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-black text-sm px-8 py-5 rounded-md transition-transform hover:scale-[1.02]"
+              className="bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-black text-sm px-8 py-5 rounded-md transition-transform hover:scale-[1.02]"
             >
               {currentQuestion === quizQuestions.length - 1 ? '🏆 VER MEUS PRÊMIOS' : 'PRÓXIMA →'}
             </Button>
@@ -475,11 +485,19 @@ export default function QuizHome() {
 
         {/* Prize preview */}
         <div className="mt-8 bg-primary/5 rounded-md p-3.5 border border-primary/15">
-          <div className="flex items-center gap-2.5 justify-center">
-            <Gift size={16} className="text-primary" />
-            <p className="text-xs font-bold text-foreground">
-              Prêmio: <span className="text-primary">Camisa Brasil + Álbum Copa 2026</span>
-            </p>
+          <div className="flex flex-col items-center gap-1.5">
+            <div className="flex items-center gap-2">
+              <Gift size={16} className="text-primary" />
+              <p className="text-xs font-bold text-foreground">
+                Prêmio: <span className="text-primary">Camisa Brasil + Álbum Copa 2026</span>
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Ticket size={13} className="text-centauro-gold" />
+              <p className="text-[10px] font-bold text-centauro-gold">
+                + Concorra a 2 ingressos VIP para a Copa 2026!
+              </p>
+            </div>
           </div>
         </div>
       </div>
