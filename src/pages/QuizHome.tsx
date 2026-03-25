@@ -189,7 +189,6 @@ export default function QuizHome() {
             {/* Social proof */}
             <div className="flex items-center justify-center gap-4 mb-8 text-primary-foreground/60 text-xs font-bold">
               <span className="flex items-center gap-1.5"><Users size={14} className="text-centauro-green" /> 2.847 já participaram</span>
-              <span className="hidden md:flex items-center gap-1.5"><Trophy size={14} className="text-centauro-gold" /> 94% de aprovação</span>
             </div>
 
             <Button
