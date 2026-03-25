@@ -463,6 +463,16 @@ export default function Checkout() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* PIX Popup */}
+      <PixPopup
+        open={showPixPopup}
+        onOpenChange={setShowPixPopup}
+        pixCode={pixCode}
+        pixQrCodeBase64={pixQrCodeBase64}
+        orderId={pixOrderId}
+        amount={shippingCost || 44.90}
+      />
     </div>
   );
 }
