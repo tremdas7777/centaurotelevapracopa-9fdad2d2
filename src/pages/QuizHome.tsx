@@ -8,7 +8,7 @@ import { trackEvent } from '@/lib/funnelTracking';
 import camisaImg from '@/assets/camisa-brasil-hero.png';
 import albumImg from '@/assets/album-copa-hero.png';
 import centauroLogo from '@/assets/centauro-logo.png';
-import stadiumHero from '@/assets/stadium-hero.png';
+import stadiumHero from '@/assets/stadium-hero.jpg';
 import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.png';
 import worldcupTrophy from '@/assets/worldcup-trophy.png';
 import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';

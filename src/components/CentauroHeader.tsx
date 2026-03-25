@@ -1,5 +1,5 @@
 import centauroLogo from "@/assets/centauro-logo.png";
-import centauroBanner from "@/assets/centauro-copa-banner.jpg";
+import quizBanner from "@/assets/quiz-banner.png";
 
 export default function CentauroHeader() {
   return (
@@ -14,7 +14,7 @@ export default function CentauroHeader() {
       {/* Banner */}
       <div
         className="w-full h-48 md:h-64 bg-cover bg-center relative"
-        style={{ backgroundImage: `url(${centauroBanner})` }}
+        style={{ backgroundImage: `url(${quizBanner})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-6">
