@@ -13,7 +13,7 @@ import centauroLogo from '@/assets/centauro-logo.webp';
 import stadiumHero from '@/assets/stadium-hero.webp';
 import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.webp';
 import cbfLogo from '@/assets/cbf-logo.webp';
-import quizBannerPreload from '@/assets/quiz-banner-sm.webp';
+import quizBannerPreload from '@/assets/quiz-banner-md.webp';
 import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
 import { playCorrectSound, playWrongSound, playRevealSound } from '@/lib/quizSounds';
 
@@ -147,7 +147,7 @@ export default function QuizHome() {
   // HOME / LANDING PAGE
   if (showHome) {
     return (
-      <div className="bg-foreground flex flex-col">
+      <div className="bg-foreground flex flex-col min-h-screen">
         {/* Preload quiz banner */}
         <link rel="preload" as="image" href={quizBannerPreload} />
         <img src={quizBannerPreload} alt="" className="hidden" />
@@ -160,13 +160,13 @@ export default function QuizHome() {
         </div>
 
         {/* Players banner */}
-        <div className="w-full h-44 md:h-64 relative overflow-hidden">
+        <div className="w-full h-48 md:h-64 relative overflow-hidden">
           <img src={quizBannerPreload} alt="Jogadores Seleção Brasileira" className="w-full h-full object-cover object-top" />
           <div className="absolute inset-0 bg-gradient-to-b from-foreground/20 via-transparent to-foreground" />
         </div>
 
-        {/* Full-screen Hero */}
-        <div className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-12 bg-foreground">
+        {/* Hero content - fills remaining viewport */}
+        <div className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 bg-foreground">
           <div className="relative z-10 max-w-lg mx-auto flex flex-col items-center">
 
             <p className="text-xs font-bold text-centauro-green uppercase tracking-widest mb-2">⚽ Promoção Copa do Mundo 2026</p>
