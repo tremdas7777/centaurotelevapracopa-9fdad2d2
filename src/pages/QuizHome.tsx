@@ -7,8 +7,7 @@ import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Gift, ShoppingCart, S
 import { trackEvent } from '@/lib/funnelTracking';
 import { fireConversionEvent } from '@/lib/pixelManager';
 import { fireSaleWebhook } from '@/lib/webhookManager';
-import camisaCasaImg from '@/assets/camisa-brasil-hero.png';
-import camisaForaImg from '@/assets/camisa-brasil-fora.png';
+import camisaImg from '@/assets/camisa-brasil-hero.png';
 import albumImg from '@/assets/album-copa-hero.png';
 import centauroLogo from '@/assets/centauro-logo.png';
 import stadiumHero from '@/assets/stadium-hero.jpg';
@@ -84,7 +83,6 @@ export default function QuizHome() {
   const [showAnimation, setShowAnimation] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300);
   const [selectedSize, setSelectedSize] = useState('M');
-  const [selectedJersey, setSelectedJersey] = useState<'casa' | 'fora'>('casa');
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
   const hasTrackedVisitor = useRef(false);
   const hasTrackedQuizStart = useRef(false);
@@ -302,36 +300,11 @@ export default function QuizHome() {
                 <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider">
                   Exclusivo
                 </span>
-                <img src={selectedJersey === 'casa' ? camisaCasaImg : camisaForaImg} alt="Camisa Brasil 2026" className="max-h-44 object-contain" />
+                <img src={camisaImg} alt="Camisa Brasil 2026" className="max-h-44 object-contain" />
               </div>
               <div className="p-5">
                 <h3 className="text-lg font-black text-foreground mb-0.5">Camisa Brasil 2026</h3>
                 <p className="text-muted-foreground text-xs mb-3">Seleção Brasileira - Edição Copa do Mundo</p>
-                <div className="mb-3">
-                  <p className="text-xs font-bold text-foreground mb-2">Modelo:</p>
-                  <div className="flex gap-2 mb-3">
-                    <button
-                      onClick={() => setSelectedJersey('casa')}
-                      className={`flex-1 py-2 px-3 rounded-md text-xs font-black border-2 transition-all ${
-                        selectedJersey === 'casa'
-                          ? 'bg-centauro-gold text-foreground border-centauro-gold'
-                          : 'bg-secondary text-foreground border-border hover:border-primary/50'
-                      }`}
-                    >
-                      🏠 Casa
-                    </button>
-                    <button
-                      onClick={() => setSelectedJersey('fora')}
-                      className={`flex-1 py-2 px-3 rounded-md text-xs font-black border-2 transition-all ${
-                        selectedJersey === 'fora'
-                          ? 'bg-blue-700 text-primary-foreground border-blue-700'
-                          : 'bg-secondary text-foreground border-border hover:border-primary/50'
-                      }`}
-                    >
-                      ✈️ Fora
-                    </button>
-                  </div>
-                </div>
                 <div className="mb-3">
                   <p className="text-xs font-bold text-foreground mb-2">Tamanho:</p>
                   <div className="flex gap-2">
