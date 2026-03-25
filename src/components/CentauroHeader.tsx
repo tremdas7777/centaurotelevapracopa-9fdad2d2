@@ -12,8 +12,8 @@ export default function CentauroHeader() {
       </div>
 
       {/* Banner */}
-      <div className="w-full relative">
-        <img src={quizBanner} alt="Quiz Copa 2026" className="w-full h-auto object-contain" />
+      <div className="w-full h-32 md:h-64 relative overflow-hidden">
+        <img src={quizBanner} alt="Quiz Copa 2026" className="w-full h-full object-cover object-top" />
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/30 to-transparent" />
       </div>
     </header>
