@@ -518,23 +518,11 @@ export default function QuizHome() {
                 </div>
                 <p className="font-black text-centauro-gold text-sm">INCLUSO</p>
               </div>
-              <div className="border-t border-border" />
-              <div className="flex items-center justify-between p-3.5 bg-primary/5 rounded-md border border-primary/20">
-                <div>
-                  <p className="font-bold text-foreground text-sm">Taxa de Envio</p>
-                  <p className="text-xs text-muted-foreground">Entrega em 3-5 dias úteis</p>
-                </div>
-                {freteRevealed ? (
-                  <p className="font-black text-centauro-green text-lg">R$ 44,90</p>
-                ) : (
-                  <p className="font-black text-muted-foreground text-sm">Informe o CEP</p>
-                )}
-              </div>
             </div>
             <div className="bg-secondary p-5 rounded-md text-center">
-              <p className="text-muted-foreground text-xs font-medium mb-1">Economia total</p>
-              <p className="text-3xl font-black text-foreground mb-0.5">R$ 439,80</p>
-              <p className="text-sm font-bold text-centauro-green">de desconto nos seus prêmios!</p>
+              <p className="text-muted-foreground text-xs font-medium mb-1">Você economiza</p>
+              <p className="text-3xl font-black text-foreground mb-0.5 line-through decoration-destructive decoration-2">R$ 439,80</p>
+              <p className="text-sm font-bold text-centauro-green">em prêmios 100% gratuitos!</p>
             </div>
           </Card>
 
