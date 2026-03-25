@@ -408,7 +408,7 @@ export default function QuizHome() {
           </Card>
 
           {/* CTA */}
-          <div className="bg-foreground rounded-xl p-8 md:p-10 text-center mb-8 relative overflow-hidden">
+          <div className="bg-primary rounded-xl p-8 md:p-10 text-center mb-8 relative overflow-hidden">
             <div className="absolute inset-0 opacity-5">
               <div className="absolute inset-0" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.15) 20px, rgba(255,255,255,0.15) 40px)' }} />
             </div>
