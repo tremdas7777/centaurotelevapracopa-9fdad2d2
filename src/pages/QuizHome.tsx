@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import CentauroHeader from '@/components/CentauroHeader';
@@ -14,6 +14,7 @@ import stadiumHero from '@/assets/stadium-hero.webp';
 import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.webp';
 import worldcupTrophy from '@/assets/worldcup-trophy.webp';
 import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
+import { playCorrectSound, playWrongSound, playRevealSound } from '@/lib/quizSounds';
 
 interface Question {
   id: number;
@@ -114,7 +115,10 @@ export default function QuizHome() {
     if (selectedAnswer !== null) return;
     setSelectedAnswer(index);
     setShowResult(true);
-    setIsCorrect(index === quizQuestions[currentQuestion].correctAnswer);
+    const correct = index === quizQuestions[currentQuestion].correctAnswer;
+    setIsCorrect(correct);
+    if (correct) playCorrectSound();
+    else playWrongSound();
   };
 
   const handleNextQuestion = () => {
@@ -167,11 +171,11 @@ export default function QuizHome() {
             <p className="text-xs font-bold text-centauro-green uppercase tracking-widest mb-2">⚽ Promoção Copa do Mundo 2026</p>
 
             <h1 className="text-3xl md:text-5xl font-black text-primary-foreground leading-[1.1] mb-4 tracking-tight">
-              Ganhe a Camisa Oficial do Brasil + Álbum da Copa
+              Prove que você é o maior torcedor do Brasil
             </h1>
 
             <p className="text-sm md:text-lg text-primary-foreground/70 mb-8 leading-relaxed max-w-md">
-              Acerte 5 de 8 perguntas sobre a Seleção e <strong className="text-primary-foreground">leve seus prêmios pagando apenas o frete</strong>
+              Teste seus conhecimentos sobre a Seleção e <strong className="text-primary-foreground">desbloqueie prêmios exclusivos</strong>
             </p>
 
             <Button
