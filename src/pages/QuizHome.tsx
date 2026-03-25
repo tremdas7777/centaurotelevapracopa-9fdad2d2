@@ -45,14 +45,14 @@ const quizQuestions: Question[] = [
   },
   {
     id: 4,
-    question: 'Neymar joga com qual número na Seleção?',
-    options: ['7', '10', '11', '9'],
+    question: 'Quantos gols Pelé marcou pela Seleção Brasileira?',
+    options: ['70 gols', '77 gols', '85 gols', '90 gols'],
     correctAnswer: 1,
   },
   {
     id: 5,
-    question: 'Quantos gols Pelé marcou pela Seleção Brasileira?',
-    options: ['70 gols', '77 gols', '85 gols', '90 gols'],
+    question: 'Contra qual seleção será o segundo jogo do Brasil na fase de grupos da Copa do Mundo 2026?',
+    options: ['Haiti', 'Escócia', 'Marrocos', 'Colômbia'],
     correctAnswer: 1,
   },
   {
