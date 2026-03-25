@@ -229,6 +229,8 @@ export default function Checkout() {
                   placeholder="00000-000"
                   value={cep}
                   onChange={handleCepChange}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   className="py-5"
                   maxLength={9}
                 />

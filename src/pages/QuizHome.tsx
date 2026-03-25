@@ -587,6 +587,8 @@ export default function QuizHome() {
                       placeholder="000.000.000-00"
                       value={cpfValue}
                       onChange={handleCpfChange}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       className={`text-center text-lg tracking-widest ${cpfError ? 'border-destructive' : ''}`}
                       maxLength={14}
                     />
