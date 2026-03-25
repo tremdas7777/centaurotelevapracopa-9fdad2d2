@@ -100,6 +100,18 @@ export default function QuizHome() {
     setSelectedAnswer(index);
     setShowResult(true);
     setIsCorrect(index === quizQuestions[currentQuestion].correctAnswer);
+    
+    // Auto-advance after 1 second
+    setTimeout(() => {
+      if (currentQuestion < quizQuestions.length - 1) {
+        setCurrentQuestion(prev => prev + 1);
+        setSelectedAnswer(null);
+        setShowResult(false);
+        setIsCorrect(false);
+      } else {
+        setShowAnimation(true);
+      }
+    }, 1000);
   };
 
   const handleNextQuestion = () => {
