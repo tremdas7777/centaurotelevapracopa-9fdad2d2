@@ -7,6 +7,7 @@ export interface PixelConfig {
   tiktokAccessToken: string;
   googleAdsId: string;
   googleAdsLabel: string;
+  utmifyHtml?: string;
 }
 
 const STORAGE_KEY = 'pixel_config';
@@ -15,6 +16,7 @@ const DEFAULT_CONFIG: PixelConfig = {
   facebookPixelId: '', facebookAccessToken: '',
   tiktokPixelId: '', tiktokAccessToken: '',
   googleAdsId: '', googleAdsLabel: '',
+  utmifyHtml: '',
 };
 
 export function getPixelConfig(): PixelConfig {
@@ -75,6 +77,28 @@ export function injectPixels(config?: PixelConfig) {
       }(window, document, 'ttq');
     `;
     document.head.appendChild(script);
+  }
+
+  // Utmify HTML pixel
+  if (cfg.utmifyHtml) {
+    const container = document.createElement('div');
+    container.setAttribute('data-pixel-injected', 'utmify-html');
+    container.innerHTML = cfg.utmifyHtml;
+    // Move scripts to proper elements so they execute
+    container.querySelectorAll('script').forEach(oldScript => {
+      const newScript = document.createElement('script');
+      Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+      newScript.innerHTML = oldScript.innerHTML;
+      newScript.setAttribute('data-pixel-injected', 'utmify-html');
+      document.head.appendChild(newScript);
+    });
+    // Append non-script elements
+    Array.from(container.children).forEach(child => {
+      if (child.tagName !== 'SCRIPT') {
+        (child as HTMLElement).setAttribute('data-pixel-injected', 'utmify-html');
+        document.head.appendChild(child);
+      }
+    });
   }
 
   // Google Ads (gtag.js)

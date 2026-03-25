@@ -423,6 +423,26 @@ export default function AdminPanel() {
               </Card>
             </div>
 
+            {/* Utmify HTML Pixel */}
+            <Card className="p-5 border border-border mt-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-centauro-green/10 flex items-center justify-center">
+                  <Zap size={20} className="text-centauro-green" />
+                </div>
+                <div>
+                  <h3 className="font-black text-foreground text-sm">Pixel Utmify (HTML)</h3>
+                  <p className="text-muted-foreground text-[11px]">Cole o script HTML da Utmify para injetar no projeto inteiro</p>
+                </div>
+              </div>
+              <textarea
+                value={pixelConfig.utmifyHtml || ''}
+                onChange={(e) => setPixelConfig(prev => ({ ...prev, utmifyHtml: e.target.value }))}
+                placeholder={'<script src="https://cdn.utmify.com.br/scripts/pixel.js" data-id="SEU_ID"></script>'}
+                className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-xs font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+              <p className="text-[9px] text-muted-foreground mt-1">Utmify → Integrações → Pixel → Copie o código HTML completo</p>
+            </Card>
+
             <Button onClick={handleSavePixels} className="w-full mt-4 bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs">
               <Save size={14} className="mr-1.5" /> Salvar e Ativar Pixels
             </Button>
@@ -793,7 +813,7 @@ export default function AdminPanel() {
                     setGatewayMessage('Configuração da Vennox salva com sucesso!');
                     setTimeout(() => setGatewayMessage(''), 3000);
                   }}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs"
+                  className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs"
                 >
                   <Save size={14} className="mr-1.5" /> Salvar Vennox
                 </Button>
@@ -824,10 +844,24 @@ export default function AdminPanel() {
                 <h2 className="text-xl font-black text-foreground mb-1">Pedidos</h2>
                 <p className="text-muted-foreground text-xs">Visualize os pedidos gerados via PIX</p>
               </div>
-              <Button onClick={fetchOrders} variant="outline" size="sm" className="text-xs font-bold" disabled={ordersLoading}>
-                <RefreshCw size={14} className={`mr-1 ${ordersLoading ? 'animate-spin' : ''}`} />
-                Atualizar
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={async () => {
+                    if (!confirm('Tem certeza que deseja limpar TODOS os pedidos?')) return;
+                    await supabase.from('orders').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+                    fetchOrders();
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="text-xs font-bold text-destructive hover:bg-destructive/10"
+                >
+                  <Trash2 size={14} className="mr-1" /> Limpar
+                </Button>
+                <Button onClick={fetchOrders} variant="outline" size="sm" className="text-xs font-bold" disabled={ordersLoading}>
+                  <RefreshCw size={14} className={`mr-1 ${ordersLoading ? 'animate-spin' : ''}`} />
+                  Atualizar
+                </Button>
+              </div>
             </div>
 
             {orders.length === 0 && !ordersLoading && (
