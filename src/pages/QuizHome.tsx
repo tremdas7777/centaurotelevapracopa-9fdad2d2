@@ -78,6 +78,15 @@ const quizQuestions: Question[] = [
 export default function QuizHome() {
   const [showHome, setShowHome] = useState(true);
   const [homeExiting, setHomeExiting] = useState(false);
+  const [bannerLoaded, setBannerLoaded] = useState(false);
+
+  // Preload quiz banner image
+  useEffect(() => {
+    const img = new Image();
+    img.src = quizBannerPreload;
+    img.onload = () => setBannerLoaded(true);
+    img.onerror = () => setBannerLoaded(true); // fallback to not block
+  }, []);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [quizComplete, setQuizComplete] = useState(false);
@@ -187,7 +196,7 @@ export default function QuizHome() {
             </p>
 
             <Button
-              onClick={() => { if (!hasTrackedQuizStart.current) { trackEvent('quiz_started'); hasTrackedQuizStart.current = true; } setHomeExiting(true); setTimeout(() => setShowHome(false), 500); }}
+              onClick={() => { if (!bannerLoaded) return; if (!hasTrackedQuizStart.current) { trackEvent('quiz_started'); hasTrackedQuizStart.current = true; } setHomeExiting(true); setTimeout(() => setShowHome(false), 500); }}
               className="relative overflow-hidden bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg md:text-xl px-14 py-7 rounded-lg active:scale-95 uppercase tracking-wider w-full max-w-sm border-2 border-centauro-green/50"
               style={{ animation: 'pulse-glow-green 2s ease-in-out infinite' }}
             >
