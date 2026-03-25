@@ -582,22 +582,21 @@ export default function AdminPanel() {
                 />
               </div>
 
-              {/* URL field - only when external is on */}
-              {externalCheckout && (
-                <div className="space-y-2">
-                  <Input
-                    type="url"
-                    value={newCheckoutUrl}
-                    onChange={(e) => setNewCheckoutUrl(e.target.value)}
-                    placeholder="https://seu-checkout.com/pagamento"
-                    className="font-mono text-xs"
-                  />
-                  <Button onClick={handleSave} className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs" size="sm">
-                    <Save size={14} className="mr-1.5" /> Salvar Link
-                  </Button>
-                  <StatusMessage msg={message} />
-                </div>
-              )}
+              {/* URL field */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Link do checkout externo</label>
+                <Input
+                  type="url"
+                  value={newCheckoutUrl}
+                  onChange={(e) => setNewCheckoutUrl(e.target.value)}
+                  placeholder="https://seu-checkout.com/pagamento"
+                  className="font-mono text-xs"
+                />
+                <Button onClick={handleSave} className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs" size="sm">
+                  <Save size={14} className="mr-1.5" /> Salvar Link
+                </Button>
+                <StatusMessage msg={message} />
+              </div>
 
               {/* Status info */}
               <p className="text-[10px] text-muted-foreground">
