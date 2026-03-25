@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { CheckCircle, Truck, Shield, Lock, Ticket, Clock, Users } from 'lucide-react';
+import { CheckCircle, Truck, Shield, Lock, Ticket, Clock, Users, Loader2 } from 'lucide-react';
 import centauroLogo from '@/assets/centauro-logo.webp';
 import cbfLogo from '@/assets/cbf-logo.webp';
 import camisaImg from '@/assets/camisa-brasil-hero.webp';
@@ -11,6 +11,9 @@ import albumImg from '@/assets/album-copa-hero.webp';
 import { trackEvent } from '@/lib/funnelTracking';
 import { fireConversionEvent } from '@/lib/pixelManager';
 import { fireSaleWebhook } from '@/lib/webhookManager';
+import { getPaymentGatewayConfig } from '@/lib/paymentGateway';
+import { supabase } from '@/integrations/supabase/client';
+import PixPopup from '@/components/PixPopup';
 import {
   AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
   AlertDialogDescription, AlertDialogFooter, AlertDialogAction
@@ -37,6 +40,14 @@ export default function Checkout() {
   const [nearestStore, setNearestStore] = useState('');
   const [timeLeft, setTimeLeft] = useState(1800);
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
+
+  // PIX state
+  const [pixLoading, setPixLoading] = useState(false);
+  const [showPixPopup, setShowPixPopup] = useState(false);
+  const [pixCode, setPixCode] = useState('');
+  const [pixQrCodeBase64, setPixQrCodeBase64] = useState('');
+  const [pixOrderId, setPixOrderId] = useState('');
+  const [pixError, setPixError] = useState('');
 
   const cepValid = cep.replace(/\D/g, '').length === 8 && !!endereco;
   const shippingCost = shippingMethod === 'sedex' ? 44.90 : shippingMethod === 'retirada' ? 0 : null;
@@ -103,16 +114,52 @@ export default function Checkout() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (shippingMethod === 'retirada') {
       setShowStoreError(true);
       return;
     }
+
     trackEvent('checkout');
     fireConversionEvent('Purchase', { value: 44.90, currency: 'BRL' });
     fireSaleWebhook({ source: 'quiz-copa-2026' });
-    const checkoutUrl = localStorage.getItem('checkoutUrl') || 'https://seu-checkout.com/taxa-envio';
-    window.location.href = checkoutUrl;
+
+    const gatewayConfig = getPaymentGatewayConfig();
+
+    if (gatewayConfig.pagouai.secretKey) {
+      // Generate PIX via edge function
+      setPixLoading(true);
+      setPixError('');
+      try {
+        const { data, error } = await supabase.functions.invoke('criar-pix', {
+          body: {
+            secretKey: gatewayConfig.pagouai.secretKey,
+            amount: shippingCost || 44.90,
+            buyerName: nome,
+            buyerEmail: email,
+            buyerDocument: '',
+            buyerPhone: telefone,
+          },
+        });
+
+        if (error) throw error;
+
+        setPixCode(data.pix_code || '');
+        setPixQrCodeBase64(data.pix_qr_code_base64 || '');
+        setPixOrderId(data.order_id || '');
+        setShowPixPopup(true);
+      } catch (err: any) {
+        console.error('PIX error:', err);
+        setPixError('Erro ao gerar PIX. Tente novamente.');
+        setTimeout(() => setPixError(''), 5000);
+      } finally {
+        setPixLoading(false);
+      }
+    } else {
+      // Fallback to external checkout
+      const checkoutUrl = localStorage.getItem('checkoutUrl') || 'https://seu-checkout.com/taxa-envio';
+      window.location.href = checkoutUrl;
+    }
   };
 
   const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
@@ -331,13 +378,23 @@ export default function Checkout() {
         </Card>
 
         {/* Submit */}
+        {pixError && (
+          <div className="mb-3 p-3 rounded-lg bg-destructive/10 text-destructive text-xs font-bold text-center border border-destructive/30">
+            {pixError}
+          </div>
+        )}
+
         <Button
           onClick={handleSubmit}
-          disabled={!isFormValid}
+          disabled={!isFormValid || pixLoading}
           className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-7 rounded-lg transition-transform hover:scale-[1.02] active:scale-95 mb-4"
           style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)', animation: 'pulse-glow-green 2s ease-in-out infinite' }}
         >
-          {shippingMethod === 'sedex' ? 'FINALIZAR PEDIDO — R$ 44,90' : 'FINALIZAR PEDIDO'}
+          {pixLoading ? (
+            <><Loader2 size={18} className="mr-2 animate-spin" /> GERANDO PIX...</>
+          ) : (
+            shippingMethod === 'sedex' ? 'FINALIZAR PEDIDO — R$ 44,90' : 'FINALIZAR PEDIDO'
+          )}
         </Button>
 
         {/* Trust */}
@@ -406,6 +463,16 @@ export default function Checkout() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* PIX Popup */}
+      <PixPopup
+        open={showPixPopup}
+        onOpenChange={setShowPixPopup}
+        pixCode={pixCode}
+        pixQrCodeBase64={pixQrCodeBase64}
+        orderId={pixOrderId}
+        amount={shippingCost || 44.90}
+      />
     </div>
   );
 }

@@ -3,17 +3,19 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { Eye, EyeOff, LogOut, Save, Link2, Info, BarChart3, ShoppingCart, TrendingUp, Users, CheckCircle, ArrowDown, Trash2, Code, Webhook, Bell, Zap, Loader2, ExternalLink, CreditCard, QrCode } from 'lucide-react';
+import { Eye, EyeOff, LogOut, Save, Link2, Info, BarChart3, ShoppingCart, TrendingUp, Users, CheckCircle, ArrowDown, Trash2, Code, Webhook, Bell, Zap, Loader2, ExternalLink, CreditCard, QrCode, Copy, RefreshCw } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import { getFunnelStats, clearFunnelEvents } from '@/lib/funnelTracking';
 import { getPixelConfig, savePixelConfig, type PixelConfig } from '@/lib/pixelManager';
 import { getWebhookConfig, saveWebhookConfig, type WebhookConfig } from '@/lib/webhookManager';
 import { getUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
 import { getPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
+import { supabase } from '@/integrations/supabase/client';
 
 const ADMIN_PASSWORD = 'escalabahia';
 
-type Tab = 'analytics' | 'pixels' | 'webhooks' | 'utmify' | 'checkout' | 'pagamentos';
+type Tab = 'analytics' | 'pixels' | 'webhooks' | 'utmify' | 'checkout' | 'pagamentos' | 'pedidos';
 
 export default function AdminPanel() {
   const [password, setPassword] = useState('');
@@ -37,7 +39,7 @@ export default function AdminPanel() {
   const [webhookConfig, setWebhookConfig] = useState<WebhookConfig>({ saleWebhookUrl: '' });
   const [webhookMessage, setWebhookMessage] = useState('');
 
-  // UTMify state
+  // Utmify state
   const [utmifyConfig, setUtmifyConfig] = useState<UtmifyConfig>({ apiToken: '', apiToken2: '' });
   const [utmifyMessage, setUtmifyMessage] = useState('');
   const [utmifyMessage2, setUtmifyMessage2] = useState('');
@@ -47,6 +49,15 @@ export default function AdminPanel() {
   // Payment gateway state
   const [gatewayConfig, setGatewayConfig] = useState<PaymentGatewayConfig>(getPaymentGatewayConfig());
   const [gatewayMessage, setGatewayMessage] = useState('');
+  const [orders, setOrders] = useState<any[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+
+  const fetchOrders = async () => {
+    setOrdersLoading(true);
+    const { data } = await supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(50);
+    setOrders(data || []);
+    setOrdersLoading(false);
+  };
 
   useEffect(() => {
     const saved = localStorage.getItem('checkoutUrl');
@@ -65,6 +76,12 @@ export default function AdminPanel() {
     const interval = setInterval(refresh, 30000);
     return () => clearInterval(interval);
   }, [isAuthenticated, period]);
+
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'pedidos') {
+      fetchOrders();
+    }
+  }, [isAuthenticated, activeTab]);
 
   const handleLogin = () => {
     if (password === ADMIN_PASSWORD) {
@@ -95,7 +112,7 @@ export default function AdminPanel() {
 
   const handleSaveUtmify = () => {
     saveUtmifyConfig(utmifyConfig);
-    setUtmifyMessage('Token UTMify salvo com sucesso!');
+    setUtmifyMessage('Token Utmify salvo com sucesso!');
     setTimeout(() => setUtmifyMessage(''), 3000);
   };
 
@@ -184,8 +201,9 @@ export default function AdminPanel() {
     { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={14} /> },
     { id: 'pixels', label: 'Pixels', icon: <Code size={14} /> },
     { id: 'webhooks', label: 'Webhooks', icon: <Bell size={14} /> },
-    { id: 'utmify', label: 'UTMify', icon: <Zap size={14} /> },
+    { id: 'utmify', label: 'Utmify', icon: <Zap size={14} /> },
     { id: 'pagamentos', label: 'Pagamentos', icon: <CreditCard size={14} /> },
+    { id: 'pedidos', label: 'Pedidos', icon: <ShoppingCart size={14} /> },
     { id: 'checkout', label: 'Checkout', icon: <Link2 size={14} /> },
   ];
 
@@ -470,8 +488,8 @@ export default function AdminPanel() {
         {/* UTMIFY TAB */}
         {activeTab === 'utmify' && (
           <div>
-            <h2 className="text-xl font-black text-foreground mb-1">Integração UTMify</h2>
-            <p className="text-muted-foreground text-xs mb-6">Rastreie suas vendas com a UTMify</p>
+            <h2 className="text-xl font-black text-foreground mb-1">Integração Utmify</h2>
+            <p className="text-muted-foreground text-xs mb-6">Rastreie suas vendas com a Utmify</p>
 
             <Card className="p-5 border border-border">
               <div className="flex items-center gap-3 mb-3">
@@ -480,7 +498,7 @@ export default function AdminPanel() {
                 </div>
                 <div>
                   <h3 className="font-black text-foreground text-sm">Tokens da API</h3>
-                  <p className="text-muted-foreground text-[11px]">Configure até 2 tokens UTMify para envio simultâneo</p>
+                  <p className="text-muted-foreground text-[11px]">Configure até 2 tokens Utmify para envio simultâneo</p>
                 </div>
               </div>
 
@@ -492,7 +510,7 @@ export default function AdminPanel() {
                     type="password"
                     value={utmifyConfig.apiToken}
                     onChange={(e) => setUtmifyConfig(prev => ({ ...prev, apiToken: e.target.value }))}
-                    placeholder="Cole aqui o Token 1 da UTMify"
+                    placeholder="Cole aqui o Token 1 da Utmify"
                     className="font-mono text-xs"
                   />
                   <Button
@@ -521,7 +539,7 @@ export default function AdminPanel() {
                     type="password"
                     value={utmifyConfig.apiToken2}
                     onChange={(e) => setUtmifyConfig(prev => ({ ...prev, apiToken2: e.target.value }))}
-                    placeholder="Cole aqui o Token 2 da UTMify"
+                    placeholder="Cole aqui o Token 2 da Utmify"
                     className="font-mono text-xs"
                   />
                   <Button
@@ -555,7 +573,7 @@ export default function AdminPanel() {
                 <h3 className="font-bold text-foreground text-[11px]">Como funciona</h3>
               </div>
               <ul className="text-[10px] text-muted-foreground space-y-0.5 pl-5 list-disc">
-                <li><strong>Token:</strong> Gere em UTMify → Integrações → Credenciais de API</li>
+                <li><strong>Token:</strong> Gere em Utmify → Integrações → Credenciais de API</li>
                 <li><strong>Teste:</strong> Envia um pedido de teste (isTest: true) para validar o token</li>
                 <li>Eventos de venda são enviados automaticamente ao clicar no checkout</li>
                 <li>Parâmetros UTM são capturados e enviados junto com a venda</li>
@@ -579,34 +597,12 @@ export default function AdminPanel() {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => {
-                    const updated = { ...gatewayConfig, activeGateway: 'pagouai' as const };
-                    setGatewayConfig(updated);
-                    savePaymentGatewayConfig(updated);
-                  }}
-                  className={`flex-1 px-3 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${
-                    gatewayConfig.activeGateway === 'pagouai'
-                      ? 'border-centauro-green bg-centauro-green/5 text-centauro-green'
-                      : 'border-border text-muted-foreground hover:border-muted-foreground/30'
-                  }`}
+                  className="flex-1 px-3 py-2.5 rounded-lg text-xs font-bold border-2 transition-all border-centauro-green bg-centauro-green/5 text-centauro-green"
                 >
                   Pagou.ai
                 </button>
-                <button
-                  onClick={() => {
-                    const updated = { ...gatewayConfig, activeGateway: 'none' as const };
-                    setGatewayConfig(updated);
-                    savePaymentGatewayConfig(updated);
-                  }}
-                  className={`px-3 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${
-                    gatewayConfig.activeGateway === 'none'
-                      ? 'border-destructive bg-destructive/5 text-destructive'
-                      : 'border-border text-muted-foreground hover:border-muted-foreground/30'
-                  }`}
-                >
-                  Nenhum
-                </button>
               </div>
+              <p className="text-[9px] text-muted-foreground mt-2">Mais gateways serão adicionados em breve</p>
             </Card>
 
             {/* Pagou.ai Config */}
@@ -666,7 +662,73 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* CHECKOUT TAB */}
+        {/* PEDIDOS TAB */}
+        {activeTab === 'pedidos' && (
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-black text-foreground mb-1">Pedidos</h2>
+                <p className="text-muted-foreground text-xs">Visualize os pedidos gerados via PIX</p>
+              </div>
+              <Button onClick={fetchOrders} variant="outline" size="sm" className="text-xs font-bold" disabled={ordersLoading}>
+                <RefreshCw size={14} className={`mr-1 ${ordersLoading ? 'animate-spin' : ''}`} />
+                Atualizar
+              </Button>
+            </div>
+
+            {orders.length === 0 && !ordersLoading && (
+              <Card className="p-8 border border-border text-center">
+                <ShoppingCart size={32} className="mx-auto mb-3 text-muted-foreground" />
+                <p className="text-sm font-bold text-foreground">Nenhum pedido ainda</p>
+                <p className="text-xs text-muted-foreground mt-1">Os pedidos aparecerão aqui quando clientes gerarem PIX</p>
+                <Button onClick={fetchOrders} className="mt-4 bg-primary text-primary-foreground text-xs font-bold" size="sm">
+                  Carregar Pedidos
+                </Button>
+              </Card>
+            )}
+
+            {ordersLoading && (
+              <div className="flex justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+              </div>
+            )}
+
+            {orders.length > 0 && (
+              <div className="space-y-3">
+                {orders.map((order) => (
+                  <Card key={order.id} className="p-4 border border-border">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <p className="text-xs font-black text-foreground">{order.buyer_name || 'Sem nome'}</p>
+                        <p className="text-[10px] text-muted-foreground">{order.buyer_email || 'Sem email'}</p>
+                        {order.buyer_phone && <p className="text-[10px] text-muted-foreground">{order.buyer_phone}</p>}
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <Badge className={`text-[10px] ${order.status === 'paid' ? 'bg-centauro-green/10 text-centauro-green border-centauro-green/30' : 'bg-centauro-gold/10 text-centauro-gold border-centauro-gold/30'}`}>
+                          {order.status === 'paid' ? 'Pago' : 'Pendente'}
+                        </Badge>
+                        <Badge variant="outline" className={`text-[10px] ${order.qr_code_copied ? 'border-centauro-green/30 text-centauro-green' : 'border-muted-foreground/30 text-muted-foreground'}`}>
+                          <Copy size={10} className="mr-1" />
+                          {order.qr_code_copied ? 'Copiado' : 'Não copiado'}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between pt-2 border-t border-border">
+                      <span className="text-xs font-bold text-foreground">
+                        R$ {(order.amount_cents / 100).toFixed(2).replace('.', ',')}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {new Date(order.created_at).toLocaleString('pt-BR')}
+                      </span>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+
         {activeTab === 'checkout' && (
           <div className="space-y-4">
             <div>
