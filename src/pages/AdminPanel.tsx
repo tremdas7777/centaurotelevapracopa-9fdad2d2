@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Eye, EyeOff, LogOut, Save, Link2, Info } from 'lucide-react';
 import centauroLogo from '@/assets/centauro-logo.png';
 
-const ADMIN_PASSWORD = 'copa2026';
+const ADMIN_PASSWORD = 'escalabahia';
 
 export default function AdminPanel() {
   const [password, setPassword] = useState('');
