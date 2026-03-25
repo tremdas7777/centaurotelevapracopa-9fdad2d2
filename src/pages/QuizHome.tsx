@@ -77,6 +77,7 @@ const quizQuestions: Question[] = [
 
 export default function QuizHome() {
   const [showHome, setShowHome] = useState(true);
+  const [homeExiting, setHomeExiting] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [quizComplete, setQuizComplete] = useState(false);
