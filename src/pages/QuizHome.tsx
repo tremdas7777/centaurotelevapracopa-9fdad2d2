@@ -160,14 +160,14 @@ export default function QuizHome() {
         </div>
 
         {/* Players banner */}
-        <div className="w-full h-48 md:h-64 relative overflow-hidden">
-          <img src={quizBannerPreload} alt="Jogadores Seleção Brasileira" className="w-full h-full object-cover object-top" />
-          <div className="absolute inset-0 bg-gradient-to-b from-foreground/20 via-transparent to-foreground" />
+        <div className="w-full h-56 md:h-72 relative overflow-hidden">
+          <img src={quizBannerPreload} alt="Jogadores Seleção Brasileira" className="w-full h-full object-cover object-[center_30%]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-foreground" />
         </div>
 
         {/* Hero content with stadium background - fills remaining viewport */}
         <div
-          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8"
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-8 -mt-6"
           style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
         >
           <div className="absolute inset-0 bg-foreground/85" />
