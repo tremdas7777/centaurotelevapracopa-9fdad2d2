@@ -82,7 +82,7 @@ export default function QuizHome() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(300);
+  const [timeLeft, setTimeLeft] = useState(1800);
   const [selectedSize, setSelectedSize] = useState('M');
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
   const hasTrackedVisitor = useRef(false);
@@ -158,7 +158,7 @@ export default function QuizHome() {
 
         {/* Full-screen Hero - min-h-screen minus top bar */}
         <div
-          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 min-h-[calc(100vh-88px)]"
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 min-h-screen"
           style={{
             backgroundImage: `url(${stadiumHero})`,
             backgroundSize: 'cover',
