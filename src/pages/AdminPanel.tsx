@@ -168,6 +168,7 @@ export default function AdminPanel() {
     { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={14} /> },
     { id: 'pixels', label: 'Pixels', icon: <Code size={14} /> },
     { id: 'webhooks', label: 'Webhooks', icon: <Bell size={14} /> },
+    { id: 'utmify', label: 'UTMify', icon: <Zap size={14} /> },
     { id: 'checkout', label: 'Checkout', icon: <Link2 size={14} /> },
   ];
 
