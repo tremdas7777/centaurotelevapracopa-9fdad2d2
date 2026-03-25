@@ -245,7 +245,21 @@ export default function Checkout() {
     }
   };
 
-  const isFormValid = nome && email && telefone.replace(/\D/g, '').length >= 10 && cpf.replace(/\D/g, '').length === 11 && !cpfError && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
+  const validateEmail = (value: string): boolean => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    if (value && !validateEmail(value)) {
+      setEmailError('E-mail inválido. Verifique o endereço.');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const isFormValid = nome && email && !emailError && telefone.replace(/\D/g, '').length >= 10 && cpf.replace(/\D/g, '').length === 11 && !cpfError && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
 
   return (
     <div className="min-h-screen bg-background" style={{ fontFamily: "'Rubik', 'Inter', system-ui, sans-serif" }}>
@@ -335,9 +349,12 @@ export default function Checkout() {
                   type="email"
                   placeholder="seu@email.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="py-5"
+                  onChange={handleEmailChange}
+                  className={`py-5 ${emailError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                 />
+                {emailError && (
+                  <p className="text-destructive text-xs font-semibold mt-1.5">{emailError}</p>
+                )}
               </div>
               <div>
                 <label className="text-xs font-bold text-foreground mb-1.5 block">Telefone</label>
