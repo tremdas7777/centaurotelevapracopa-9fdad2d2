@@ -14,6 +14,8 @@ import { fireWebhookEvent } from '@/lib/webhookManager';
 import { getPaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
 import PixPopup from '@/components/PixPopup';
+import { findNearestStore, type CentauroStore } from '@/lib/centauroStores';
+import {
 import {
   AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
   AlertDialogDescription, AlertDialogFooter, AlertDialogAction
