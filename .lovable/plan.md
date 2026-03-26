@@ -1,41 +1,12 @@
 
 
-## Plano: Trocar API de consulta CPF
+## Plan: Remove ball image from loading screen
 
-### Problema
-A API atual (`apicpf.com`) não funciona bem. O usuário quer usar a nova API: `https://base2.sistemafull.site:80/api/cpfx?CPF=XXXXXXXXXXX`
+The user wants to undo the ball image addition on the "Verificando Resultado" loading screen and revert to the original emoji.
 
-### Resposta da nova API
-```json
-{
-  "CPF": "85954158541",
-  "NOME": "ANDRE LUAN LEANDRO BRAGA",
-  "NASCIMENTO": "16/06/2000",
-  "MAE": "CASSIA MARGARETE LEANDRO BRAGA",
-  "SEXO": "Masculino"
-}
-```
+### Changes
 
-### O que muda
-
-**1. Edge Function `supabase/functions/consulta-cpf/index.ts`**
-- Trocar a chamada de `api.apicpf.com` para `https://base2.sistemafull.site:80/api/cpfx?CPF={cpf}`
-- Essa API nao precisa de token/API key -- é pública (query param apenas)
-- Remover dependência do `CPF_API_KEY`
-- Converter o nome retornado (todo maiúsculo) para formato "Primeira Letra Maiúscula" (ex: "ANDRE LUAN" → "Andre Luan")
-- Retornar `{ nome: "Andre Luan Leandro Braga" }`
-
-**2. Frontend (`src/pages/QuizHome.tsx`)**
-- Nenhuma mudança necessária -- já chama a edge function e usa `data.nome`
-
-### Detalhes técnicos
-
-Função de capitalização no edge function:
-```typescript
-function toTitleCase(str: string): string {
-  return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-}
-```
-
-A edge function continuará fazendo proxy para não expor a URL da API diretamente no frontend.
+**`src/components/LoadingAnimation.tsx`**
+- Remove the `import bolaCopa` line
+- Replace the `<img>` tag (lines ~62-64) with the original `⚽` emoji text, keeping the pulse animation div
 
