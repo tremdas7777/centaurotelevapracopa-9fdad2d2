@@ -541,7 +541,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
 
           {/* Scratch Grid */}
           <div key={currentRound} className="animate-scale-in">
-            <ScratchGrid grid={grid} onAllRevealed={handleAllRevealed} />
+            <ScratchGrid grid={grid} onAllRevealed={handleAllRevealed} logoSrc={centauroLogo} />
           </div>
 
           {/* Legend */}
