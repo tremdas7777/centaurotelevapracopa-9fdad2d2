@@ -804,8 +804,6 @@ className={`text-center text-lg tracking-widest ${cpfError ? 'border-destructive
           </div>
         </div>
       </footer>
-        </div>
-      </div>
     );
   }
 
