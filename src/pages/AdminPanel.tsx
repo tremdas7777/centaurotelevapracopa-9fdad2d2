@@ -47,7 +47,12 @@ export default function AdminPanel() {
   const [utmifyTesting2, setUtmifyTesting2] = useState(false);
 
   // Payment gateway state
-  const [gatewayConfig, setGatewayConfig] = useState<PaymentGatewayConfig>(getPaymentGatewayConfig());
+  const [gatewayConfig, setGatewayConfig] = useState<PaymentGatewayConfig>({
+    activeGateway: 'centurionpay',
+    pagouai: { publicKey: '', secretKey: '', enabled: false },
+    vennox: { secretKey: '', companyId: '', enabled: false },
+    centurionpay: { secretKey: '', companyId: '', enabled: false },
+  });
   const [gatewayMessage, setGatewayMessage] = useState('');
   const [orders, setOrders] = useState<any[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
