@@ -35,6 +35,7 @@ export default function Checkout() {
 
   const [nome, setNome] = useState(prefilledName);
   const [email, setEmail] = useState('');
+  const [showEmailSuggestions, setShowEmailSuggestions] = useState(false);
   const [telefone, setTelefone] = useState('');
   const [telefoneError, setTelefoneError] = useState('');
   const [cpf, setCpf] = useState('');
@@ -282,10 +283,41 @@ export default function Checkout() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
   };
 
+  const emailDomains = ['@gmail.com', '@outlook.com', '@hotmail.com', '@yahoo.com', '@icloud.com'];
+
+  const getEmailSuggestions = (): string[] => {
+    if (!email || email.includes('@')) {
+      // If already has @ but domain is incomplete, suggest completions
+      if (email.includes('@')) {
+        const [local, domain] = email.split('@');
+        if (local && domain !== undefined) {
+          return emailDomains
+            .filter(d => d.slice(1).startsWith(domain) && d.slice(1) !== domain)
+            .map(d => `${local}${d}`);
+        }
+      }
+      return [];
+    }
+    return emailDomains.map(d => `${email}${d}`);
+  };
+
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setEmail(value);
-    if (value && !validateEmail(value)) {
+    setShowEmailSuggestions(true);
+    if (value && !value.includes('@')) {
+      setEmailError('');
+    } else if (value && !validateEmail(value)) {
+      setEmailError('E-mail inválido. Verifique o endereço.');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const handleSelectEmailSuggestion = (suggestion: string) => {
+    setEmail(suggestion);
+    setShowEmailSuggestions(false);
+    if (!validateEmail(suggestion)) {
       setEmailError('E-mail inválido. Verifique o endereço.');
     } else {
       setEmailError('');
@@ -382,15 +414,32 @@ export default function Checkout() {
 
             {/* Email + Telefone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div data-field-error={showFieldErrors && (!email || !!emailError) ? 'true' : undefined}>
+              <div data-field-error={showFieldErrors && (!email || !!emailError) ? 'true' : undefined} className="relative">
                 <label className="text-xs font-bold text-foreground mb-1.5 block">E-mail</label>
                 <Input
                   type="email"
                   placeholder="seu@email.com"
                   value={email}
                   onChange={handleEmailChange}
+                  onFocus={() => setShowEmailSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowEmailSuggestions(false), 200)}
+                  autoComplete="off"
                   className={`py-5 ${emailError || (showFieldErrors && !email) ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                 />
+                {showEmailSuggestions && getEmailSuggestions().length > 0 && (
+                  <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                    {getEmailSuggestions().map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onMouseDown={() => handleSelectEmailSuggestion(suggestion)}
+                        className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 {emailError && <p className="text-destructive text-xs font-semibold mt-1.5">{emailError}</p>}
                 {showFieldErrors && !email && !emailError && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
               </div>
