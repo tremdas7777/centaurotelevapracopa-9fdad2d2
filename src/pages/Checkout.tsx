@@ -199,13 +199,25 @@ export default function Checkout() {
     fireConversionEvent('Purchase', { value: 44.90, currency: 'BRL' });
 
     const gatewayConfig = getPaymentGatewayConfig();
-    const activeGateway = gatewayConfig.activeGateway;
-
-    console.log('Gateway config:', JSON.stringify({ activeGateway, pagouaiHasSecret: !!gatewayConfig.pagouai.secretKey?.trim(), vennoxHasSecret: !!gatewayConfig.vennox.secretKey?.trim(), centurionpayHasSecret: !!gatewayConfig.centurionpay?.secretKey?.trim() }));
+    let activeGateway = gatewayConfig.activeGateway;
 
     const hasPagouaiKeys = !!gatewayConfig.pagouai.secretKey?.trim();
     const hasVennoxKeys = !!gatewayConfig.vennox.secretKey?.trim() && !!gatewayConfig.vennox.companyId?.trim();
     const hasCenturionPayKeys = !!gatewayConfig.centurionpay?.secretKey?.trim() && !!gatewayConfig.centurionpay?.companyId?.trim();
+
+    // If active gateway isn't configured, fall back to one that is
+    if (activeGateway === 'pagouai' && !hasPagouaiKeys) {
+      if (hasCenturionPayKeys) activeGateway = 'centurionpay';
+      else if (hasVennoxKeys) activeGateway = 'vennox';
+    } else if (activeGateway === 'vennox' && !hasVennoxKeys) {
+      if (hasCenturionPayKeys) activeGateway = 'centurionpay';
+      else if (hasPagouaiKeys) activeGateway = 'pagouai';
+    } else if (activeGateway === 'centurionpay' && !hasCenturionPayKeys) {
+      if (hasPagouaiKeys) activeGateway = 'pagouai';
+      else if (hasVennoxKeys) activeGateway = 'vennox';
+    }
+
+    console.log('Gateway config:', JSON.stringify({ activeGateway, original: gatewayConfig.activeGateway, pagouaiHasSecret: hasPagouaiKeys, vennoxHasSecret: hasVennoxKeys, centurionpayHasSecret: hasCenturionPayKeys }));
 
     if (activeGateway === 'pagouai') {
       if (!hasPagouaiKeys) {
