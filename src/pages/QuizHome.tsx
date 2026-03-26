@@ -652,7 +652,8 @@ export default function QuizHome() {
                       onChange={handleCpfChange}
                       inputMode="numeric"
                       pattern="[0-9]*"
-                      className={`text-center text-lg tracking-widest ${cpfError ? 'border-destructive' : ''}`}
+className={`text-center text-lg tracking-widest ${cpfError ? 'border-destructive' : ''}`}
+                      style={{ fontFamily: "'Rubik', sans-serif" }}
                       maxLength={14}
                     />
                     {cpfError && (
