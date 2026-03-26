@@ -77,9 +77,11 @@ const ROUND_CONFIGS = [
 function ScratchGrid({
   grid,
   onAllRevealed,
+  logoSrc,
 }: {
   grid: ScratchItem[];
   onAllRevealed: (revealedIndices: number[]) => void;
+  logoSrc: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -218,13 +220,18 @@ function ScratchGrid({
       drawStar(sx, sy, sz, sa);
     }
 
-    // Hand/pointer icon in center
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.font = `${Math.min(totalW * 0.15, 50)}px sans-serif`;
-    ctx.fillText('👆', cx, cy - totalH * 0.08);
-
+    // Draw Centauro logo in center
+    const logoImg = new Image();
+    logoImg.src = logoSrc;
+    logoImg.onload = () => {
+      const logoH = Math.min(totalH * 0.18, 50);
+      const logoW = logoH * (logoImg.naturalWidth / logoImg.naturalHeight);
+      ctx.filter = 'brightness(0) invert(1)';
+      ctx.globalAlpha = 0.8;
+      ctx.drawImage(logoImg, cx - logoW / 2, cy - totalH * 0.16 - logoH / 2, logoW, logoH);
+      ctx.filter = 'none';
+      ctx.globalAlpha = 1;
+    };
     // "RASPE AQUI!" text
     ctx.fillStyle = '#FFFFFF';
     const titleSize = Math.min(totalW * 0.1, 32);
@@ -534,7 +541,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
 
           {/* Scratch Grid */}
           <div key={currentRound} className="animate-scale-in">
-            <ScratchGrid grid={grid} onAllRevealed={handleAllRevealed} />
+            <ScratchGrid grid={grid} onAllRevealed={handleAllRevealed} logoSrc={centauroLogo} />
           </div>
 
           {/* Legend */}
