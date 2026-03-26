@@ -536,7 +536,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
           </div>
 
           {/* Action button */}
-          {roundResult !== 'pending' && (
+          {roundResult === 'win' && (
             <div className="mt-5 animate-fade-in">
               <Button
                 onClick={handleNext}
