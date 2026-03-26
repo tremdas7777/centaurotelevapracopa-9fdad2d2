@@ -10,7 +10,7 @@ import { getFunnelStats, clearFunnelEvents } from '@/lib/funnelTracking';
 import { getPixelConfig, savePixelConfig, type PixelConfig, type FacebookPixelEntry, type TikTokPixelEntry, type GoogleAdsEntry } from '@/lib/pixelManager';
 import { getWebhookConfig, saveWebhookConfig, fireWebhookEvent, type WebhookConfig, type WebhookEntry } from '@/lib/webhookManager';
 import { getUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
-import { getPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
+import { fetchPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
 
 const ADMIN_PASSWORD = 'escalabahia';
@@ -66,7 +66,7 @@ export default function AdminPanel() {
     setPixelConfig(getPixelConfig());
     setWebhookConfig(getWebhookConfig());
     setUtmifyConfig(getUtmifyConfig());
-    setGatewayConfig(getPaymentGatewayConfig());
+    fetchPaymentGatewayConfig().then(config => setGatewayConfig(config));
   }, []);
 
   useEffect(() => {
