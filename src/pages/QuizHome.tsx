@@ -383,7 +383,7 @@ export default function QuizHome() {
         </button>
 
         {/* Footer preto da home */}
-        <footer className="bg-centauro-black mt-8 py-8 px-4">
+        <footer className="bg-centauro-black mt-8 py-8 px-4" style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}>
           <div className="max-w-xl mx-auto text-primary-foreground">
             <div className="mb-5">
               <h4 className="font-bold text-sm mb-2">Links Rápidos</h4>
