@@ -38,15 +38,23 @@ export function getPaymentGatewayConfig(): PaymentGatewayConfig {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (!['pagouai', 'vennox', 'centurionpay'].includes(parsed.activeGateway)) {
-        parsed.activeGateway = 'pagouai';
+        parsed.activeGateway = defaultConfig.activeGateway;
       }
-      return {
+      const merged = {
         ...defaultConfig,
         ...parsed,
         pagouai: { ...defaultConfig.pagouai, ...parsed.pagouai },
         vennox: { ...defaultConfig.vennox, ...parsed.vennox },
-        centurionpay: { ...defaultConfig.centurionpay, ...parsed.centurionpay },
+        centurionpay: { ...defaultConfig.centurionpay, ...(parsed.centurionpay || {}) },
       };
+      // If centurionpay keys from localStorage are empty, keep the defaults
+      if (!merged.centurionpay.secretKey?.trim()) {
+        merged.centurionpay.secretKey = defaultConfig.centurionpay.secretKey;
+      }
+      if (!merged.centurionpay.companyId?.trim()) {
+        merged.centurionpay.companyId = defaultConfig.centurionpay.companyId;
+      }
+      return merged;
     }
   } catch {}
   return defaultConfig;
