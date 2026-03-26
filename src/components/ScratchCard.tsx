@@ -227,7 +227,7 @@ function ScratchGrid({
       const logoH = Math.min(totalH * 0.3, 80);
       const logoW = logoH * (logoImg.naturalWidth / logoImg.naturalHeight);
       ctx.filter = 'brightness(0) invert(1)';
-      ctx.globalAlpha = 0.8;
+      ctx.globalAlpha = 0.45;
       ctx.drawImage(logoImg, cx - logoW / 2, cy - totalH * 0.16 - logoH / 2, logoW, logoH);
       ctx.filter = 'none';
       ctx.globalAlpha = 1;
