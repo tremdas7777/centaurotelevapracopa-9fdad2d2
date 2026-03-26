@@ -647,6 +647,24 @@ export default function Checkout() {
                       <div className="flex-1">
                         <p className="text-xs font-bold text-foreground">Correios SEDEX</p>
                         <p className="text-[10px] text-muted-foreground">Prazo: 3 a 5 dias úteis</p>
+                        <p className="text-[10px] text-muted-foreground">
+                          Entrega estimada: {(() => {
+                            const addBusinessDays = (start: Date, days: number) => {
+                              let d = new Date(start);
+                              let added = 0;
+                              while (added < days) {
+                                d.setDate(d.getDate() + 1);
+                                if (d.getDay() !== 0 && d.getDay() !== 6) added++;
+                              }
+                              return d;
+                            };
+                            const now = new Date();
+                            const from = addBusinessDays(now, 3);
+                            const to = addBusinessDays(now, 5);
+                            const fmt = (d: Date) => d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+                            return `${fmt(from)} a ${fmt(to)}`;
+                          })()}
+                        </p>
                       </div>
                       <span className="text-sm font-black text-centauro-green">R$ 44,90</span>
                     </div>
