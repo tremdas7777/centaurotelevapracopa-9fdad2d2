@@ -16,7 +16,6 @@ import { supabase } from '@/integrations/supabase/client';
 import PixPopup from '@/components/PixPopup';
 import { findNearestStore, type CentauroStore } from '@/lib/centauroStores';
 import {
-import {
   AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
   AlertDialogDescription, AlertDialogFooter, AlertDialogAction
 } from '@/components/ui/alert-dialog';
