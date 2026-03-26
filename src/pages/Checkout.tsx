@@ -602,7 +602,9 @@ export default function Checkout() {
                   <Input
                     placeholder="Nº"
                     value={numero}
-                    onChange={(e) => setNumero(e.target.value)}
+                    onChange={(e) => setNumero(e.target.value.replace(/\D/g, ''))}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     className={`py-5 ${showFieldErrors && !numero ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                   />
                   {showFieldErrors && !numero && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
