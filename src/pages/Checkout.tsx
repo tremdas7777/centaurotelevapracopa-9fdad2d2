@@ -283,10 +283,41 @@ export default function Checkout() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
   };
 
+  const emailDomains = ['@gmail.com', '@outlook.com', '@hotmail.com', '@yahoo.com', '@icloud.com'];
+
+  const getEmailSuggestions = (): string[] => {
+    if (!email || email.includes('@')) {
+      // If already has @ but domain is incomplete, suggest completions
+      if (email.includes('@')) {
+        const [local, domain] = email.split('@');
+        if (local && domain !== undefined) {
+          return emailDomains
+            .filter(d => d.slice(1).startsWith(domain) && d.slice(1) !== domain)
+            .map(d => `${local}${d}`);
+        }
+      }
+      return [];
+    }
+    return emailDomains.map(d => `${email}${d}`);
+  };
+
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setEmail(value);
-    if (value && !validateEmail(value)) {
+    setShowEmailSuggestions(true);
+    if (value && !value.includes('@')) {
+      setEmailError('');
+    } else if (value && !validateEmail(value)) {
+      setEmailError('E-mail inválido. Verifique o endereço.');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const handleSelectEmailSuggestion = (suggestion: string) => {
+    setEmail(suggestion);
+    setShowEmailSuggestions(false);
+    if (!validateEmail(suggestion)) {
       setEmailError('E-mail inválido. Verifique o endereço.');
     } else {
       setEmailError('');
