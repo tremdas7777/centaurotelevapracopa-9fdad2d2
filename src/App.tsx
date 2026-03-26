@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import QuizHome from "./pages/QuizHome";
 import Checkout from "./pages/Checkout";
 import AdminPanel from "./pages/AdminPanel";
+import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
 import { injectPixels } from "./lib/pixelManager";
 
@@ -27,6 +28,7 @@ const App = () => {
           <Route path="/" element={<QuizHome />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/obrigado" element={<ThankYou />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
