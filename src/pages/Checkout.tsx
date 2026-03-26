@@ -144,6 +144,8 @@ export default function Checkout() {
     const digits = formatted.replace(/\D/g, '');
     if (digits.length === 8) {
       setCepLoading(true);
+      setGoogleStores([]);
+      setSelectedGoogleStore(null);
       try {
         const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
         const data = await res.json();
@@ -152,8 +154,24 @@ export default function Checkout() {
           setBairro(data.bairro || '');
           setCidade(data.localidade || '');
           setEstado(data.uf || '');
+          // Fallback local
           const store = findNearestStore(data.localidade || '', data.uf || '');
           setNearestStore(store);
+          // Google Places search
+          setStoresLoading(true);
+          try {
+            const { data: storesData, error } = await supabase.functions.invoke('buscar-lojas-centauro', {
+              body: { cep: digits },
+            });
+            if (!error && storesData?.stores?.length > 0) {
+              setGoogleStores(storesData.stores);
+              setSelectedGoogleStore(storesData.stores[0]);
+            }
+          } catch {
+            // fallback to local store data
+          } finally {
+            setStoresLoading(false);
+          }
         } else {
           setShowCepError(true);
           setEndereco('');
