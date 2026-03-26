@@ -57,7 +57,7 @@ export default function Checkout() {
   const [googleStores, setGoogleStores] = useState<GoogleStore[]>([]);
   const [selectedGoogleStore, setSelectedGoogleStore] = useState<GoogleStore | null>(null);
   const [storesLoading, setStoresLoading] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(1800);
+  const [timeLeft, setTimeLeft] = useState(600);
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
 
   // PIX state
@@ -446,13 +446,6 @@ export default function Checkout() {
               <p className="text-[10px] text-muted-foreground">Panini Edição Limitada</p>
             </div>
             <span className="text-xs font-black text-centauro-green">GRÁTIS</span>
-          </div>
-          <div className="flex items-center gap-3 pt-2 border-t border-border">
-            <Ticket size={16} className="text-centauro-gold" />
-            <div className="flex-1">
-              <p className="text-xs font-bold text-foreground">Sorteio: 2 Ingressos VIP Copa</p>
-            </div>
-            <span className="text-xs font-black text-centauro-gold">INCLUSO</span>
           </div>
         </Card>
 
