@@ -511,14 +511,14 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
           {/* Round title */}
           <div className="text-center mb-4">
             <h2 className="text-xl font-black text-primary-foreground mb-1">
-              {roundResult === 'win' ? '🎉 VOCÊ GANHOU!' : roundResult === 'lose' ? '😔 Não foi dessa vez...' : config.title}
+              {roundResult === 'win' ? '🎉 VOCÊ GANHOU!' : config.title}
             </h2>
             <p className="text-primary-foreground/50 text-xs font-semibold">
               {roundResult === 'pending'
                 ? 'Raspe todos os campos! 3 iguais = prêmio'
                 : roundResult === 'win'
                 ? `Parabéns! Você ganhou ${wonPrizes[wonPrizes.length - 1]?.emoji} ${wonPrizes[wonPrizes.length - 1]?.label}!`
-                : 'Tente novamente na próxima chance!'
+                : 'Raspe todos os campos!'
               }
             </p>
           </div>
