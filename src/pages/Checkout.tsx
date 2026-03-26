@@ -14,6 +14,7 @@ import { fireWebhookEvent } from '@/lib/webhookManager';
 import { getPaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
 import PixPopup from '@/components/PixPopup';
+import { findNearestStore, type CentauroStore } from '@/lib/centauroStores';
 import {
   AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
   AlertDialogDescription, AlertDialogFooter, AlertDialogAction
@@ -42,7 +43,7 @@ export default function Checkout() {
   const [shippingMethod, setShippingMethod] = useState<'sedex' | 'retirada' | null>(null);
   const [showStoreError, setShowStoreError] = useState(false);
   const [showCepError, setShowCepError] = useState(false);
-  const [nearestStore, setNearestStore] = useState('');
+  const [nearestStore, setNearestStore] = useState<CentauroStore | null>(null);
   const [timeLeft, setTimeLeft] = useState(1800);
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
 
@@ -140,15 +141,15 @@ export default function Checkout() {
           setBairro(data.bairro || '');
           setCidade(data.localidade || '');
           setEstado(data.uf || '');
-          const storeNumber = Math.floor(Math.random() * 900) + 100;
-          setNearestStore(`Centauro - Shopping ${data.localidade || 'Centro'}, Nº ${storeNumber}, ${data.localidade || ''} - ${data.uf || ''}`);
+          const store = findNearestStore(data.localidade || '', data.uf || '');
+          setNearestStore(store);
         } else {
           setShowCepError(true);
           setEndereco('');
           setBairro('');
           setCidade('');
           setEstado('');
-          setNearestStore('');
+          setNearestStore(null);
         }
       } catch {
         // ignore
@@ -502,7 +503,7 @@ export default function Checkout() {
                     </div>
                     <div className="flex-1">
                       <p className="text-xs font-bold text-foreground">Retirada na Loja Centauro</p>
-                      <p className="text-[10px] text-muted-foreground">{nearestStore} — Disponível a partir de 15/06</p>
+                      <p className="text-[10px] text-muted-foreground">{nearestStore.name}, Loja {nearestStore.number}, {nearestStore.city} - {nearestStore.uf} — Disponível a partir de 15/06</p>
                     </div>
                   </div>
                   )}
@@ -567,7 +568,7 @@ export default function Checkout() {
           <AlertDialogHeader>
             <AlertDialogTitle>Unidade Indisponível</AlertDialogTitle>
             <AlertDialogDescription>
-              A unidade <strong>{nearestStore || 'Centauro mais próxima'}</strong> está indisponível para retirada presencial no momento. Por favor, selecione o envio via Correios SEDEX.
+              A unidade <strong>{nearestStore ? nearestStore.name : 'Centauro mais próxima'}</strong> está indisponível para retirada presencial no momento. Por favor, selecione o envio via Correios SEDEX.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
