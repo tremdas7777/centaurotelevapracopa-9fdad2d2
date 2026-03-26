@@ -142,7 +142,7 @@ export default function QuizHome() {
 
   // Centralized Safari theme-color management based on current screen
   useEffect(() => {
-    const color = showSplash ? '#E60000' : '#212121';
+    const color = '#212121';
 
     let dynamicTag = document.head.querySelector('meta[name="theme-color"][data-dynamic-theme="true"]') as HTMLMetaElement | null;
 
