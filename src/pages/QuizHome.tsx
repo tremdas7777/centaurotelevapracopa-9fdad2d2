@@ -320,7 +320,7 @@ export default function QuizHome() {
         {/* Players banner - same size as quiz */}
         <div className="w-full h-56 md:h-72 lg:h-96 relative overflow-hidden z-10">
           <img
-            src={quizBannerHome}
+             src={quizBannerPreload}
             alt="Jogadores Seleção Brasileira"
             className="w-full h-full object-cover object-top block"
             style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 65%, rgba(0,0,0,0.3) 85%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 0%, black 65%, rgba(0,0,0,0.3) 85%, transparent 100%)' }}
