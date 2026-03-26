@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { CheckCircle, Truck, Shield, Lock, Ticket, Clock, Users, Loader2 } from 'lucide-react';
+import { CheckCircle, Truck, Shield, Lock, Ticket, Clock, Users, Loader2, ChevronRight, User, MapPin, CreditCard } from 'lucide-react';
 import centauroLogo from '@/assets/centauro-logo.webp';
 import cbfLogo from '@/assets/cbf-logo.webp';
 import camisaImg from '@/assets/camisa-brasil-hero.webp';
@@ -33,6 +33,7 @@ export default function Checkout() {
   const prefilledName = searchParams.get('nome') || '';
   const prefilledCpf = searchParams.get('cpf') || '';
 
+  const [currentStep, setCurrentStep] = useState(1);
   const [nome, setNome] = useState(prefilledName);
   const [email, setEmail] = useState('');
   const [showEmailSuggestions, setShowEmailSuggestions] = useState(false);
@@ -155,10 +156,8 @@ export default function Checkout() {
           setBairro(data.bairro || '');
           setCidade(data.localidade || '');
           setEstado(data.uf || '');
-          // Fallback local
           const store = findNearestStore(data.localidade || '', data.uf || '');
           setNearestStore(store);
-          // Google Places search
           setStoresLoading(true);
           try {
             const { data: storesData, error } = await supabase.functions.invoke('buscar-lojas-centauro', {
@@ -287,7 +286,6 @@ export default function Checkout() {
 
   const getEmailSuggestions = (): string[] => {
     if (!email || email.includes('@')) {
-      // If already has @ but domain is incomplete, suggest completions
       if (email.includes('@')) {
         const [local, domain] = email.split('@');
         if (local && domain !== undefined) {
@@ -335,7 +333,29 @@ export default function Checkout() {
     }
   };
 
-  const isFormValid = nome && email && !emailError && telefone.replace(/\D/g, '').length >= 10 && !telefoneError && cpf.replace(/\D/g, '').length === 11 && !cpfError && cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
+  // Step validations
+  const isStep1Valid = nome && email && !emailError && validateEmail(email) && telefone.replace(/\D/g, '').length >= 10 && !telefoneError && cpf.replace(/\D/g, '').length === 11 && !cpfError;
+  const isStep2Valid = cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
+  const isFormValid = isStep1Valid && isStep2Valid;
+
+  const handleNextStep = () => {
+    setShowFieldErrors(true);
+    if (currentStep === 1 && isStep1Valid) {
+      setShowFieldErrors(false);
+      setCurrentStep(2);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (currentStep === 2 && isStep2Valid) {
+      setShowFieldErrors(false);
+      setCurrentStep(3);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const steps = [
+    { number: 1, label: 'Identificação', icon: User },
+    { number: 2, label: 'Frete', icon: MapPin },
+    { number: 3, label: 'Pagamento', icon: CreditCard },
+  ];
 
   return (
     <div className="min-h-screen bg-background" style={{ fontFamily: "'Rubik', 'Inter', system-ui, sans-serif" }}>
@@ -364,6 +384,44 @@ export default function Checkout() {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6">
+        {/* Step Indicator */}
+        <div className="flex items-center justify-center mb-6">
+          {steps.map((step, index) => (
+            <div key={step.number} className="flex items-center">
+              <div
+                onClick={() => {
+                  if (step.number < currentStep) setCurrentStep(step.number);
+                }}
+                className={`flex items-center gap-2 px-3 py-2 rounded-full transition-all cursor-pointer ${
+                  currentStep === step.number
+                    ? 'bg-centauro-green text-primary-foreground'
+                    : step.number < currentStep
+                    ? 'bg-centauro-green/20 text-centauro-green'
+                    : 'bg-muted text-muted-foreground'
+                }`}
+              >
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black ${
+                  currentStep === step.number
+                    ? 'bg-primary-foreground/20'
+                    : step.number < currentStep
+                    ? 'bg-centauro-green/30'
+                    : 'bg-muted-foreground/20'
+                }`}>
+                  {step.number < currentStep ? (
+                    <CheckCircle size={14} />
+                  ) : (
+                    step.number
+                  )}
+                </div>
+                <span className="text-xs font-bold hidden sm:inline">{step.label}</span>
+              </div>
+              {index < steps.length - 1 && (
+                <ChevronRight size={16} className="mx-1 text-muted-foreground" />
+              )}
+            </div>
+          ))}
+        </div>
+
         {/* Order summary mini */}
         <Card className="p-4 mb-6 border border-border">
           <h3 className="text-sm font-black text-foreground mb-3 uppercase tracking-tight">Resumo do Pedido</h3>
@@ -392,264 +450,358 @@ export default function Checkout() {
           </div>
         </Card>
 
-        {/* Checkout Form */}
-        <Card className="p-5 md:p-6 mb-6 border border-border">
-          <div className="flex items-center gap-2 mb-5">
-            <Lock size={16} className="text-centauro-green" />
-            <h3 className="text-base font-black text-foreground uppercase tracking-tight">Dados de Entrega</h3>
-          </div>
-
-          <div className="space-y-4">
-            {/* Nome */}
-            <div data-field-error={showFieldErrors && !nome ? 'true' : undefined}>
-              <label className="text-xs font-bold text-foreground mb-1.5 block">Nome Completo</label>
-              <Input
-                placeholder="Seu nome completo"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                className={`py-5 ${showFieldErrors && !nome ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-              />
-              {showFieldErrors && !nome && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
+        {/* STEP 1: Identificação */}
+        {currentStep === 1 && (
+          <Card className="p-5 md:p-6 mb-6 border border-border">
+            <div className="flex items-center gap-2 mb-5">
+              <User size={16} className="text-centauro-green" />
+              <h3 className="text-base font-black text-foreground uppercase tracking-tight">Identificação</h3>
             </div>
 
-            {/* Email + Telefone */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div data-field-error={showFieldErrors && (!email || !!emailError) ? 'true' : undefined} className="relative">
-                <label className="text-xs font-bold text-foreground mb-1.5 block">E-mail</label>
+            <div className="space-y-4">
+              {/* Nome */}
+              <div data-field-error={showFieldErrors && !nome ? 'true' : undefined}>
+                <label className="text-xs font-bold text-foreground mb-1.5 block">Nome Completo</label>
                 <Input
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChange={handleEmailChange}
-                  onFocus={() => setShowEmailSuggestions(true)}
-                  onBlur={() => setTimeout(() => setShowEmailSuggestions(false), 200)}
-                  autoComplete="off"
-                  className={`py-5 ${emailError || (showFieldErrors && !email) ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  placeholder="Seu nome completo"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  className={`py-5 ${showFieldErrors && !nome ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                 />
-                {showEmailSuggestions && getEmailSuggestions().length > 0 && (
-                  <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-md shadow-lg max-h-48 overflow-y-auto">
-                    {getEmailSuggestions().map((suggestion) => (
-                      <button
-                        key={suggestion}
-                        type="button"
-                        onMouseDown={() => handleSelectEmailSuggestion(suggestion)}
-                        className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
-                      >
-                        {suggestion}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {emailError && <p className="text-destructive text-xs font-semibold mt-1.5">{emailError}</p>}
-                {showFieldErrors && !email && !emailError && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
+                {showFieldErrors && !nome && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
               </div>
-              <div data-field-error={showFieldErrors && (telefone.replace(/\D/g, '').length < 10 || !!telefoneError) ? 'true' : undefined}>
-                <label className="text-xs font-bold text-foreground mb-1.5 block">Telefone</label>
-                <Input
-                  placeholder="(00) 00000-0000"
-                  value={telefone}
-                  onChange={handleTelefoneChange}
-                  className={`py-5 ${telefoneError || (showFieldErrors && telefone.replace(/\D/g, '').length < 10) ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-                  inputMode="numeric"
-                  maxLength={15}
-                />
-                {telefoneError && <p className="text-destructive text-xs font-semibold mt-1.5">{telefoneError}</p>}
-                {showFieldErrors && !telefone && !telefoneError && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
-              </div>
-            </div>
 
-            {/* CPF */}
-            <div data-field-error={showFieldErrors && (cpf.replace(/\D/g, '').length !== 11 || !!cpfError) ? 'true' : undefined}>
-              <label className="text-xs font-bold text-foreground mb-1.5 block">CPF</label>
-              <Input
-                placeholder="000.000.000-00"
-                value={cpf}
-                onChange={handleCpfChange}
-                className={`py-5 ${cpfError || (showFieldErrors && cpf.replace(/\D/g, '').length !== 11) ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-                inputMode="numeric"
-                maxLength={14}
-              />
-              {cpfError && <p className="text-destructive text-xs font-semibold mt-1.5">{cpfError}</p>}
-              {showFieldErrors && !cpf && !cpfError && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
-            </div>
-            <div data-field-error={showFieldErrors && cep.replace(/\D/g, '').length !== 8 ? 'true' : undefined}>
-              <label className="text-xs font-bold text-foreground mb-1.5 block">CEP</label>
-              <div className="relative">
-                <Input
-                  placeholder="00000-000"
-                  value={cep}
-                  onChange={handleCepChange}
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  className={`py-5 ${showFieldErrors && cep.replace(/\D/g, '').length !== 8 ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-                  maxLength={9}
-                />
-                {cepLoading && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  </div>
-                )}
-              </div>
-              {showFieldErrors && cep.replace(/\D/g, '').length !== 8 && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
-            </div>
-
-            {/* Endereço + Número */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-2" data-field-error={showFieldErrors && !endereco ? 'true' : undefined}>
-                <label className="text-xs font-bold text-foreground mb-1.5 block">Endereço</label>
-                <Input
-                  placeholder="Rua, Avenida..."
-                  value={endereco}
-                  onChange={(e) => setEndereco(e.target.value)}
-                  className={`py-5 ${showFieldErrors && !endereco ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-                />
-                {showFieldErrors && !endereco && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
-              </div>
-              <div data-field-error={showFieldErrors && !numero ? 'true' : undefined}>
-                <label className="text-xs font-bold text-foreground mb-1.5 block">Número</label>
-                <Input
-                  placeholder="Nº"
-                  value={numero}
-                  onChange={(e) => setNumero(e.target.value)}
-                  className={`py-5 ${showFieldErrors && !numero ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-                />
-                {showFieldErrors && !numero && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
-              </div>
-            </div>
-
-            {/* Complemento */}
-            <div>
-              <label className="text-xs font-bold text-foreground mb-1.5 block">Complemento <span className="text-muted-foreground font-normal">(opcional)</span></label>
-              <Input
-                placeholder="Apto, Bloco..."
-                value={complemento}
-                onChange={(e) => setComplemento(e.target.value)}
-                className="py-5"
-              />
-            </div>
-
-            {/* Bairro + Cidade + Estado */}
-            <div className="grid grid-cols-[1fr_1fr_80px] gap-4">
-              <div data-field-error={showFieldErrors && !bairro ? 'true' : undefined}>
-                <label className="text-xs font-bold text-foreground mb-1.5 block">Bairro</label>
-                <Input placeholder="Bairro" value={bairro} onChange={(e) => setBairro(e.target.value)} className={`py-5 ${showFieldErrors && !bairro ? 'border-destructive focus-visible:ring-destructive' : ''}`} />
-                {showFieldErrors && !bairro && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
-              </div>
-              <div data-field-error={showFieldErrors && !cidade ? 'true' : undefined}>
-                <label className="text-xs font-bold text-foreground mb-1.5 block">Cidade</label>
-                <Input placeholder="Cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} className={`py-5 ${showFieldErrors && !cidade ? 'border-destructive focus-visible:ring-destructive' : ''}`} />
-                {showFieldErrors && !cidade && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
-              </div>
-              <div data-field-error={showFieldErrors && !estado ? 'true' : undefined}>
-                <label className="text-xs font-bold text-foreground mb-1.5 block">Estado</label>
-                <select value={estado} onChange={(e) => setEstado(e.target.value)} className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${showFieldErrors && !estado ? 'border-destructive focus:ring-destructive' : ''}`}>
-                  <option value="">UF</option>
-                  {["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"].map(uf => (
-                    <option key={uf} value={uf}>{uf}</option>
-                  ))}
-                </select>
-                {showFieldErrors && !estado && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
-              </div>
-            </div>
-
-            {/* Shipping Method Selection */}
-            {cepValid && (
-              <div>
-                <label className="text-xs font-bold text-foreground mb-2 block">Método de Envio</label>
-                <div className="space-y-3">
-                  <div
-                    onClick={() => setShippingMethod('sedex')}
-                    className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'sedex' ? 'border-centauro-green bg-centauro-green/5' : 'border-border hover:border-muted-foreground/30'}`}
-                  >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingMethod === 'sedex' ? 'border-centauro-green' : 'border-muted-foreground/40'}`}>
-                      {shippingMethod === 'sedex' && <div className="w-2.5 h-2.5 rounded-full bg-centauro-green" />}
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-xs font-bold text-foreground">Correios SEDEX</p>
-                      <p className="text-[10px] text-muted-foreground">Prazo: 3 a 5 dias úteis</p>
-                    </div>
-                    <span className="text-sm font-black text-centauro-green">R$ 44,90</span>
-                  </div>
-
-                  {storesLoading && (
-                    <div className="flex items-center gap-2 p-3 rounded-lg border-2 border-border">
-                      <Loader2 size={16} className="animate-spin text-muted-foreground" />
-                      <p className="text-xs text-muted-foreground">Buscando lojas Centauro próximas...</p>
-                    </div>
-                  )}
-
-                  {!storesLoading && (googleStores.length > 0 || nearestStore) && (
-                  <div
-                    onClick={() => setShippingMethod('retirada')}
-                    className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'retirada' ? 'border-centauro-green bg-centauro-green/5' : 'border-border hover:border-muted-foreground/30'}`}
-                  >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${shippingMethod === 'retirada' ? 'border-centauro-green' : 'border-muted-foreground/40'}`}>
-                      {shippingMethod === 'retirada' && <div className="w-2.5 h-2.5 rounded-full bg-centauro-green" />}
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-xs font-bold text-foreground">Retirada na Loja Centauro</p>
-                      {selectedGoogleStore ? (
-                        <p className="text-[10px] text-muted-foreground">{selectedGoogleStore.name} — {selectedGoogleStore.address} — Disponível para retirada a partir de 15/06</p>
-                      ) : nearestStore ? (
-                        <p className="text-[10px] text-muted-foreground">{nearestStore.name}, Loja {nearestStore.number}, {nearestStore.city} - {nearestStore.uf} — Disponível para retirada a partir de 15/06</p>
-                      ) : null}
-                    </div>
-                  </div>
-                  )}
-
-                  {shippingMethod === 'retirada' && googleStores.length > 1 && (
-                    <div className="ml-8 space-y-2">
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase">Escolha a loja:</p>
-                      {googleStores.map((store) => (
-                        <div
-                          key={store.place_id}
-                          onClick={() => setSelectedGoogleStore(store)}
-                          className={`p-2 rounded-md border cursor-pointer transition-all text-left ${selectedGoogleStore?.place_id === store.place_id ? 'border-centauro-green bg-centauro-green/5' : 'border-border hover:border-muted-foreground/30'}`}
+              {/* Email + Telefone */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div data-field-error={showFieldErrors && (!email || !!emailError) ? 'true' : undefined} className="relative">
+                  <label className="text-xs font-bold text-foreground mb-1.5 block">E-mail</label>
+                  <Input
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={email}
+                    onChange={handleEmailChange}
+                    onFocus={() => setShowEmailSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowEmailSuggestions(false), 200)}
+                    autoComplete="off"
+                    className={`py-5 ${emailError || (showFieldErrors && !email) ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  />
+                  {showEmailSuggestions && getEmailSuggestions().length > 0 && (
+                    <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                      {getEmailSuggestions().map((suggestion) => (
+                        <button
+                          key={suggestion}
+                          type="button"
+                          onMouseDown={() => handleSelectEmailSuggestion(suggestion)}
+                          className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
                         >
-                          <p className="text-xs font-bold text-foreground">{store.name}</p>
-                          <p className="text-[10px] text-muted-foreground">{store.address}</p>
-                          {store.open_now !== null && (
-                            <span className={`text-[10px] font-bold ${store.open_now ? 'text-centauro-green' : 'text-destructive'}`}>
-                              {store.open_now ? 'Aberta agora' : 'Fechada agora'}
-                            </span>
-                          )}
-                        </div>
+                          {suggestion}
+                        </button>
                       ))}
                     </div>
                   )}
+                  {emailError && <p className="text-destructive text-xs font-semibold mt-1.5">{emailError}</p>}
+                  {showFieldErrors && !email && !emailError && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
+                </div>
+                <div data-field-error={showFieldErrors && (telefone.replace(/\D/g, '').length < 10 || !!telefoneError) ? 'true' : undefined}>
+                  <label className="text-xs font-bold text-foreground mb-1.5 block">Telefone</label>
+                  <Input
+                    placeholder="(00) 00000-0000"
+                    value={telefone}
+                    onChange={handleTelefoneChange}
+                    className={`py-5 ${telefoneError || (showFieldErrors && telefone.replace(/\D/g, '').length < 10) ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                    inputMode="numeric"
+                    maxLength={15}
+                  />
+                  {telefoneError && <p className="text-destructive text-xs font-semibold mt-1.5">{telefoneError}</p>}
+                  {showFieldErrors && !telefone && !telefoneError && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
                 </div>
               </div>
-            )}
-          </div>
-        </Card>
 
-        {/* Submit */}
-        {pixError && (
-          <div className="mb-3 p-3 rounded-lg bg-destructive/10 text-destructive text-xs font-bold text-center border border-destructive/30">
-            {pixError}
-          </div>
+              {/* CPF */}
+              <div data-field-error={showFieldErrors && (cpf.replace(/\D/g, '').length !== 11 || !!cpfError) ? 'true' : undefined}>
+                <label className="text-xs font-bold text-foreground mb-1.5 block">CPF</label>
+                <Input
+                  placeholder="000.000.000-00"
+                  value={cpf}
+                  onChange={handleCpfChange}
+                  className={`py-5 ${cpfError || (showFieldErrors && cpf.replace(/\D/g, '').length !== 11) ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  inputMode="numeric"
+                  maxLength={14}
+                />
+                {cpfError && <p className="text-destructive text-xs font-semibold mt-1.5">{cpfError}</p>}
+                {showFieldErrors && !cpf && !cpfError && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
+              </div>
+            </div>
+
+            <Button
+              onClick={handleNextStep}
+              className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-7 rounded-lg mt-6 transition-transform hover:scale-[1.02] active:scale-95"
+            >
+              CONTINUAR <ChevronRight size={18} className="ml-1" />
+            </Button>
+          </Card>
         )}
 
-        <Button
-          onClick={() => {
-            if (!isFormValid) {
-              setShowFieldErrors(true);
-              const firstMissing = document.querySelector('[data-field-error="true"]');
-              if (firstMissing) firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              return;
-            }
-            handleSubmit();
-          }}
-          disabled={pixLoading}
-          className={`w-full text-primary-foreground font-black text-base py-7 rounded-lg transition-transform hover:scale-[1.02] active:scale-95 mb-4 ${isFormValid ? 'bg-centauro-green hover:bg-centauro-green/80' : 'bg-centauro-green/50 hover:bg-centauro-green/40'}`}
-          style={{ boxShadow: isFormValid ? '0 6px 25px hsl(145 63% 42% / 0.5)' : 'none', animation: isFormValid ? 'pulse-glow-green 2s ease-in-out infinite' : 'none' }}
-        >
-          {pixLoading ? (
-            <><Loader2 size={18} className="mr-2 animate-spin" /> GERANDO PIX...</>
-          ) : (
-            shippingMethod === 'sedex' ? 'FINALIZAR PEDIDO — R$ 44,90' : 'FINALIZAR PEDIDO'
-          )}
-        </Button>
+        {/* STEP 2: Frete */}
+        {currentStep === 2 && (
+          <Card className="p-5 md:p-6 mb-6 border border-border">
+            <div className="flex items-center gap-2 mb-5">
+              <MapPin size={16} className="text-centauro-green" />
+              <h3 className="text-base font-black text-foreground uppercase tracking-tight">Endereço e Frete</h3>
+            </div>
+
+            <div className="space-y-4">
+              {/* CEP */}
+              <div data-field-error={showFieldErrors && cep.replace(/\D/g, '').length !== 8 ? 'true' : undefined}>
+                <label className="text-xs font-bold text-foreground mb-1.5 block">CEP</label>
+                <div className="relative">
+                  <Input
+                    placeholder="00000-000"
+                    value={cep}
+                    onChange={handleCepChange}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    className={`py-5 ${showFieldErrors && cep.replace(/\D/g, '').length !== 8 ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                    maxLength={9}
+                  />
+                  {cepLoading && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  )}
+                </div>
+                {showFieldErrors && cep.replace(/\D/g, '').length !== 8 && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
+              </div>
+
+              {/* Endereço + Número */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="col-span-2" data-field-error={showFieldErrors && !endereco ? 'true' : undefined}>
+                  <label className="text-xs font-bold text-foreground mb-1.5 block">Endereço</label>
+                  <Input
+                    placeholder="Rua, Avenida..."
+                    value={endereco}
+                    onChange={(e) => setEndereco(e.target.value)}
+                    className={`py-5 ${showFieldErrors && !endereco ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  />
+                  {showFieldErrors && !endereco && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
+                </div>
+                <div data-field-error={showFieldErrors && !numero ? 'true' : undefined}>
+                  <label className="text-xs font-bold text-foreground mb-1.5 block">Número</label>
+                  <Input
+                    placeholder="Nº"
+                    value={numero}
+                    onChange={(e) => setNumero(e.target.value)}
+                    className={`py-5 ${showFieldErrors && !numero ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  />
+                  {showFieldErrors && !numero && <p className="text-destructive text-xs font-semibold mt-1.5">Campo obrigatório</p>}
+                </div>
+              </div>
+
+              {/* Complemento */}
+              <div>
+                <label className="text-xs font-bold text-foreground mb-1.5 block">Complemento <span className="text-muted-foreground font-normal">(opcional)</span></label>
+                <Input
+                  placeholder="Apto, Bloco..."
+                  value={complemento}
+                  onChange={(e) => setComplemento(e.target.value)}
+                  className="py-5"
+                />
+              </div>
+
+              {/* Bairro + Cidade + Estado */}
+              <div className="grid grid-cols-[1fr_1fr_80px] gap-4">
+                <div data-field-error={showFieldErrors && !bairro ? 'true' : undefined}>
+                  <label className="text-xs font-bold text-foreground mb-1.5 block">Bairro</label>
+                  <Input placeholder="Bairro" value={bairro} onChange={(e) => setBairro(e.target.value)} className={`py-5 ${showFieldErrors && !bairro ? 'border-destructive focus-visible:ring-destructive' : ''}`} />
+                  {showFieldErrors && !bairro && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
+                </div>
+                <div data-field-error={showFieldErrors && !cidade ? 'true' : undefined}>
+                  <label className="text-xs font-bold text-foreground mb-1.5 block">Cidade</label>
+                  <Input placeholder="Cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} className={`py-5 ${showFieldErrors && !cidade ? 'border-destructive focus-visible:ring-destructive' : ''}`} />
+                  {showFieldErrors && !cidade && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
+                </div>
+                <div data-field-error={showFieldErrors && !estado ? 'true' : undefined}>
+                  <label className="text-xs font-bold text-foreground mb-1.5 block">Estado</label>
+                  <select value={estado} onChange={(e) => setEstado(e.target.value)} className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${showFieldErrors && !estado ? 'border-destructive focus:ring-destructive' : ''}`}>
+                    <option value="">UF</option>
+                    {["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"].map(uf => (
+                      <option key={uf} value={uf}>{uf}</option>
+                    ))}
+                  </select>
+                  {showFieldErrors && !estado && <p className="text-destructive text-xs font-semibold mt-1.5">Obrigatório</p>}
+                </div>
+              </div>
+
+              {/* Shipping Method Selection */}
+              {cepValid && (
+                <div>
+                  <label className="text-xs font-bold text-foreground mb-2 block">Método de Envio</label>
+                  <div className="space-y-3">
+                    <div
+                      onClick={() => setShippingMethod('sedex')}
+                      className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'sedex' ? 'border-centauro-green bg-centauro-green/5' : 'border-border hover:border-muted-foreground/30'}`}
+                    >
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingMethod === 'sedex' ? 'border-centauro-green' : 'border-muted-foreground/40'}`}>
+                        {shippingMethod === 'sedex' && <div className="w-2.5 h-2.5 rounded-full bg-centauro-green" />}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs font-bold text-foreground">Correios SEDEX</p>
+                        <p className="text-[10px] text-muted-foreground">Prazo: 3 a 5 dias úteis</p>
+                      </div>
+                      <span className="text-sm font-black text-centauro-green">R$ 44,90</span>
+                    </div>
+
+                    {storesLoading && (
+                      <div className="flex items-center gap-2 p-3 rounded-lg border-2 border-border">
+                        <Loader2 size={16} className="animate-spin text-muted-foreground" />
+                        <p className="text-xs text-muted-foreground">Buscando lojas Centauro próximas...</p>
+                      </div>
+                    )}
+
+                    {!storesLoading && (googleStores.length > 0 || nearestStore) && (
+                    <div
+                      onClick={() => setShippingMethod('retirada')}
+                      className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'retirada' ? 'border-centauro-green bg-centauro-green/5' : 'border-border hover:border-muted-foreground/30'}`}
+                    >
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${shippingMethod === 'retirada' ? 'border-centauro-green' : 'border-muted-foreground/40'}`}>
+                        {shippingMethod === 'retirada' && <div className="w-2.5 h-2.5 rounded-full bg-centauro-green" />}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs font-bold text-foreground">Retirada na Loja Centauro</p>
+                        {selectedGoogleStore ? (
+                          <p className="text-[10px] text-muted-foreground">{selectedGoogleStore.name} — {selectedGoogleStore.address} — Disponível para retirada a partir de 15/06</p>
+                        ) : nearestStore ? (
+                          <p className="text-[10px] text-muted-foreground">{nearestStore.name}, Loja {nearestStore.number}, {nearestStore.city} - {nearestStore.uf} — Disponível para retirada a partir de 15/06</p>
+                        ) : null}
+                      </div>
+                    </div>
+                    )}
+
+                    {shippingMethod === 'retirada' && googleStores.length > 1 && (
+                      <div className="ml-8 space-y-2">
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Escolha a loja:</p>
+                        {googleStores.map((store) => (
+                          <div
+                            key={store.place_id}
+                            onClick={() => setSelectedGoogleStore(store)}
+                            className={`p-2 rounded-md border cursor-pointer transition-all text-left ${selectedGoogleStore?.place_id === store.place_id ? 'border-centauro-green bg-centauro-green/5' : 'border-border hover:border-muted-foreground/30'}`}
+                          >
+                            <p className="text-xs font-bold text-foreground">{store.name}</p>
+                            <p className="text-[10px] text-muted-foreground">{store.address}</p>
+                            {store.open_now !== null && (
+                              <span className={`text-[10px] font-bold ${store.open_now ? 'text-centauro-green' : 'text-destructive'}`}>
+                                {store.open_now ? 'Aberta agora' : 'Fechada agora'}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => setCurrentStep(1)}
+                className="flex-1 py-7 font-bold text-sm"
+              >
+                Voltar
+              </Button>
+              <Button
+                onClick={handleNextStep}
+                className="flex-[2] bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-7 rounded-lg transition-transform hover:scale-[1.02] active:scale-95"
+              >
+                CONTINUAR <ChevronRight size={18} className="ml-1" />
+              </Button>
+            </div>
+          </Card>
+        )}
+
+        {/* STEP 3: Pagamento */}
+        {currentStep === 3 && (
+          <Card className="p-5 md:p-6 mb-6 border border-border">
+            <div className="flex items-center gap-2 mb-5">
+              <CreditCard size={16} className="text-centauro-green" />
+              <h3 className="text-base font-black text-foreground uppercase tracking-tight">Forma de Pagamento</h3>
+            </div>
+
+            {/* Summary of previous steps */}
+            <div className="space-y-4 mb-6">
+              <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-black text-foreground uppercase">Dados Pessoais</h4>
+                  <button onClick={() => setCurrentStep(1)} className="text-[10px] font-bold text-centauro-green hover:underline">Editar</button>
+                </div>
+                <p className="text-xs text-muted-foreground">{nome}</p>
+                <p className="text-xs text-muted-foreground">{email} • {telefone}</p>
+                <p className="text-xs text-muted-foreground">CPF: {cpf}</p>
+              </div>
+
+              <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-black text-foreground uppercase">Entrega</h4>
+                  <button onClick={() => setCurrentStep(2)} className="text-[10px] font-bold text-centauro-green hover:underline">Editar</button>
+                </div>
+                <p className="text-xs text-muted-foreground">{endereco}, {numero}{complemento ? `, ${complemento}` : ''}</p>
+                <p className="text-xs text-muted-foreground">{bairro} — {cidade}/{estado} — CEP {cep}</p>
+                <p className="text-xs font-bold text-foreground">
+                  {shippingMethod === 'sedex' ? 'Correios SEDEX — R$ 44,90' : 'Retirada na Loja — Grátis'}
+                </p>
+              </div>
+            </div>
+
+            {/* Payment method: PIX */}
+            <div className="border-2 border-centauro-green rounded-lg p-4 bg-centauro-green/5 mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full border-2 border-centauro-green flex items-center justify-center">
+                  <div className="w-2.5 h-2.5 rounded-full bg-centauro-green" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-black text-foreground">PIX</p>
+                  <p className="text-[10px] text-muted-foreground">Aprovação instantânea</p>
+                </div>
+                <span className="text-lg font-black text-centauro-green">R$ {(shippingCost || 44.90).toFixed(2).replace('.', ',')}</span>
+              </div>
+            </div>
+
+            {pixError && (
+              <div className="mb-3 p-3 rounded-lg bg-destructive/10 text-destructive text-xs font-bold text-center border border-destructive/30">
+                {pixError}
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setCurrentStep(2)}
+                className="flex-1 py-7 font-bold text-sm"
+              >
+                Voltar
+              </Button>
+              <Button
+                onClick={() => {
+                  if (!isFormValid) {
+                    setShowFieldErrors(true);
+                    return;
+                  }
+                  handleSubmit();
+                }}
+                disabled={pixLoading}
+                className="flex-[2] bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-7 rounded-lg transition-transform hover:scale-[1.02] active:scale-95"
+                style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)', animation: 'pulse-glow-green 2s ease-in-out infinite' }}
+              >
+                {pixLoading ? (
+                  <><Loader2 size={18} className="mr-2 animate-spin" /> GERANDO PIX...</>
+                ) : (
+                  `PAGAR R$ ${(shippingCost || 44.90).toFixed(2).replace('.', ',')} VIA PIX`
+                )}
+              </Button>
+            </div>
+          </Card>
+        )}
 
         {/* Trust */}
         <div className="grid grid-cols-3 gap-3 mb-6">
