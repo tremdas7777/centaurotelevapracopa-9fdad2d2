@@ -137,7 +137,7 @@ export default function QuizHome() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
   const [showScratchCard, setShowScratchCard] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(1800);
+  const [timeLeft, setTimeLeft] = useState(600);
   const [selectedSize, setSelectedSize] = useState('M');
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
   const [showAddressDialog, setShowAddressDialog] = useState(false);
