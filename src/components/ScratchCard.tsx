@@ -238,14 +238,14 @@ function ScratchGrid({
     ctx.font = `900 ${titleSize}px Inter, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('RASPE AQUI!', cx, cy + totalH * 0.1);
+    ctx.fillText('RASPE AQUI!', cx, cy + totalH * 0.02);
 
     // Subtitle
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
     const subSize = Math.min(totalW * 0.04, 13);
     ctx.font = `600 ${subSize}px Inter, sans-serif`;
-    ctx.fillText('Raspe os 9 quadradinhos, encontre', cx, cy + totalH * 0.22);
-    ctx.fillText('3 símbolos iguais e ganhe o prêmio!', cx, cy + totalH * 0.28);
+    ctx.fillText('Raspe os 9 quadradinhos, encontre', cx, cy + totalH * 0.12);
+    ctx.fillText('3 símbolos iguais e ganhe o prêmio!', cx, cy + totalH * 0.17);
 
   }, [getCellSize]);
 
