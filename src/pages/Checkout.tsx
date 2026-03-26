@@ -219,6 +219,19 @@ export default function Checkout() {
 
     console.log('Gateway config:', JSON.stringify({ activeGateway, original: gatewayConfig.activeGateway, pagouaiHasSecret: hasPagouaiKeys, vennoxHasSecret: hasVennoxKeys, centurionpayHasSecret: hasCenturionPayKeys }));
 
+    const purchaseMetadata = {
+      address: endereco,
+      addressNumber: numero,
+      complement: complemento,
+      neighborhood: bairro,
+      city: cidade,
+      state: estado,
+      cep: cep.replace(/\D/g, ''),
+      shippingMethod: shippingMethod || 'sedex',
+      shippingCostCents: Math.round((shippingCost || 44.90) * 100),
+      itemsDescription: 'Kit Copa 2026: Camisa Seleção Brasileira + Álbum Copa do Mundo + Sorteio VIP Ingressos',
+    };
+
     if (activeGateway === 'pagouai') {
       if (!hasPagouaiKeys) {
         setPixError('Gateway Pagou.ai não configurado. Vá em /admin → Pagamentos e salve as chaves.');
@@ -237,6 +250,7 @@ export default function Checkout() {
             buyerEmail: email,
             buyerDocument: cpf,
             buyerPhone: telefone,
+            metadata: purchaseMetadata,
           },
         });
 
@@ -272,6 +286,7 @@ export default function Checkout() {
             buyerEmail: email,
             buyerDocument: cpf,
             buyerPhone: telefone,
+            metadata: purchaseMetadata,
           },
         });
 
@@ -307,6 +322,7 @@ export default function Checkout() {
             buyerEmail: email,
             buyerDocument: cpf,
             buyerPhone: telefone,
+            metadata: purchaseMetadata,
           },
         });
 

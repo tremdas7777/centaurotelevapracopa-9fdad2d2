@@ -53,52 +53,82 @@ export type Database = {
       orders: {
         Row: {
           amount_cents: number
+          buyer_address: string | null
+          buyer_address_number: string | null
+          buyer_cep: string | null
+          buyer_city: string | null
+          buyer_complement: string | null
           buyer_document: string | null
           buyer_email: string | null
           buyer_name: string | null
+          buyer_neighborhood: string | null
           buyer_phone: string | null
+          buyer_state: string | null
           created_at: string
           external_id: string | null
           gateway: string
           gateway_response: Json | null
           id: string
+          items_description: string | null
           pix_code: string | null
           pix_qr_code_base64: string | null
           qr_code_copied: boolean
+          shipping_cost_cents: number | null
+          shipping_method: string | null
           status: string
           updated_at: string
         }
         Insert: {
           amount_cents: number
+          buyer_address?: string | null
+          buyer_address_number?: string | null
+          buyer_cep?: string | null
+          buyer_city?: string | null
+          buyer_complement?: string | null
           buyer_document?: string | null
           buyer_email?: string | null
           buyer_name?: string | null
+          buyer_neighborhood?: string | null
           buyer_phone?: string | null
+          buyer_state?: string | null
           created_at?: string
           external_id?: string | null
           gateway?: string
           gateway_response?: Json | null
           id?: string
+          items_description?: string | null
           pix_code?: string | null
           pix_qr_code_base64?: string | null
           qr_code_copied?: boolean
+          shipping_cost_cents?: number | null
+          shipping_method?: string | null
           status?: string
           updated_at?: string
         }
         Update: {
           amount_cents?: number
+          buyer_address?: string | null
+          buyer_address_number?: string | null
+          buyer_cep?: string | null
+          buyer_city?: string | null
+          buyer_complement?: string | null
           buyer_document?: string | null
           buyer_email?: string | null
           buyer_name?: string | null
+          buyer_neighborhood?: string | null
           buyer_phone?: string | null
+          buyer_state?: string | null
           created_at?: string
           external_id?: string | null
           gateway?: string
           gateway_response?: Json | null
           id?: string
+          items_description?: string | null
           pix_code?: string | null
           pix_qr_code_base64?: string | null
           qr_code_copied?: boolean
+          shipping_cost_cents?: number | null
+          shipping_method?: string | null
           status?: string
           updated_at?: string
         }
