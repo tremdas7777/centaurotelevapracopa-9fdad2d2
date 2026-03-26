@@ -142,7 +142,9 @@ export default function QuizHome() {
 
   // Centralized Safari theme-color management based on current screen
   useEffect(() => {
-    const color = '#212121';
+    // Use red for splash, loading animation, and scratch card screens; dark for others
+    const isRedScreen = showSplash || showAnimation || showScratchCard;
+    const color = isRedScreen ? '#E30613' : '#212121';
 
     let dynamicTag = document.head.querySelector('meta[name="theme-color"][data-dynamic-theme="true"]') as HTMLMetaElement | null;
 
