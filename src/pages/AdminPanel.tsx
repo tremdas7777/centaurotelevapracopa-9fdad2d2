@@ -10,7 +10,7 @@ import { getFunnelStats, clearFunnelEvents } from '@/lib/funnelTracking';
 import { getPixelConfig, savePixelConfig, type PixelConfig, type FacebookPixelEntry, type TikTokPixelEntry, type GoogleAdsEntry } from '@/lib/pixelManager';
 import { getWebhookConfig, saveWebhookConfig, fireWebhookEvent, type WebhookConfig, type WebhookEntry } from '@/lib/webhookManager';
 import { getUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
-import { getPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
+import { fetchPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
 
 const ADMIN_PASSWORD = 'escalabahia';
@@ -47,7 +47,12 @@ export default function AdminPanel() {
   const [utmifyTesting2, setUtmifyTesting2] = useState(false);
 
   // Payment gateway state
-  const [gatewayConfig, setGatewayConfig] = useState<PaymentGatewayConfig>(getPaymentGatewayConfig());
+  const [gatewayConfig, setGatewayConfig] = useState<PaymentGatewayConfig>({
+    activeGateway: 'centurionpay',
+    pagouai: { publicKey: '', secretKey: '', enabled: false },
+    vennox: { secretKey: '', companyId: '', enabled: false },
+    centurionpay: { secretKey: '', companyId: '', enabled: false },
+  });
   const [gatewayMessage, setGatewayMessage] = useState('');
   const [orders, setOrders] = useState<any[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
@@ -66,7 +71,7 @@ export default function AdminPanel() {
     setPixelConfig(getPixelConfig());
     setWebhookConfig(getWebhookConfig());
     setUtmifyConfig(getUtmifyConfig());
-    setGatewayConfig(getPaymentGatewayConfig());
+    fetchPaymentGatewayConfig().then(config => setGatewayConfig(config));
   }, []);
 
   useEffect(() => {
@@ -727,9 +732,10 @@ export default function AdminPanel() {
                 {(['pagouai', 'vennox', 'centurionpay'] as const).map((gw) => (
                   <button
                     key={gw}
-                    onClick={() => {
-                      setGatewayConfig(prev => ({ ...prev, activeGateway: gw }));
-                      savePaymentGatewayConfig({ ...gatewayConfig, activeGateway: gw });
+                    onClick={async () => {
+                      const updated = { ...gatewayConfig, activeGateway: gw };
+                      setGatewayConfig(updated);
+                      await savePaymentGatewayConfig(updated);
                       const names: Record<string, string> = { pagouai: 'Pagou.ai', vennox: 'Vennox', centurionpay: 'Centurion Pay' };
                       setGatewayMessage(`Gateway ativo: ${names[gw]}`);
                       setTimeout(() => setGatewayMessage(''), 3000);
@@ -791,8 +797,8 @@ export default function AdminPanel() {
                 </div>
 
                 <Button
-                  onClick={() => {
-                    savePaymentGatewayConfig(gatewayConfig);
+                  onClick={async () => {
+                    await savePaymentGatewayConfig(gatewayConfig);
                     setGatewayMessage('Configuração da Pagou.ai salva com sucesso!');
                     setTimeout(() => setGatewayMessage(''), 3000);
                   }}
@@ -849,8 +855,8 @@ export default function AdminPanel() {
                 </div>
 
                 <Button
-                  onClick={() => {
-                    savePaymentGatewayConfig(gatewayConfig);
+                  onClick={async () => {
+                    await savePaymentGatewayConfig(gatewayConfig);
                     setGatewayMessage('Configuração da Vennox salva com sucesso!');
                     setTimeout(() => setGatewayMessage(''), 3000);
                   }}
@@ -907,8 +913,8 @@ export default function AdminPanel() {
                 </div>
 
                 <Button
-                  onClick={() => {
-                    savePaymentGatewayConfig(gatewayConfig);
+                  onClick={async () => {
+                    await savePaymentGatewayConfig(gatewayConfig);
                     setGatewayMessage('Configuração da Centurion Pay salva com sucesso!');
                     setTimeout(() => setGatewayMessage(''), 3000);
                   }}
