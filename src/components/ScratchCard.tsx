@@ -298,15 +298,9 @@ function ScratchGrid({
 
           const scratchPercent = transparentCount / totalSamples;
 
-          // Auto-reveal cell after 40% scratched
+          // Count cell as revealed after 40% scratched (but DON'T clear entire cell)
           if (scratchPercent >= 0.4) {
             revealedCells.current.add(idx);
-            // Animate clear of remaining cell area
-            ctx.globalCompositeOperation = 'destination-out';
-            ctx.fillStyle = 'rgba(0,0,0,1)';
-            ctx.fillRect(cx, cy, cellW, cellH);
-            ctx.globalCompositeOperation = 'source-over';
-
             const newCount = revealedCells.current.size;
             setRevealedCount(newCount);
 
@@ -383,7 +377,7 @@ function ScratchGrid({
           {grid.map((item, i) => (
             <div
               key={i}
-              className="bg-gradient-to-br from-muted to-background flex flex-col items-center justify-center gap-0.5 aspect-square"
+              className="bg-[#1a1a1a] flex flex-col items-center justify-center gap-0.5 aspect-square"
             >
               {item.image ? (
                 <>
