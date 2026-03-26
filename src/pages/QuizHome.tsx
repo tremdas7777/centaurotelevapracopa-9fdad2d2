@@ -81,9 +81,20 @@ const quizQuestions: Question[] = [
 
 export default function QuizHome() {
   const navigate = useNavigate();
+  const [showSplash, setShowSplash] = useState(true);
+  const [splashExiting, setSplashExiting] = useState(false);
   const [showHome, setShowHome] = useState(true);
   const [homeExiting, setHomeExiting] = useState(false);
   const [bannerLoaded, setBannerLoaded] = useState(false);
+
+  // Splash screen timer
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSplashExiting(true);
+      setTimeout(() => setShowSplash(false), 400);
+    }, 1800);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Preload quiz banner image
   useEffect(() => {
