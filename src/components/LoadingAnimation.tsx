@@ -10,6 +10,19 @@ export default function LoadingAnimation({ onComplete }: LoadingAnimationProps) 
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
+    const themeColorMetaTags = Array.from(document.querySelectorAll('meta[name="theme-color"]'));
+    const previousColors = themeColorMetaTags.map((tag) => tag.getAttribute('content') ?? '');
+    const rootStyles = getComputedStyle(document.documentElement);
+    const loadingColor = `hsl(${rootStyles.getPropertyValue('--primary').trim()})`;
+
+    themeColorMetaTags.forEach((tag) => tag.setAttribute('content', loadingColor));
+
+    return () => {
+      themeColorMetaTags.forEach((tag, index) => tag.setAttribute('content', previousColors[index]));
+    };
+  }, []);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
