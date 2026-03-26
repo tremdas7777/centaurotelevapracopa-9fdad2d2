@@ -583,7 +583,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
       {showLosePopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 animate-fade-in">
           <div className="flex flex-col items-center gap-5 px-8 py-10 max-w-sm w-full bg-foreground/70 backdrop-blur-md rounded-2xl mx-4 border border-muted/30 shadow-2xl">
-            <img src={centauroLogo} alt="Centauro" className="h-10 object-contain brightness-0 invert" />
+            <img src={centauroLogo} alt="Centauro" className="h-16 object-contain brightness-0 invert" />
             <span className="text-6xl">😔</span>
             <h2 className="text-2xl font-black text-primary-foreground text-center">
               Não foi dessa vez...
