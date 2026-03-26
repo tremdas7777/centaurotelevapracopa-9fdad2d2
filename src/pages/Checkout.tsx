@@ -149,7 +149,7 @@ export default function Checkout() {
           setBairro('');
           setCidade('');
           setEstado('');
-          setNearestStore('');
+          setNearestStore(null);
         }
       } catch {
         // ignore
@@ -503,7 +503,7 @@ export default function Checkout() {
                     </div>
                     <div className="flex-1">
                       <p className="text-xs font-bold text-foreground">Retirada na Loja Centauro</p>
-                      <p className="text-[10px] text-muted-foreground">{nearestStore} — Disponível a partir de 15/06</p>
+                      <p className="text-[10px] text-muted-foreground">{nearestStore.name}, Loja {nearestStore.number}, {nearestStore.city} - {nearestStore.uf} — Disponível a partir de 15/06</p>
                     </div>
                   </div>
                   )}
@@ -568,7 +568,7 @@ export default function Checkout() {
           <AlertDialogHeader>
             <AlertDialogTitle>Unidade Indisponível</AlertDialogTitle>
             <AlertDialogDescription>
-              A unidade <strong>{nearestStore || 'Centauro mais próxima'}</strong> está indisponível para retirada presencial no momento. Por favor, selecione o envio via Correios SEDEX.
+              A unidade <strong>{nearestStore ? nearestStore.name : 'Centauro mais próxima'}</strong> está indisponível para retirada presencial no momento. Por favor, selecione o envio via Correios SEDEX.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
