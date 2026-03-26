@@ -67,9 +67,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    // The API returns an array of results
-    const result = Array.isArray(data) ? data[0] : data;
-    const nome = result?.nome || result?.NOME || result?.name;
+    // The API returns { data: [{ name, cpf, ... }] }
+    const records = data?.data || data;
+    const result = Array.isArray(records) ? records[0] : records;
+    const nome = result?.name || result?.nome || result?.NOME;
 
     if (!nome) {
       return new Response(JSON.stringify({ error: 'CPF não encontrado' }), {
