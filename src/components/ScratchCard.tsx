@@ -441,6 +441,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
       setTimeout(() => setShowCelebration(false), 3500);
     } else {
       setRoundResult('lose');
+      setShowLosePopup(true);
     }
   }, [grid]);
 
