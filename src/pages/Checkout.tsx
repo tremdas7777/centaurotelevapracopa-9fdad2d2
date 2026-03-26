@@ -229,7 +229,7 @@ export default function Checkout() {
       cep: cep.replace(/\D/g, ''),
       shippingMethod: shippingMethod || 'sedex',
       shippingCostCents: Math.round((shippingCost || 44.90) * 100),
-      itemsDescription: 'Kit Copa 2026: Camisa Seleção Brasileira + Álbum Copa do Mundo + Sorteio VIP Ingressos',
+      itemsDescription: 'Panela Antiaderente 12L',
     };
 
     if (activeGateway === 'pagouai') {
