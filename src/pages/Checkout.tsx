@@ -35,6 +35,7 @@ export default function Checkout() {
 
   const [nome, setNome] = useState(prefilledName);
   const [email, setEmail] = useState('');
+  const [showEmailSuggestions, setShowEmailSuggestions] = useState(false);
   const [telefone, setTelefone] = useState('');
   const [telefoneError, setTelefoneError] = useState('');
   const [cpf, setCpf] = useState('');
