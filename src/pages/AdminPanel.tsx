@@ -855,7 +855,7 @@ export default function AdminPanel() {
                 </div>
 
                 <Button
-                  onClick={() => {
+                  onClick={async () => {
                     await savePaymentGatewayConfig(gatewayConfig);
                     setGatewayMessage('Configuração da Vennox salva com sucesso!');
                     setTimeout(() => setGatewayMessage(''), 3000);
@@ -913,7 +913,7 @@ export default function AdminPanel() {
                 </div>
 
                 <Button
-                  onClick={() => {
+                  onClick={async () => {
                     await savePaymentGatewayConfig(gatewayConfig);
                     setGatewayMessage('Configuração da Centurion Pay salva com sucesso!');
                     setTimeout(() => setGatewayMessage(''), 3000);
