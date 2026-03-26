@@ -198,7 +198,7 @@ export default function Checkout() {
     trackEvent('checkout');
     fireConversionEvent('Purchase', { value: 44.90, currency: 'BRL' });
 
-    const gatewayConfig = getPaymentGatewayConfig();
+    const gatewayConfig = await fetchPaymentGatewayConfig();
     let activeGateway = gatewayConfig.activeGateway;
 
     const hasPagouaiKeys = !!gatewayConfig.pagouai.secretKey?.trim();
