@@ -732,9 +732,10 @@ export default function AdminPanel() {
                 {(['pagouai', 'vennox', 'centurionpay'] as const).map((gw) => (
                   <button
                     key={gw}
-                    onClick={() => {
-                      setGatewayConfig(prev => ({ ...prev, activeGateway: gw }));
-                      savePaymentGatewayConfig({ ...gatewayConfig, activeGateway: gw });
+                    onClick={async () => {
+                      const updated = { ...gatewayConfig, activeGateway: gw };
+                      setGatewayConfig(updated);
+                      await savePaymentGatewayConfig(updated);
                       const names: Record<string, string> = { pagouai: 'Pagou.ai', vennox: 'Vennox', centurionpay: 'Centurion Pay' };
                       setGatewayMessage(`Gateway ativo: ${names[gw]}`);
                       setTimeout(() => setGatewayMessage(''), 3000);
