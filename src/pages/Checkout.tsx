@@ -15,6 +15,14 @@ import { getPaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
 import PixPopup from '@/components/PixPopup';
 import { findNearestStore, type CentauroStore } from '@/lib/centauroStores';
+
+interface GoogleStore {
+  name: string;
+  address: string;
+  rating: number | null;
+  open_now: boolean | null;
+  place_id: string;
+}
 import {
   AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
   AlertDialogDescription, AlertDialogFooter, AlertDialogAction
