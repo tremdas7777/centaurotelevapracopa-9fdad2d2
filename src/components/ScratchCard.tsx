@@ -264,16 +264,16 @@ function ScratchGrid({
     if (!ctx) return;
 
     const { cellW, cellH, gap } = getCellSize();
-
-    // Scratch with large brush
     const dpr = 2;
+
+    // Scratch with brush
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
-    ctx.arc(posX, posY, 20, 0, Math.PI * 2);
+    ctx.arc(posX, posY, 22, 0, Math.PI * 2);
     ctx.fill();
     ctx.globalCompositeOperation = 'source-over';
 
-    // Check which cell was touched and if it's sufficiently scratched
+    // Check which cell this position is in
     for (let row = 0; row < 3; row++) {
       for (let col = 0; col < 3; col++) {
         const idx = row * 3 + col;
@@ -282,41 +282,29 @@ function ScratchGrid({
         const cx = col * (cellW + gap);
         const cy = row * (cellH + gap);
 
-        // Check if scratch position is in this cell
         if (posX >= cx && posX <= cx + cellW && posY >= cy && posY <= cy + cellH) {
-          // Sample a few points in this cell to check transparency
-          const samplePoints = [
-            [cx + cellW * 0.3, cy + cellH * 0.3],
-            [cx + cellW * 0.7, cy + cellH * 0.3],
-            [cx + cellW * 0.5, cy + cellH * 0.5],
-            [cx + cellW * 0.3, cy + cellH * 0.7],
-            [cx + cellW * 0.7, cy + cellH * 0.7],
-          ];
-
+          // Sample many points in this cell to calculate scratch percentage
+          const gridSize = 5;
           let transparentCount = 0;
-          for (const [sx, sy] of samplePoints) {
-            const pixel = ctx.getImageData(sx * dpr, sy * dpr, 1, 1).data;
-            if (pixel[3] < 50) transparentCount++;
+          const totalSamples = gridSize * gridSize;
+          for (let gx = 0; gx < gridSize; gx++) {
+            for (let gy = 0; gy < gridSize; gy++) {
+              const sx = cx + (cellW * (gx + 0.5)) / gridSize;
+              const sy = cy + (cellH * (gy + 0.5)) / gridSize;
+              const pixel = ctx.getImageData(sx * dpr, sy * dpr, 1, 1).data;
+              if (pixel[3] < 50) transparentCount++;
+            }
           }
 
-          // If any scratch detected in cell, reveal it immediately
-          if (transparentCount >= 1) {
+          const scratchPercent = transparentCount / totalSamples;
+
+          // Auto-reveal cell after 40% scratched
+          if (scratchPercent >= 0.4) {
             revealedCells.current.add(idx);
-            // Clear entire cell
+            // Animate clear of remaining cell area
             ctx.globalCompositeOperation = 'destination-out';
-            const r = 12;
-            ctx.beginPath();
-            ctx.moveTo(cx + r, cy);
-            ctx.lineTo(cx + cellW - r, cy);
-            ctx.quadraticCurveTo(cx + cellW, cy, cx + cellW, cy + r);
-            ctx.lineTo(cx + cellW, cy + cellH - r);
-            ctx.quadraticCurveTo(cx + cellW, cy + cellH, cx + cellW - r, cy + cellH);
-            ctx.lineTo(cx + r, cy + cellH);
-            ctx.quadraticCurveTo(cx, cy + cellH, cx, cy + cellH - r);
-            ctx.lineTo(cx, cy + r);
-            ctx.quadraticCurveTo(cx, cy, cx + r, cy);
-            ctx.closePath();
-            ctx.fill();
+            ctx.fillStyle = 'rgba(0,0,0,1)';
+            ctx.fillRect(cx, cy, cellW, cellH);
             ctx.globalCompositeOperation = 'source-over';
 
             const newCount = revealedCells.current.size;
