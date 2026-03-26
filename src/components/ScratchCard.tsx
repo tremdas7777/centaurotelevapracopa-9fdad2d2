@@ -88,6 +88,7 @@ function ScratchGrid({
   const isDrawing = useRef(false);
   const revealedCells = useRef<Set<number>>(new Set());
   const hasFinished = useRef(false);
+  const lastPosRef = useRef<{ x: number; y: number } | null>(null);
   const [revealedCount, setRevealedCount] = useState(0);
 
   const getCellSize = useCallback(() => {
@@ -226,10 +227,16 @@ function ScratchGrid({
     logoImg.onload = () => {
       const logoH = Math.min(totalH * 0.3, 80);
       const logoW = logoH * (logoImg.naturalWidth / logoImg.naturalHeight);
-      ctx.filter = 'brightness(0) invert(1)';
+      const offscreen = document.createElement('canvas');
+      offscreen.width = logoImg.naturalWidth;
+      offscreen.height = logoImg.naturalHeight;
+      const offCtx = offscreen.getContext('2d')!;
+      offCtx.drawImage(logoImg, 0, 0);
+      offCtx.globalCompositeOperation = 'source-in';
+      offCtx.fillStyle = '#FFFFFF';
+      offCtx.fillRect(0, 0, offscreen.width, offscreen.height);
       ctx.globalAlpha = 0.45;
-      ctx.drawImage(logoImg, cx - logoW / 2, cy - totalH * 0.16 - logoH / 2, logoW, logoH);
-      ctx.filter = 'none';
+      ctx.drawImage(offscreen, cx - logoW / 2, cy - totalH * 0.16 - logoH / 2, logoW, logoH);
       ctx.globalAlpha = 1;
     };
     // "RASPE AQUI!" text
@@ -266,11 +273,23 @@ function ScratchGrid({
     const { cellW, cellH, gap } = getCellSize();
     const dpr = 2;
 
-    // Scratch with brush
+    // Scratch with continuous brush stroke
+    const lastPos = lastPosRef.current;
     ctx.globalCompositeOperation = 'destination-out';
-    ctx.beginPath();
-    ctx.arc(posX, posY, 22, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.lineWidth = 38;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    if (lastPos) {
+      ctx.beginPath();
+      ctx.moveTo(lastPos.x, lastPos.y);
+      ctx.lineTo(posX, posY);
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.arc(posX, posY, 19, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    lastPosRef.current = { x: posX, y: posY };
     ctx.globalCompositeOperation = 'source-over';
 
     // Check which cell this position is in
@@ -341,6 +360,7 @@ function ScratchGrid({
   const handleStart = (e: React.TouchEvent | React.MouseEvent) => {
     e.preventDefault();
     isDrawing.current = true;
+    lastPosRef.current = null;
     const pos = getPos(e);
     checkCellReveal(pos.x, pos.y);
   };
@@ -354,6 +374,7 @@ function ScratchGrid({
 
   const handleEnd = () => {
     isDrawing.current = false;
+    lastPosRef.current = null;
   };
 
   const { cellW, cellH, gap, totalH } = getCellSize();
