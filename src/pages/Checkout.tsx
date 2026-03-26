@@ -540,12 +540,11 @@ export default function Checkout() {
                     <div className="flex-1">
                       <p className="text-xs font-bold text-foreground">Retirada na Loja Centauro</p>
                       {selectedGoogleStore ? (
-                        <p className="text-[10px] text-muted-foreground">{selectedGoogleStore.name} — {selectedGoogleStore.address} — Disponível a partir de 15/06</p>
+                        <p className="text-[10px] text-muted-foreground">{selectedGoogleStore.name} — {selectedGoogleStore.address} — Disponível para retirada a partir de 15/06</p>
                       ) : nearestStore ? (
-                        <p className="text-[10px] text-muted-foreground">{nearestStore.name}, Loja {nearestStore.number}, {nearestStore.city} - {nearestStore.uf} — Disponível a partir de 15/06</p>
+                        <p className="text-[10px] text-muted-foreground">{nearestStore.name}, Loja {nearestStore.number}, {nearestStore.city} - {nearestStore.uf} — Disponível para retirada a partir de 15/06</p>
                       ) : null}
                     </div>
-                    <span className="text-sm font-black text-centauro-green flex-shrink-0">GRÁTIS</span>
                   </div>
                   )}
 
