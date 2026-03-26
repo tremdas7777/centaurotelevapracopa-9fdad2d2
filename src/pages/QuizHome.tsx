@@ -131,6 +131,7 @@ export default function QuizHome() {
 
     return () => clearTimeout(safetyTimer);
   }, []);
+
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [quizComplete, setQuizComplete] = useState(false);
@@ -138,6 +139,14 @@ export default function QuizHome() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
   const [showScratchCard, setShowScratchCard] = useState(false);
+
+  // Centralized Safari theme-color management based on current screen
+  useEffect(() => {
+    const tags = document.querySelectorAll('meta[name="theme-color"]');
+    const color = showAnimation ? '#E60000' : '#212121';
+    tags.forEach((tag) => tag.setAttribute('content', color));
+  }, [showAnimation, showScratchCard, showHome, quizComplete]);
+
   const [timeLeft, setTimeLeft] = useState(600);
   const [selectedSize, setSelectedSize] = useState('M');
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
