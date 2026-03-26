@@ -421,6 +421,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
   const [grid, setGrid] = useState<ScratchItem[]>(() => generateLosingGrid());
   const [roundResult, setRoundResult] = useState<'pending' | 'win' | 'lose'>('pending');
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showLosePopup, setShowLosePopup] = useState(false);
   const [wonPrizes, setWonPrizes] = useState<ScratchItem[]>([]);
 
   const totalRounds = 3;
