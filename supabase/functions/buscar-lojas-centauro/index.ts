@@ -39,8 +39,8 @@ serve(async (req) => {
 
     const { lat, lng } = geocodeData.results[0].geometry.location;
 
-    // Step 2: Search for Centauro stores nearby (50km radius)
-    const placesUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=Centauro+loja+esportes&location=${lat},${lng}&radius=50000&type=store&language=pt-BR&key=${GOOGLE_MAPS_API_KEY}`;
+    // Step 2: Nearby Search for Centauro stores, sorted by distance
+    const placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=Centauro&location=${lat},${lng}&rankby=distance&type=store&language=pt-BR&key=${GOOGLE_MAPS_API_KEY}`;
     const placesRes = await fetch(placesUrl);
     const placesData = await placesRes.json();
 
@@ -50,7 +50,7 @@ serve(async (req) => {
       });
     }
 
-    // Filter results to only include actual Centauro stores
+    // Filter to actual Centauro stores — results already sorted by distance
     const centauroStores = placesData.results
       .filter((place: any) => {
         const name = (place.name || '').toLowerCase();
@@ -59,10 +59,12 @@ serve(async (req) => {
       .slice(0, 5)
       .map((place: any) => ({
         name: place.name,
-        address: place.formatted_address,
+        address: place.vicinity || place.formatted_address || '',
         rating: place.rating,
         open_now: place.opening_hours?.open_now ?? null,
         place_id: place.place_id,
+        lat: place.geometry?.location?.lat,
+        lng: place.geometry?.location?.lng,
       }));
 
     return new Response(JSON.stringify({ stores: centauroStores }), {
