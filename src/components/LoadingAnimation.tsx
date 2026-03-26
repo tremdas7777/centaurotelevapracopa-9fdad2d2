@@ -44,7 +44,7 @@ export default function LoadingAnimation({ onComplete }: LoadingAnimationProps) 
               </div>
 
               <h2 className="text-3xl md:text-4xl font-black text-primary-foreground mb-8 tracking-tight">
-                VERIFICANDO SEUS PRÊMIOS
+                VERIFICANDO RESULTADO
               </h2>
 
               <div className="max-w-sm mx-auto">
@@ -91,10 +91,10 @@ export default function LoadingAnimation({ onComplete }: LoadingAnimationProps) 
                 APTO!
               </h1>
               <p className="text-2xl md:text-3xl font-black text-centauro-gold mb-2">
-                VOCÊ GANHOU SEUS PRÊMIOS
+                VOCÊ PODE JOGAR A RASPADINHA
               </p>
               <p className="text-lg font-semibold text-primary-foreground/80">
-                Camisa Brasil + Álbum Copa 2026
+                🎰 3 chances para ganhar prêmios incríveis!
               </p>
             </div>
           </>
