@@ -1,12 +1,17 @@
-import { useState, useRef, useCallback } from 'react';
-import { Gift, Star, ChevronRight, Sparkles } from 'lucide-react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { Gift, Star, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import CentauroHeader from '@/components/CentauroHeader';
+import centauroLogo from '@/assets/centauro-logo.webp';
+import cbfLogo from '@/assets/cbf-logo.webp';
+import centauroLogoColor from '@/assets/centauro-logo.webp';
+import camisaImg from '@/assets/camisa-brasil-hero.webp';
+import albumImg from '@/assets/album-copa-hero.webp';
 
 interface ScratchItem {
   id: string;
   label: string;
   emoji: string;
+  image?: string;
 }
 
 const ALL_ITEMS: ScratchItem[] = [
@@ -14,19 +19,15 @@ const ALL_ITEMS: ScratchItem[] = [
   { id: 'trofeu', label: 'Troféu', emoji: '🏆' },
   { id: 'chuteira', label: 'Chuteira', emoji: '👟' },
   { id: 'bandeira', label: 'Bandeira', emoji: '🇧🇷' },
-  { id: 'album', label: 'Álbum', emoji: '📖' },
-  { id: 'camisa', label: 'Camisa', emoji: '👕' },
+  { id: 'album', label: 'Álbum', emoji: '📖', image: albumImg },
+  { id: 'camisa', label: 'Camisa', emoji: '👕', image: camisaImg },
 ];
 
-// Generate a grid where NO item appears 3+ times (no winner)
 function generateLosingGrid(): ScratchItem[] {
   const grid: ScratchItem[] = [];
   const counts: Record<string, number> = {};
-
-  // Shuffle all items and pick ensuring max 2 of each
   const shuffled = [...ALL_ITEMS].sort(() => Math.random() - 0.5);
   let idx = 0;
-
   while (grid.length < 9) {
     const item = shuffled[idx % shuffled.length];
     const count = counts[item.id] || 0;
@@ -35,7 +36,6 @@ function generateLosingGrid(): ScratchItem[] {
       counts[item.id] = count + 1;
     }
     idx++;
-    // Safety: after many iterations just fill
     if (idx > 100) {
       const available = ALL_ITEMS.find(i => (counts[i.id] || 0) < 2);
       if (available) {
@@ -44,26 +44,17 @@ function generateLosingGrid(): ScratchItem[] {
       }
     }
   }
-
   return grid.sort(() => Math.random() - 0.5);
 }
 
-// Generate a grid where the winning item appears exactly 3 times
 function generateWinningGrid(winnerId: string): ScratchItem[] {
   const winner = ALL_ITEMS.find(i => i.id === winnerId)!;
   const others = ALL_ITEMS.filter(i => i.id !== winnerId);
   const grid: ScratchItem[] = [];
-
-  // Place 3 winners
-  for (let i = 0; i < 3; i++) {
-    grid.push({ ...winner });
-  }
-
-  // Fill remaining 6 with others (max 2 each)
+  for (let i = 0; i < 3; i++) grid.push({ ...winner });
   const shuffled = [...others].sort(() => Math.random() - 0.5);
   const counts: Record<string, number> = {};
   let idx = 0;
-
   while (grid.length < 9) {
     const item = shuffled[idx % shuffled.length];
     const count = counts[item.id] || 0;
@@ -74,82 +65,167 @@ function generateWinningGrid(winnerId: string): ScratchItem[] {
     idx++;
     if (idx > 100) break;
   }
-
   return grid.sort(() => Math.random() - 0.5);
 }
 
-// Round configs: round 0 = lose, round 1 = win album, round 2 = win camisa
 const ROUND_CONFIGS = [
   { type: 'lose' as const, winnerId: null, title: 'Tente a sorte!' },
   { type: 'win' as const, winnerId: 'album', title: 'Segunda chance!' },
   { type: 'win' as const, winnerId: 'camisa', title: 'Última chance!' },
 ];
 
-interface ScratchCellProps {
-  item: ScratchItem;
-  index: number;
-  revealed: boolean;
-  onScratch: (index: number) => void;
-}
+// Canvas-based scratch cell with real drag-to-reveal
+function ScratchCell({ item, onRevealed }: { item: ScratchItem; onRevealed: () => void }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isDrawing = useRef(false);
+  const hasRevealed = useRef(false);
+  const [revealed, setRevealed] = useState(false);
 
-function ScratchCell({ item, index, revealed, onScratch }: ScratchCellProps) {
-  const cellRef = useRef<HTMLDivElement>(null);
-  const scratchAmount = useRef(0);
-  const [localRevealed, setLocalRevealed] = useState(false);
-  const isRevealed = revealed || localRevealed;
+  const initCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-  const handleInteraction = useCallback((clientX: number, clientY: number) => {
-    if (isRevealed) return;
-    scratchAmount.current += 1;
-    if (scratchAmount.current >= 3) {
-      setLocalRevealed(true);
-      onScratch(index);
+    const rect = container.getBoundingClientRect();
+    const size = rect.width;
+    canvas.width = size * 2;
+    canvas.height = size * 2;
+    ctx.scale(2, 2);
+
+    // Gold gradient
+    const gradient = ctx.createLinearGradient(0, 0, size, size);
+    gradient.addColorStop(0, '#C9A84C');
+    gradient.addColorStop(0.3, '#E8D48B');
+    gradient.addColorStop(0.5, '#F5E6A3');
+    gradient.addColorStop(0.7, '#E8D48B');
+    gradient.addColorStop(1, '#C9A84C');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // Load and draw Centauro logo
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const logoW = size * 0.5;
+      const logoH = (img.height / img.width) * logoW;
+      const x = (size - logoW) / 2;
+      const y = (size - logoH) / 2;
+      ctx.globalAlpha = 0.2;
+      ctx.drawImage(img, x, y, logoW, logoH);
+      ctx.globalAlpha = 1.0;
+    };
+    img.src = centauroLogoColor;
+
+    // Subtle text
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    ctx.font = `bold ${Math.max(8, size * 0.08)}px Inter, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText('RASPE', size / 2, size * 0.25);
+    ctx.fillText('AQUI', size / 2, size * 0.82);
+  }, []);
+
+  useEffect(() => {
+    initCanvas();
+  }, [initCanvas]);
+
+  const scratch = useCallback((x: number, y: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas || hasRevealed.current) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(x, y, 18, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Check percentage
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let transparent = 0;
+    for (let i = 3; i < imageData.data.length; i += 16) {
+      if (imageData.data[i] === 0) transparent++;
     }
-  }, [isRevealed, index, onScratch]);
+    const total = imageData.data.length / 16;
+    const pct = (transparent / total) * 100;
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (e.buttons === 1) handleInteraction(e.clientX, e.clientY);
+    if (pct > 50 && !hasRevealed.current) {
+      hasRevealed.current = true;
+      setTimeout(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        setRevealed(true);
+        onRevealed();
+      }, 200);
+    }
+  }, [onRevealed]);
+
+  const getPos = (e: React.TouchEvent | React.MouseEvent) => {
+    const canvas = canvasRef.current!;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = (canvas.width / 2) / rect.width;
+    const scaleY = (canvas.height / 2) / rect.height;
+    if ('touches' in e) {
+      return {
+        x: (e.touches[0].clientX - rect.left) * scaleX / scaleX,
+        y: (e.touches[0].clientY - rect.top) * scaleY / scaleY,
+      };
+    }
+    return {
+      x: ((e as React.MouseEvent).clientX - rect.left),
+      y: ((e as React.MouseEvent).clientY - rect.top),
+    };
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handleStart = (e: React.TouchEvent | React.MouseEvent) => {
     e.preventDefault();
-    handleInteraction(e.touches[0].clientX, e.touches[0].clientY);
+    isDrawing.current = true;
+    const pos = getPos(e);
+    scratch(pos.x, pos.y);
   };
 
-  const handleClick = () => {
-    if (!isRevealed) {
-      setLocalRevealed(true);
-      onScratch(index);
-    }
+  const handleMove = (e: React.TouchEvent | React.MouseEvent) => {
+    if (!isDrawing.current) return;
+    e.preventDefault();
+    const pos = getPos(e);
+    scratch(pos.x, pos.y);
+  };
+
+  const handleEnd = () => {
+    isDrawing.current = false;
   };
 
   return (
-    <div
-      ref={cellRef}
-      className="relative aspect-square rounded-xl overflow-hidden cursor-pointer select-none touch-none"
-      onMouseDown={handleClick}
-      onMouseMove={handleMouseMove}
-      onTouchStart={(e) => { e.preventDefault(); handleClick(); }}
-      onTouchMove={handleTouchMove}
-    >
+    <div ref={containerRef} className="relative aspect-square rounded-xl overflow-hidden border border-border">
       {/* Prize underneath */}
-      <div className="absolute inset-0 bg-gradient-to-br from-muted to-background flex flex-col items-center justify-center gap-0.5 border border-border rounded-xl">
-        <span className="text-3xl md:text-4xl">{item.emoji}</span>
-        <span className="text-[10px] md:text-xs font-bold text-foreground/70">{item.label}</span>
+      <div className="absolute inset-0 bg-gradient-to-br from-muted to-background flex flex-col items-center justify-center gap-0.5">
+        {item.image ? (
+          <>
+            <img src={item.image} alt={item.label} className="w-3/4 h-3/4 object-contain" />
+            <span className="text-[9px] md:text-[10px] font-bold text-foreground/70">{item.label}</span>
+          </>
+        ) : (
+          <>
+            <span className="text-3xl md:text-4xl">{item.emoji}</span>
+            <span className="text-[9px] md:text-[10px] font-bold text-foreground/70">{item.label}</span>
+          </>
+        )}
       </div>
 
-      {/* Gold scratch overlay */}
-      {!isRevealed && (
-        <div className="absolute inset-0 rounded-xl flex items-center justify-center transition-opacity duration-300"
-          style={{
-            background: 'linear-gradient(135deg, #C9A84C, #E8D48B, #F5E6A3, #E8D48B, #C9A84C)',
-          }}
-        >
-          <div className="text-center">
-            <Sparkles size={20} className="mx-auto mb-1 text-foreground/30" />
-            <span className="text-[10px] font-bold text-foreground/40 uppercase tracking-wider">Raspe</span>
-          </div>
-        </div>
+      {/* Canvas scratch layer */}
+      {!revealed && (
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full cursor-pointer touch-none"
+          onMouseDown={handleStart}
+          onMouseMove={handleMove}
+          onMouseUp={handleEnd}
+          onMouseLeave={handleEnd}
+          onTouchStart={handleStart}
+          onTouchMove={handleMove}
+          onTouchEnd={handleEnd}
+        />
       )}
     </div>
   );
@@ -161,7 +237,7 @@ interface ScratchCardProps {
 
 export default function ScratchCard({ onComplete }: ScratchCardProps) {
   const [currentRound, setCurrentRound] = useState(0);
-  const [revealedCells, setRevealedCells] = useState<boolean[]>(Array(9).fill(false));
+  const [revealedCount, setRevealedCount] = useState(0);
   const [grid, setGrid] = useState<ScratchItem[]>(() => generateLosingGrid());
   const [roundResult, setRoundResult] = useState<'pending' | 'win' | 'lose'>('pending');
   const [showCelebration, setShowCelebration] = useState(false);
@@ -170,46 +246,39 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
   const totalRounds = 3;
   const config = ROUND_CONFIGS[currentRound];
 
-  const checkResult = useCallback((newRevealed: boolean[]) => {
-    const allRevealed = newRevealed.every(Boolean);
-    if (!allRevealed) return;
-
-    // Count items
-    const counts: Record<string, number> = {};
-    grid.forEach(item => {
-      counts[item.id] = (counts[item.id] || 0) + 1;
+  const handleCellRevealed = useCallback(() => {
+    setRevealedCount(prev => {
+      const newCount = prev + 1;
+      if (newCount >= 9) {
+        // All revealed, check result
+        setTimeout(() => {
+          const counts: Record<string, number> = {};
+          grid.forEach(item => {
+            counts[item.id] = (counts[item.id] || 0) + 1;
+          });
+          const winner = Object.entries(counts).find(([, count]) => count >= 3);
+          if (winner) {
+            const wonItem = ALL_ITEMS.find(i => i.id === winner[0])!;
+            setRoundResult('win');
+            setWonPrizes(p => [...p, wonItem]);
+            setShowCelebration(true);
+            setTimeout(() => setShowCelebration(false), 2000);
+          } else {
+            setRoundResult('lose');
+          }
+        }, 300);
+      }
+      return newCount;
     });
-
-    const winner = Object.entries(counts).find(([, count]) => count >= 3);
-    if (winner) {
-      const wonItem = ALL_ITEMS.find(i => i.id === winner[0])!;
-      setRoundResult('win');
-      setWonPrizes(prev => [...prev, wonItem]);
-      setShowCelebration(true);
-      setTimeout(() => setShowCelebration(false), 2000);
-    } else {
-      setRoundResult('lose');
-    }
   }, [grid]);
-
-  const handleScratch = useCallback((index: number) => {
-    setRevealedCells(prev => {
-      const newRevealed = [...prev];
-      newRevealed[index] = true;
-      // Defer check to next tick so state is updated
-      setTimeout(() => checkResult(newRevealed), 100);
-      return newRevealed;
-    });
-  }, [checkResult]);
 
   const handleNext = () => {
     if (currentRound < totalRounds - 1) {
       const nextRound = currentRound + 1;
       const nextConfig = ROUND_CONFIGS[nextRound];
       setCurrentRound(nextRound);
-      setRevealedCells(Array(9).fill(false));
+      setRevealedCount(0);
       setRoundResult('pending');
-
       if (nextConfig.type === 'win' && nextConfig.winnerId) {
         setGrid(generateWinningGrid(nextConfig.winnerId));
       } else {
@@ -220,20 +289,14 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
     }
   };
 
-  const revealedCount = revealedCells.filter(Boolean).length;
-
   return (
     <div className="min-h-[100dvh] bg-foreground flex flex-col">
-      {/* Centauro + CBF Header */}
-      <CentauroHeader />
-
-      {/* Title bar */}
-      <div className="bg-primary py-3 px-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-center">
-          <Gift className="text-centauro-gold mr-3" size={24} />
-          <h1 className="text-lg md:text-xl font-black text-primary-foreground tracking-tight">
-            RASPADINHA DA SORTE
-          </h1>
+      {/* Logo bar only (no banner image) */}
+      <div className="bg-primary py-4 px-4">
+        <div className="max-w-4xl mx-auto flex items-center justify-center -translate-x-2">
+          <img src={centauroLogo} alt="Centauro" className="h-14 md:h-20 object-contain brightness-0 invert" />
+          <div className="w-px h-8 bg-primary-foreground/30 ml-2 mr-4" />
+          <img src={cbfLogo} alt="CBF" className="h-14 md:h-20 object-contain" />
         </div>
       </div>
 
@@ -308,9 +371,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
               <ScratchCell
                 key={`${currentRound}-${i}`}
                 item={item}
-                index={i}
-                revealed={revealedCells[i]}
-                onScratch={handleScratch}
+                onRevealed={handleCellRevealed}
               />
             ))}
           </div>
