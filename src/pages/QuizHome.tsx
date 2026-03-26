@@ -86,22 +86,48 @@ export default function QuizHome() {
   const [showHome, setShowHome] = useState(true);
   const [homeExiting, setHomeExiting] = useState(false);
   const [bannerLoaded, setBannerLoaded] = useState(false);
+  const [allAssetsReady, setAllAssetsReady] = useState(false);
 
-  // Splash screen timer
+  // Preload ALL critical images during splash, then dismiss splash
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setSplashExiting(true);
-      setTimeout(() => setShowSplash(false), 400);
-    }, 1800);
-    return () => clearTimeout(timer);
-  }, []);
+    const criticalImages = [centauroLogo, cbfLogo, quizBannerPreload, stadiumHero, camisaImg, albumImg];
+    let loaded = 0;
+    const total = criticalImages.length;
+    const startTime = Date.now();
+    const MIN_SPLASH_MS = 1200; // minimum splash duration for UX
 
-  // Preload quiz banner image
-  useEffect(() => {
-    const img = new Image();
-    img.src = quizBannerPreload;
-    img.onload = () => setBannerLoaded(true);
-    img.onerror = () => setBannerLoaded(true); // fallback to not block
+    const checkDone = () => {
+      loaded++;
+      if (loaded >= total) {
+        setBannerLoaded(true);
+        setAllAssetsReady(true);
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, MIN_SPLASH_MS - elapsed);
+        setTimeout(() => {
+          setSplashExiting(true);
+          setTimeout(() => setShowSplash(false), 400);
+        }, remaining);
+      }
+    };
+
+    criticalImages.forEach(src => {
+      const img = new Image();
+      img.src = src;
+      img.onload = checkDone;
+      img.onerror = checkDone; // don't block on error
+    });
+
+    // Safety timeout: dismiss splash after 4s max even if images fail
+    const safetyTimer = setTimeout(() => {
+      if (!allAssetsReady) {
+        setBannerLoaded(true);
+        setAllAssetsReady(true);
+        setSplashExiting(true);
+        setTimeout(() => setShowSplash(false), 400);
+      }
+    }, 4000);
+
+    return () => clearTimeout(safetyTimer);
   }, []);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showResult, setShowResult] = useState(false);
@@ -280,13 +306,6 @@ export default function QuizHome() {
   if (showHome) {
     return (
       <div className={`bg-foreground flex flex-col min-h-screen min-h-[100svh] min-h-[100dvh] transition-all duration-500 ease-in-out ${homeExiting ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-        {/* Preload quiz banner */}
-        <link rel="preload" as="image" href={quizBannerPreload} />
-        <link rel="preload" as="image" href={camisaImg} />
-        <link rel="preload" as="image" href={albumImg} />
-        <img src={quizBannerPreload} alt="" className="hidden" />
-        <img src={camisaImg} alt="" className="hidden" />
-        <img src={albumImg} alt="" className="hidden" />
         <div className="bg-primary py-4 px-4">
           <div className="max-w-4xl mx-auto flex items-center justify-center -translate-x-2">
             <img src={centauroLogo} alt="Centauro" className="h-14 md:h-20 object-contain brightness-0 invert" />
