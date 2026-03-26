@@ -136,6 +136,7 @@ export default function QuizHome() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
+  const [showScratchCard, setShowScratchCard] = useState(false);
   const [timeLeft, setTimeLeft] = useState(1800);
   const [selectedSize, setSelectedSize] = useState('M');
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
@@ -379,7 +380,12 @@ export default function QuizHome() {
   }
 
   if (showAnimation) {
-    return <LoadingAnimation onComplete={() => { setShowAnimation(false); setQuizComplete(true); }} />;
+    return <LoadingAnimation onComplete={() => { setShowAnimation(false); setShowScratchCard(true); }} />;
+  }
+
+  if (showScratchCard) {
+    return <ScratchCard onComplete={() => { setShowScratchCard(false); setQuizComplete(true); }} />;
+  }
   }
 
   if (quizComplete) {
