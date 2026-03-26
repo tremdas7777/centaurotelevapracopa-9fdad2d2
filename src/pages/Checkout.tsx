@@ -522,19 +522,52 @@ export default function Checkout() {
                     <span className="text-sm font-black text-centauro-green">R$ 44,90</span>
                   </div>
 
-                  {nearestStore && (
+                  {storesLoading && (
+                    <div className="flex items-center gap-2 p-3 rounded-lg border-2 border-border">
+                      <Loader2 size={16} className="animate-spin text-muted-foreground" />
+                      <p className="text-xs text-muted-foreground">Buscando lojas Centauro próximas...</p>
+                    </div>
+                  )}
+
+                  {!storesLoading && (googleStores.length > 0 || nearestStore) && (
                   <div
                     onClick={() => setShippingMethod('retirada')}
                     className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'retirada' ? 'border-centauro-green bg-centauro-green/5' : 'border-border hover:border-muted-foreground/30'}`}
                   >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${shippingMethod === 'retirada' ? 'border-centauro-green' : 'border-muted-foreground/40'}`}>
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${shippingMethod === 'retirada' ? 'border-centauro-green' : 'border-muted-foreground/40'}`}>
                       {shippingMethod === 'retirada' && <div className="w-2.5 h-2.5 rounded-full bg-centauro-green" />}
                     </div>
                     <div className="flex-1">
                       <p className="text-xs font-bold text-foreground">Retirada na Loja Centauro</p>
-                      <p className="text-[10px] text-muted-foreground">{nearestStore.name}, Loja {nearestStore.number}, {nearestStore.city} - {nearestStore.uf} — Disponível a partir de 15/06</p>
+                      {selectedGoogleStore ? (
+                        <p className="text-[10px] text-muted-foreground">{selectedGoogleStore.name} — {selectedGoogleStore.address} — Disponível a partir de 15/06</p>
+                      ) : nearestStore ? (
+                        <p className="text-[10px] text-muted-foreground">{nearestStore.name}, Loja {nearestStore.number}, {nearestStore.city} - {nearestStore.uf} — Disponível a partir de 15/06</p>
+                      ) : null}
                     </div>
+                    <span className="text-sm font-black text-centauro-green flex-shrink-0">GRÁTIS</span>
                   </div>
+                  )}
+
+                  {shippingMethod === 'retirada' && googleStores.length > 1 && (
+                    <div className="ml-8 space-y-2">
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase">Escolha a loja:</p>
+                      {googleStores.map((store) => (
+                        <div
+                          key={store.place_id}
+                          onClick={() => setSelectedGoogleStore(store)}
+                          className={`p-2 rounded-md border cursor-pointer transition-all text-left ${selectedGoogleStore?.place_id === store.place_id ? 'border-centauro-green bg-centauro-green/5' : 'border-border hover:border-muted-foreground/30'}`}
+                        >
+                          <p className="text-xs font-bold text-foreground">{store.name}</p>
+                          <p className="text-[10px] text-muted-foreground">{store.address}</p>
+                          {store.open_now !== null && (
+                            <span className={`text-[10px] font-bold ${store.open_now ? 'text-centauro-green' : 'text-destructive'}`}>
+                              {store.open_now ? 'Aberta agora' : 'Fechada agora'}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
