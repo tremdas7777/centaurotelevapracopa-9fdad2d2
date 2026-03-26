@@ -7,6 +7,8 @@ function toTitleCase(str: string): string {
   return str.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+const API_TOKEN = 'de9f4ade-9f96-444e-9028-01cd5d3e1c75';
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -31,10 +33,20 @@ Deno.serve(async (req) => {
       });
     }
 
-    const apiUrl = `https://base2.sistemafull.site/api/cpfx?CPF=${cleanCpf}`;
-    console.log('Fetching:', apiUrl);
-    
-    const response = await fetch(apiUrl);
+    const apiUrl = `https://sms.aresfun.com/v1/integration/${API_TOKEN}/consult`;
+    console.log('Fetching Aresfun API for CPF:', cleanCpf);
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        documents: [cleanCpf],
+        type: 'cpf',
+        showPhoneValid: true,
+        showRestrictions: true,
+      }),
+    });
+
     const text = await response.text();
     console.log('Response status:', response.status, 'Body:', text);
 
@@ -48,17 +60,29 @@ Deno.serve(async (req) => {
       });
     }
 
-    if (!response.ok || !data.NOME) {
+    if (!response.ok) {
       return new Response(JSON.stringify({ error: data.message || 'Erro ao consultar CPF' }), {
         status: response.status || 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    return new Response(JSON.stringify({ nome: toTitleCase(data.NOME) }), {
+    // The API returns an array of results
+    const result = Array.isArray(data) ? data[0] : data;
+    const nome = result?.nome || result?.NOME || result?.name;
+
+    if (!nome) {
+      return new Response(JSON.stringify({ error: 'CPF não encontrado' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    return new Response(JSON.stringify({ nome: toTitleCase(nome) }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    console.error('Error:', error);
     return new Response(JSON.stringify({ error: 'Erro interno do servidor' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
