@@ -590,10 +590,10 @@ export default function QuizHome() {
               <div className="border-t border-foreground/20" />
               <div className="flex items-center justify-between p-3.5 bg-centauro-gold/10 rounded-md border border-centauro-gold/30">
                 <div>
-                <p className="font-bold text-foreground text-sm flex items-center gap-1.5">
-                    <Ticket size={14} className="text-centauro-gold" /> Sorteio: 2 Ingressos VIP Copa
+              <p className="font-bold text-foreground text-sm flex items-center gap-1.5">
+                    <Ticket size={14} className="text-centauro-gold" /> Concorrendo a 2 Ingressos VIP da Copa
                   </p>
-                  <p className="text-xs text-muted-foreground">Passagem + Hotel + Ingressos • Sorteio em 15/06/2026</p>
+                  <p className="text-xs text-muted-foreground">Passagem + Hotel + Ingressos VIP • Sorteio em 15/06/2026</p>
                 </div>
                 <p className="font-black text-centauro-gold text-sm">INCLUSO</p>
               </div>
