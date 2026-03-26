@@ -579,6 +579,43 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
         </div>
       </div>
 
+      {/* Lose popup overlay */}
+      {showLosePopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 animate-fade-in">
+          <div className="flex flex-col items-center gap-5 px-8 py-10 max-w-sm w-full bg-foreground rounded-2xl mx-4 border border-muted">
+            <span className="text-6xl">😔</span>
+            <h2 className="text-2xl font-black text-primary-foreground text-center">
+              Não foi dessa vez...
+            </h2>
+            <p className="text-primary-foreground/60 text-sm font-semibold text-center">
+              {currentRound < totalRounds - 1
+                ? `Mas calma! Você ainda tem mais ${totalRounds - currentRound - 1} chance${totalRounds - currentRound - 1 > 1 ? 's' : ''}! 🍀`
+                : 'Tente novamente!'
+              }
+            </p>
+            <Button
+              onClick={() => {
+                setShowLosePopup(false);
+                handleNext();
+              }}
+              className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg py-6 rounded-lg mt-2"
+            >
+              {currentRound < totalRounds - 1 ? (
+                <>
+                  Tentar novamente
+                  <ChevronRight size={20} />
+                </>
+              ) : (
+                <>
+                  Continuar
+                  <ChevronRight size={20} />
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Celebration overlay - big centered prize */}
       {showCelebration && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 animate-fade-in">
