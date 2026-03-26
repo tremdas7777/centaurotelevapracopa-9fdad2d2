@@ -338,12 +338,23 @@ export default function Checkout() {
   const isStep2Valid = cep.replace(/\D/g, '').length === 8 && endereco && numero && bairro && cidade && estado && shippingMethod;
   const isFormValid = isStep1Valid && isStep2Valid;
 
+  const scrollToFirstError = () => {
+    setTimeout(() => {
+      const firstError = document.querySelector('[data-field-error="true"]');
+      if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
+  };
+
   const handleNextStep = () => {
     setShowFieldErrors(true);
     if (currentStep === 1 && isStep1Valid) {
       setShowFieldErrors(false);
       setCurrentStep(2);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (currentStep === 1) {
+      scrollToFirstError();
     } else if (currentStep === 2) {
       if (!shippingMethod) {
         setShippingMethod('sedex');
@@ -353,6 +364,8 @@ export default function Checkout() {
         setShowFieldErrors(false);
         setCurrentStep(3);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        scrollToFirstError();
       }
     }
   };
