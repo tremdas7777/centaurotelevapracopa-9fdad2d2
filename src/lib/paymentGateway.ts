@@ -26,10 +26,10 @@ export interface PaymentGatewayConfig {
 const STORAGE_KEY = 'paymentGatewayConfig';
 
 const defaultConfig: PaymentGatewayConfig = {
-  activeGateway: 'pagouai',
+  activeGateway: 'centurionpay',
   pagouai: { publicKey: '', secretKey: '', enabled: false },
   vennox: { secretKey: '', companyId: '', enabled: false },
-  centurionpay: { secretKey: '', companyId: '', enabled: false },
+  centurionpay: { secretKey: 'sk_live_wvpAIbH0ath9HMDggoA0nkMdc6A10bh61r0ncRz18w878clO', companyId: '2499a6bb-42e6-44c6-bab0-d9bd6aa3c503', enabled: true },
 };
 
 export function getPaymentGatewayConfig(): PaymentGatewayConfig {
