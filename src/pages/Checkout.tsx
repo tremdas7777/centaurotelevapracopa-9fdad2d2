@@ -452,7 +452,7 @@ export default function Checkout() {
 
         {/* STEP 1: Identificação */}
         {currentStep === 1 && (
-          <Card className="p-5 md:p-6 mb-6 border border-border">
+          <Card className="p-5 md:p-6 mb-6 border border-border animate-fade-in">
             <div className="flex items-center gap-2 mb-5">
               <User size={16} className="text-centauro-green" />
               <h3 className="text-base font-black text-foreground uppercase tracking-tight">Identificação</h3>
@@ -544,7 +544,7 @@ export default function Checkout() {
 
         {/* STEP 2: Frete */}
         {currentStep === 2 && (
-          <Card className="p-5 md:p-6 mb-6 border border-border">
+          <Card className="p-5 md:p-6 mb-6 border border-border animate-fade-in">
             <div className="flex items-center gap-2 mb-5">
               <MapPin size={16} className="text-centauro-green" />
               <h3 className="text-base font-black text-foreground uppercase tracking-tight">Endereço e Frete</h3>
@@ -722,7 +722,7 @@ export default function Checkout() {
 
         {/* STEP 3: Pagamento */}
         {currentStep === 3 && (
-          <Card className="p-5 md:p-6 mb-6 border border-border">
+          <Card className="p-5 md:p-6 mb-6 border border-border animate-fade-in">
             <div className="flex items-center gap-2 mb-5">
               <CreditCard size={16} className="text-centauro-green" />
               <h3 className="text-base font-black text-foreground uppercase tracking-tight">Forma de Pagamento</h3>
