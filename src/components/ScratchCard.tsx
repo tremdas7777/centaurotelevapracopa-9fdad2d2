@@ -5,6 +5,7 @@ import centauroLogo from '@/assets/centauro-logo.webp';
 import cbfLogo from '@/assets/cbf-logo.webp';
 import camisaImg from '@/assets/camisa-brasil-hero.webp';
 import albumImg from '@/assets/album-copa-hero.webp';
+import bolaImg from '@/assets/bola-copa-2026.webp';
 
 interface ScratchItem {
   id: string;
@@ -14,7 +15,7 @@ interface ScratchItem {
 }
 
 const ALL_ITEMS: ScratchItem[] = [
-  { id: 'bola', label: 'Bola', emoji: '⚽' },
+  { id: 'bola', label: 'Bola', emoji: '⚽', image: bolaImg },
   { id: 'trofeu', label: 'Troféu', emoji: '🏆' },
   { id: 'chuteira', label: 'Chuteira', emoji: '👟' },
   { id: 'bandeira', label: 'Bandeira', emoji: '🇧🇷' },
