@@ -131,6 +131,19 @@ export default function QuizHome() {
 
     return () => clearTimeout(safetyTimer);
   }, []);
+
+  // Centralized Safari theme-color management based on current screen
+  useEffect(() => {
+    const tags = document.querySelectorAll('meta[name="theme-color"]');
+    let color = '#212121'; // default: dark (home, quiz, splash)
+    if (showAnimation) {
+      color = '#E60000'; // loading screen: red
+    } else if (showScratchCard) {
+      color = '#212121'; // scratch card: dark
+    }
+    tags.forEach((tag) => tag.setAttribute('content', color));
+  }, [showAnimation, showScratchCard, showHome, quizComplete]);
+
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [quizComplete, setQuizComplete] = useState(false);
