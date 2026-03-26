@@ -421,6 +421,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
   const [grid, setGrid] = useState<ScratchItem[]>(() => generateLosingGrid());
   const [roundResult, setRoundResult] = useState<'pending' | 'win' | 'lose'>('pending');
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showLosePopup, setShowLosePopup] = useState(false);
   const [wonPrizes, setWonPrizes] = useState<ScratchItem[]>([]);
 
   const totalRounds = 3;
@@ -440,6 +441,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
       setTimeout(() => setShowCelebration(false), 3500);
     } else {
       setRoundResult('lose');
+      setShowLosePopup(true);
     }
   }, [grid]);
 
@@ -509,14 +511,14 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
           {/* Round title */}
           <div className="text-center mb-4">
             <h2 className="text-xl font-black text-primary-foreground mb-1">
-              {roundResult === 'win' ? '🎉 VOCÊ GANHOU!' : roundResult === 'lose' ? '😔 Não foi dessa vez...' : config.title}
+              {roundResult === 'win' ? '🎉 VOCÊ GANHOU!' : config.title}
             </h2>
             <p className="text-primary-foreground/50 text-xs font-semibold">
               {roundResult === 'pending'
                 ? 'Raspe todos os campos! 3 iguais = prêmio'
                 : roundResult === 'win'
                 ? `Parabéns! Você ganhou ${wonPrizes[wonPrizes.length - 1]?.emoji} ${wonPrizes[wonPrizes.length - 1]?.label}!`
-                : 'Tente novamente na próxima chance!'
+                : 'Raspe todos os campos!'
               }
             </p>
           </div>
@@ -534,7 +536,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
           </div>
 
           {/* Action button */}
-          {roundResult !== 'pending' && (
+          {roundResult === 'win' && (
             <div className="mt-5 animate-fade-in">
               <Button
                 onClick={handleNext}
@@ -576,6 +578,43 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
           )}
         </div>
       </div>
+
+      {/* Lose popup overlay */}
+      {showLosePopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 animate-fade-in">
+          <div className="flex flex-col items-center gap-5 px-8 py-10 max-w-sm w-full bg-foreground rounded-2xl mx-4 border border-muted">
+            <span className="text-6xl">😔</span>
+            <h2 className="text-2xl font-black text-primary-foreground text-center">
+              Não foi dessa vez...
+            </h2>
+            <p className="text-primary-foreground/60 text-sm font-semibold text-center">
+              {currentRound < totalRounds - 1
+                ? `Mas calma! Você ainda tem mais ${totalRounds - currentRound - 1} chance${totalRounds - currentRound - 1 > 1 ? 's' : ''}! 🍀`
+                : 'Tente novamente!'
+              }
+            </p>
+            <Button
+              onClick={() => {
+                setShowLosePopup(false);
+                handleNext();
+              }}
+              className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg py-6 rounded-lg mt-2"
+            >
+              {currentRound < totalRounds - 1 ? (
+                <>
+                  Tentar novamente
+                  <ChevronRight size={20} />
+                </>
+              ) : (
+                <>
+                  Continuar
+                  <ChevronRight size={20} />
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Celebration overlay - big centered prize */}
       {showCelebration && (
