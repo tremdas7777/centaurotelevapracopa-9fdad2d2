@@ -81,9 +81,20 @@ const quizQuestions: Question[] = [
 
 export default function QuizHome() {
   const navigate = useNavigate();
+  const [showSplash, setShowSplash] = useState(true);
+  const [splashExiting, setSplashExiting] = useState(false);
   const [showHome, setShowHome] = useState(true);
   const [homeExiting, setHomeExiting] = useState(false);
   const [bannerLoaded, setBannerLoaded] = useState(false);
+
+  // Splash screen timer
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSplashExiting(true);
+      setTimeout(() => setShowSplash(false), 400);
+    }, 1800);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Preload quiz banner image
   useEffect(() => {
@@ -244,6 +255,26 @@ export default function QuizHome() {
     const checkoutUrl = localStorage.getItem('checkoutUrl') || 'https://seu-checkout.com/taxa-envio';
     window.location.href = checkoutUrl;
   };
+
+  // SPLASH SCREEN
+  if (showSplash) {
+    return (
+      <div className={`fixed inset-0 bg-primary flex flex-col items-center justify-center z-50 transition-all duration-400 ${splashExiting ? 'opacity-0 scale-110' : 'opacity-100 scale-100'}`}>
+        <div className="relative flex flex-col items-center gap-6">
+          <img
+            src={centauroLogo}
+            alt="Centauro"
+            className="h-16 md:h-24 object-contain brightness-0 invert animate-fade-in"
+          />
+          <div className="flex items-center gap-3 animate-fade-in" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
+            <div className="w-2 h-2 rounded-full bg-primary-foreground/80 animate-bounce" style={{ animationDelay: '0s' }} />
+            <div className="w-2 h-2 rounded-full bg-primary-foreground/80 animate-bounce" style={{ animationDelay: '0.15s' }} />
+            <div className="w-2 h-2 rounded-full bg-primary-foreground/80 animate-bounce" style={{ animationDelay: '0.3s' }} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // HOME / LANDING PAGE
   if (showHome) {
