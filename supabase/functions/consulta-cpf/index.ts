@@ -42,8 +42,8 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         documents: [cleanCpf],
         type: 'cpf',
-        showPhoneValid: true,
-        showRestrictions: true,
+        showPhoneValid: false,
+        showRestrictions: false,
       }),
     });
 
