@@ -52,6 +52,9 @@ export default function Checkout() {
   const [showStoreError, setShowStoreError] = useState(false);
   const [showCepError, setShowCepError] = useState(false);
   const [nearestStore, setNearestStore] = useState<CentauroStore | null>(null);
+  const [googleStores, setGoogleStores] = useState<GoogleStore[]>([]);
+  const [selectedGoogleStore, setSelectedGoogleStore] = useState<GoogleStore | null>(null);
+  const [storesLoading, setStoresLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(1800);
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
 
