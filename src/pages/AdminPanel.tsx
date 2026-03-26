@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { getFunnelStats, clearFunnelEvents } from '@/lib/funnelTracking';
 import { getPixelConfig, savePixelConfig, type PixelConfig, type FacebookPixelEntry, type TikTokPixelEntry, type GoogleAdsEntry } from '@/lib/pixelManager';
-import { getWebhookConfig, saveWebhookConfig, fireWebhookEvent, type WebhookConfig, type WebhookEntry } from '@/lib/webhookManager';
+import { getWebhookConfig, saveWebhookConfig, fireWebhookEvent, syncWebhooksToDb, loadWebhooksFromDb, type WebhookConfig, type WebhookEntry } from '@/lib/webhookManager';
 import { getUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
 import { fetchPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
@@ -69,7 +69,10 @@ export default function AdminPanel() {
     if (saved) { setCheckoutUrl(saved); setNewCheckoutUrl(saved); }
     setExternalCheckout(localStorage.getItem('externalCheckout') === 'true');
     setPixelConfig(getPixelConfig());
-    setWebhookConfig(getWebhookConfig());
+    loadWebhooksFromDb().then(config => {
+      setWebhookConfig(config);
+      saveWebhookConfig(config); // sync to localStorage
+    });
     setUtmifyConfig(getUtmifyConfig());
     fetchPaymentGatewayConfig().then(config => setGatewayConfig(config));
   }, []);
@@ -133,8 +136,9 @@ export default function AdminPanel() {
     setTimeout(() => setMsg(''), 5000);
   };
 
-  const handleSaveWebhook = () => {
+  const handleSaveWebhook = async () => {
     saveWebhookConfig(webhookConfig);
+    await syncWebhooksToDb(webhookConfig);
     setWebhookMessage('Webhooks salvos com sucesso!');
     setTimeout(() => setWebhookMessage(''), 3000);
   };
