@@ -11,7 +11,7 @@ export default function LoadingAnimation({ onComplete }: LoadingAnimationProps) 
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
-    const color = showSuccess ? '#212121' : '#E60000';
+    const color = '#212121';
     const themeTags = document.querySelectorAll('meta[name="theme-color"]');
 
     themeTags.forEach((tag) => tag.setAttribute('content', color));
@@ -45,7 +45,7 @@ export default function LoadingAnimation({ onComplete }: LoadingAnimationProps) 
   }, [showSuccess, onComplete]);
 
   return (
-    <div className={`${showSuccess ? 'bg-foreground' : 'bg-primary'} flex min-h-[100svh] min-h-[100dvh] w-full flex-col relative overflow-hidden overscroll-none transition-colors duration-300`}>
+    <div className="bg-foreground flex min-h-[100svh] min-h-[100dvh] w-full flex-col relative overflow-hidden overscroll-none">
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.15) 20px, rgba(255,255,255,0.15) 40px)' }} />
       </div>
