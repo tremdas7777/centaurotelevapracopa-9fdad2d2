@@ -558,7 +558,6 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
                 ) : (
                   <>
                     Resgatar prêmios
-                    <Gift size={20} />
                   </>
                 )}
               </Button>
@@ -687,7 +686,6 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
               ) : (
                 <>
                   Resgatar prêmios
-                  <Gift size={20} />
                 </>
               )}
             </Button>

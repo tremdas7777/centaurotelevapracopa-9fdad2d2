@@ -812,7 +812,7 @@ export default function Checkout() {
               {pixLoading ? (
                 <><Loader2 size={18} className="mr-2 animate-spin" /> GERANDO PIX...</>
               ) : (
-                `FINALIZAR RESGATE — R$ ${(shippingCost || 44.90).toFixed(2).replace('.', ',')} VIA PIX`
+                'PAGAR AGORA'
               )}
             </Button>
           </Card>
