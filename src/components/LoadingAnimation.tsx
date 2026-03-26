@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import bolaCopa from '@/assets/bola-copa-2026.webp';
+
 
 interface LoadingAnimationProps {
   onComplete: () => void;
@@ -55,8 +55,8 @@ export default function LoadingAnimation({ onComplete }: LoadingAnimationProps) 
         {!showSuccess ? (
           <>
             <div>
-              <div className="mb-10" style={{ animation: 'pulse 1.5s ease-in-out infinite' }}>
-                <img src={bolaCopa} alt="Bola Copa 2026" className="w-28 h-28 object-contain mx-auto drop-shadow-2xl" />
+              <div className="mb-10 text-8xl" style={{ animation: 'pulse 1.5s ease-in-out infinite' }}>
+                ⚽
               </div>
 
               <h2 className="text-3xl md:text-4xl font-black text-primary-foreground mb-8 tracking-tight">
