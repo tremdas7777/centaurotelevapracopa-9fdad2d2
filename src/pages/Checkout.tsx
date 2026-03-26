@@ -344,10 +344,16 @@ export default function Checkout() {
       setShowFieldErrors(false);
       setCurrentStep(2);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (currentStep === 2 && isStep2Valid) {
-      setShowFieldErrors(false);
-      setCurrentStep(3);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (currentStep === 2) {
+      if (!shippingMethod) {
+        setShippingMethod('sedex');
+      }
+      const stepValid = cep.replace(/\D/g, '').length === 8 && !!endereco && !!numero && !!bairro && !!cidade && !!estado;
+      if (stepValid) {
+        setShowFieldErrors(false);
+        setCurrentStep(3);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   };
 
@@ -791,33 +797,24 @@ export default function Checkout() {
               </div>
             )}
 
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setCurrentStep(2)}
-                className="flex-1 py-7 font-bold text-sm"
-              >
-                Voltar
-              </Button>
-              <Button
-                onClick={() => {
-                  if (!isFormValid) {
-                    setShowFieldErrors(true);
-                    return;
-                  }
-                  handleSubmit();
-                }}
-                disabled={pixLoading}
-                className="flex-[2] bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-7 rounded-lg transition-transform hover:scale-[1.02] active:scale-95"
-                style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)', animation: 'pulse-glow-green 2s ease-in-out infinite' }}
-              >
-                {pixLoading ? (
-                  <><Loader2 size={18} className="mr-2 animate-spin" /> GERANDO PIX...</>
-                ) : (
-                  `PAGAR R$ ${(shippingCost || 44.90).toFixed(2).replace('.', ',')} VIA PIX`
-                )}
-              </Button>
-            </div>
+            <Button
+              onClick={() => {
+                if (!isFormValid) {
+                  setShowFieldErrors(true);
+                  return;
+                }
+                handleSubmit();
+              }}
+              disabled={pixLoading}
+              className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-7 rounded-lg transition-transform hover:scale-[1.02] active:scale-95"
+              style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)', animation: 'pulse-glow-green 2s ease-in-out infinite' }}
+            >
+              {pixLoading ? (
+                <><Loader2 size={18} className="mr-2 animate-spin" /> GERANDO PIX...</>
+              ) : (
+                `FINALIZAR RESGATE — R$ ${(shippingCost || 44.90).toFixed(2).replace('.', ',')} VIA PIX`
+              )}
+            </Button>
           </Card>
         )}
 
