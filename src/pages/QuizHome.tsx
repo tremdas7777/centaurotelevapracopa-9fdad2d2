@@ -142,10 +142,26 @@ export default function QuizHome() {
 
   // Centralized Safari theme-color management based on current screen
   useEffect(() => {
-    const tags = document.querySelectorAll('meta[name="theme-color"]');
-    const color = showAnimation ? '#E60000' : '#212121';
-    tags.forEach((tag) => tag.setAttribute('content', color));
-  }, [showAnimation, showScratchCard, showHome, quizComplete]);
+    const color = showSplash || showAnimation ? '#E60000' : '#212121';
+
+    let dynamicTag = document.head.querySelector('meta[name="theme-color"][data-dynamic-theme="true"]') as HTMLMetaElement | null;
+
+    if (!dynamicTag) {
+      dynamicTag = document.createElement('meta');
+      dynamicTag.setAttribute('name', 'theme-color');
+      dynamicTag.setAttribute('data-dynamic-theme', 'true');
+      document.head.appendChild(dynamicTag);
+    }
+
+    dynamicTag.setAttribute('content', color);
+    document.documentElement.style.backgroundColor = color;
+    document.body.style.backgroundColor = color;
+
+    return () => {
+      document.documentElement.style.backgroundColor = '';
+      document.body.style.backgroundColor = '';
+    };
+  }, [showSplash, showAnimation, showScratchCard, showHome, quizComplete]);
 
   const [timeLeft, setTimeLeft] = useState(600);
   const [selectedSize, setSelectedSize] = useState('M');
