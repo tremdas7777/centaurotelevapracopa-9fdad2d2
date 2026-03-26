@@ -328,7 +328,7 @@ export default function QuizHome() {
 
         {/* Hero content with stadium as background - fills all remaining space */}
         <div
-          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-12 -mt-12"
+          className="relative flex-1 flex flex-col items-center justify-center text-center px-5 py-16 md:py-12 -mt-12 min-h-[60vh]"
           style={{ backgroundImage: `url(${stadiumHero})`, backgroundSize: 'cover', backgroundPosition: 'center top' }}
         >
           <div className="absolute inset-0 bg-foreground/80" />
