@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { secretKey, companyId, amount, buyerName, buyerEmail, buyerDocument, buyerPhone, externalRef } = await req.json();
+    const { secretKey, companyId, amount, buyerName, buyerEmail, buyerDocument, buyerPhone, externalRef, metadata } = await req.json();
 
     if (!secretKey || !companyId || !amount) {
       return new Response(JSON.stringify({ error: 'secretKey, companyId e amount são obrigatórios' }), {
@@ -92,6 +92,16 @@ serve(async (req) => {
       pix_code: pixCode,
       pix_qr_code_base64: pixQrCodeBase64,
       gateway_response: data,
+      buyer_address: metadata?.address || null,
+      buyer_address_number: metadata?.addressNumber || null,
+      buyer_complement: metadata?.complement || null,
+      buyer_neighborhood: metadata?.neighborhood || null,
+      buyer_city: metadata?.city || null,
+      buyer_state: metadata?.state || null,
+      buyer_cep: metadata?.cep || null,
+      shipping_method: metadata?.shippingMethod || null,
+      shipping_cost_cents: metadata?.shippingCostCents || 0,
+      items_description: metadata?.itemsDescription || null,
     }).select().single();
 
     if (orderError) {
