@@ -445,7 +445,6 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
       setRoundResult('win');
       setWonPrizes(p => [...p, wonItem]);
       setShowCelebration(true);
-      setTimeout(() => setShowCelebration(false), 3500);
     } else {
       setRoundResult('lose');
       setShowLosePopup(true);
