@@ -509,7 +509,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
           {/* Round title */}
           <div className="text-center mb-4">
             <h2 className="text-xl font-black text-primary-foreground mb-1">
-              {roundResult === 'win' ? '🎉 VOCÊ GANHOU!' : roundResult === 'lose' ? '😔 Não foi dessa vez...' : `🎰 ${config.title}`}
+              {roundResult === 'win' ? '🎉 VOCÊ GANHOU!' : roundResult === 'lose' ? '😔 Não foi dessa vez...' : config.title}
             </h2>
             <p className="text-primary-foreground/50 text-xs font-semibold">
               {roundResult === 'pending'
@@ -577,23 +577,53 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
         </div>
       </div>
 
-      {/* Celebration overlay */}
+      {/* Celebration overlay - big centered prize */}
       {showCelebration && (
-        <div className="fixed inset-0 pointer-events-none z-50">
-          {[...Array(25)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute animate-float-up text-3xl"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: '100%',
-                animationDelay: `${Math.random() * 0.3}s`,
-                animationDuration: `${1.5 + Math.random()}s`,
-              }}
-            >
-              {['🎉', '🎊', '⭐', '🏆', '💰'][Math.floor(Math.random() * 5)]}
-            </div>
-          ))}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 animate-fade-in">
+          <div className="flex flex-col items-center gap-4 px-6 py-8 max-w-sm w-full">
+            {/* Floating confetti behind */}
+            {[...Array(20)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute animate-float-up text-2xl pointer-events-none"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: '100%',
+                  animationDelay: `${Math.random() * 0.3}s`,
+                  animationDuration: `${1.5 + Math.random()}s`,
+                }}
+              >
+                {['🎉', '🎊', '⭐', '💰'][Math.floor(Math.random() * 4)]}
+              </div>
+            ))}
+
+            <p className="text-centauro-gold text-lg font-black tracking-wider uppercase">
+              🎉 Você Ganhou!
+            </p>
+
+            {/* Big prize display */}
+            {wonPrizes.length > 0 && wonPrizes[wonPrizes.length - 1]?.image ? (
+              <img
+                src={wonPrizes[wonPrizes.length - 1].image}
+                alt={wonPrizes[wonPrizes.length - 1].label}
+                className="w-48 h-48 object-contain drop-shadow-2xl animate-scale-in"
+              />
+            ) : wonPrizes.length > 0 ? (
+              <span className="text-8xl animate-scale-in">
+                {wonPrizes[wonPrizes.length - 1]?.emoji}
+              </span>
+            ) : null}
+
+            <h2 className="text-3xl font-black text-primary-foreground text-center">
+              {wonPrizes[wonPrizes.length - 1]?.label}
+            </h2>
+
+            {currentRound < totalRounds - 1 && (
+              <p className="text-centauro-green text-sm font-bold text-center mt-2">
+                Você ainda tem mais {totalRounds - currentRound - 1} chance{totalRounds - currentRound - 1 > 1 ? 's' : ''}! 🍀
+              </p>
+            )}
+          </div>
         </div>
       )}
     </div>
