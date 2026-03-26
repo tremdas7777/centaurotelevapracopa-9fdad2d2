@@ -10,10 +10,16 @@ export interface VennoxConfig {
   enabled: boolean;
 }
 
+export interface IronPayConfig {
+  apiToken: string;
+  enabled: boolean;
+}
+
 export interface PaymentGatewayConfig {
-  activeGateway: 'pagouai' | 'vennox';
+  activeGateway: 'pagouai' | 'vennox' | 'ironpay';
   pagouai: PagouAiConfig;
   vennox: VennoxConfig;
+  ironpay: IronPayConfig;
 }
 
 const STORAGE_KEY = 'paymentGatewayConfig';
@@ -22,6 +28,7 @@ const defaultConfig: PaymentGatewayConfig = {
   activeGateway: 'pagouai',
   pagouai: { publicKey: '', secretKey: '', enabled: false },
   vennox: { secretKey: '', companyId: '', enabled: false },
+  ironpay: { apiToken: '', enabled: false },
 };
 
 export function getPaymentGatewayConfig(): PaymentGatewayConfig {
@@ -29,7 +36,7 @@ export function getPaymentGatewayConfig(): PaymentGatewayConfig {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (!['pagouai', 'vennox'].includes(parsed.activeGateway)) {
+      if (!['pagouai', 'vennox', 'ironpay'].includes(parsed.activeGateway)) {
         parsed.activeGateway = 'pagouai';
       }
       return {
@@ -37,6 +44,7 @@ export function getPaymentGatewayConfig(): PaymentGatewayConfig {
         ...parsed,
         pagouai: { ...defaultConfig.pagouai, ...parsed.pagouai },
         vennox: { ...defaultConfig.vennox, ...parsed.vennox },
+        ironpay: { ...defaultConfig.ironpay, ...parsed.ironpay },
       };
     }
   } catch {}
