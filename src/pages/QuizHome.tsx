@@ -383,10 +383,9 @@ export default function QuizHome() {
         </button>
 
         {/* Footer preto da home */}
-        <footer className="bg-centauro-black py-8 px-4">
-          <div className="max-w-xl mx-auto text-white">
+        <footer className="bg-centauro-black mt-8 py-8 px-4">
+          <div className="max-w-xl mx-auto text-primary-foreground">
             <div className="mb-5">
-              <img src={centauroLogo} alt="Centauro" className="h-10 mb-4 brightness-0 invert" />
               <h4 className="font-bold text-sm mb-2">Links Rápidos</h4>
               <p className="text-xs opacity-80">Início</p>
             </div>
@@ -413,7 +412,7 @@ export default function QuizHome() {
               <p className="text-xs opacity-80"><strong>Razão Social:</strong> SBF Comércio de Produtos Esportivos S.A.</p>
             </div>
 
-            <div className="border-t border-white/20 pt-4 mb-5">
+            <div className="border-t border-primary-foreground/20 pt-4 mb-5">
               <h4 className="font-bold text-sm mb-2">Segurança e Confiança</h4>
               <div className="grid grid-cols-2 gap-1.5">
                 <span className="text-xs opacity-80">✓ SSL 256-bit Cifrado</span>
@@ -423,7 +422,7 @@ export default function QuizHome() {
               </div>
             </div>
 
-            <div className="border-t border-white/20 pt-4 text-center">
+            <div className="border-t border-primary-foreground/20 pt-4 text-center">
               <p className="text-[10px] opacity-60">© 2026 Centauro Esportes. Todos os direitos reservados.</p>
               <p className="text-[10px] opacity-60 mt-1">Promoção válida enquanto durar o estoque.</p>
             </div>
