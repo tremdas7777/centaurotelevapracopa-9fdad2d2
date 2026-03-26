@@ -8,6 +8,7 @@ import centauroLogo from '@/assets/centauro-logo.webp';
 import cbfLogo from '@/assets/cbf-logo.webp';
 import camisaImg from '@/assets/camisa-brasil-hero.webp';
 import albumImg from '@/assets/album-copa-hero.webp';
+import ingressosVipImg from '@/assets/ingressos-vip-copa.png';
 import { trackEvent } from '@/lib/funnelTracking';
 import { fireConversionEvent } from '@/lib/pixelManager';
 import { fireWebhookEvent } from '@/lib/webhookManager';
@@ -459,6 +460,15 @@ export default function Checkout() {
               <p className="text-[10px] text-muted-foreground">Panini Edição Limitada</p>
             </div>
             <span className="text-xs font-black text-centauro-green">GRÁTIS</span>
+          </div>
+          <div className="border-t border-foreground/10 my-2" />
+          <div className="flex items-center gap-3">
+            <img src={ingressosVipImg} alt="Ingressos VIP" className="w-12 h-12 object-contain rounded" />
+            <div className="flex-1">
+              <p className="text-xs font-bold text-foreground">Concorrendo a 2 Ingressos VIP da Copa</p>
+              <p className="text-[10px] text-muted-foreground">Passagem + Hotel + Ingressos VIP • Sorteio 15/06/2026</p>
+            </div>
+            <span className="text-xs font-black text-centauro-gold">INCLUSO</span>
           </div>
         </Card>
 
