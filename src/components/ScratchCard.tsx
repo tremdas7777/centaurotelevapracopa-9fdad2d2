@@ -18,7 +18,7 @@ const ALL_ITEMS: ScratchItem[] = [
   { id: 'bola', label: 'Bola', emoji: '⚽', image: bolaImg },
   { id: 'trofeu', label: 'Troféu', emoji: '🏆' },
   { id: 'chuteira', label: 'Chuteira', emoji: '👟' },
-  { id: 'bandeira', label: 'Bandeira', emoji: '🇧🇷' },
+  { id: 'vale', label: 'Vale Compras R$1000', emoji: '💳' },
   { id: 'album', label: 'Álbum Copa 2026', emoji: '📖', image: albumImg },
   { id: 'camisa', label: 'Camisa Oficial', emoji: '👕', image: camisaImg },
 ];
