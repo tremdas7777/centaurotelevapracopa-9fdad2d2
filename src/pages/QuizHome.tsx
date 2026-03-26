@@ -288,7 +288,7 @@ export default function QuizHome() {
   // SPLASH SCREEN
   if (showSplash) {
     return (
-      <div className={`fixed inset-0 bg-primary flex flex-col items-center justify-center z-50 transition-all duration-400 ${splashExiting ? 'opacity-0 scale-110' : 'opacity-100 scale-100'}`}>
+      <div className={`fixed inset-0 z-50 flex min-h-[100svh] min-h-[100dvh] w-full flex-col items-center justify-center overflow-hidden overscroll-none bg-primary transition-all duration-400 ${splashExiting ? 'opacity-0 scale-110' : 'opacity-100 scale-100'}`}>
         <div className="relative flex flex-col items-center gap-6">
           <img
             src={centauroLogo}
