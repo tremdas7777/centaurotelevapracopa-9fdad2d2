@@ -18,6 +18,7 @@ import centauroLogo from '@/assets/centauro-logo.webp';
 import stadiumHero from '@/assets/stadium-hero.webp';
 import centauroWorldcupLogo from '@/assets/centauro-worldcup-logo.webp';
 import cbfLogo from '@/assets/cbf-logo.webp';
+import ingressosVipImg from '@/assets/ingressos-vip-copa.png';
 import quizBannerPreload from '@/assets/quiz-banner-hq.webp';
 import quizBannerHome from '@/assets/quiz-banner-home.webp';
 import { Mail, Phone, MapPin as MapPinIcon } from 'lucide-react';
@@ -591,7 +592,7 @@ export default function QuizHome() {
               </div>
               <div className="border-t border-foreground/20" />
               <div className="flex items-center gap-4 p-3.5 bg-centauro-gold/10 rounded-md border border-centauro-gold/30">
-                <Ticket size={28} className="text-centauro-gold flex-shrink-0" />
+                <img src={ingressosVipImg} alt="Ingressos VIP Copa 2026" className="w-16 h-16 object-contain rounded flex-shrink-0" />
                 <div className="flex-1">
                   <p className="font-bold text-foreground text-sm">Concorrendo a 2 Ingressos VIP da Copa</p>
                   <p className="text-xs text-muted-foreground">Passagem + Hotel + Ingressos VIP • Sorteio em 15/06/2026</p>
