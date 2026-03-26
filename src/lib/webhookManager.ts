@@ -1,4 +1,7 @@
 // Webhook manager - sends POST notifications on sale events
+// Now syncs with database so edge functions can also fire webhooks
+
+import { supabase } from '@/integrations/supabase/client';
 
 const STORAGE_KEY = 'webhook_config_v2';
 
@@ -43,12 +46,66 @@ export function saveWebhookConfig(config: WebhookConfig) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
 }
 
+/** Sync local webhook config to the database so edge functions can read it */
+export async function syncWebhooksToDb(config: WebhookConfig) {
+  // Clear existing
+  await supabase.from('webhook_endpoints').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+  
+  // Insert current webhooks
+  if (config.webhooks.length > 0) {
+    const rows = config.webhooks
+      .filter(w => w.url?.trim())
+      .map(w => ({
+        id: w.id,
+        url: w.url,
+        events: w.events,
+        active: true,
+      }));
+    if (rows.length > 0) {
+      await supabase.from('webhook_endpoints').insert(rows);
+    }
+  }
+}
+
+/** Load webhook config from DB (for initial admin load) */
+export async function loadWebhooksFromDb(): Promise<WebhookConfig> {
+  const { data } = await supabase.from('webhook_endpoints').select('*').eq('active', true);
+  if (data && data.length > 0) {
+    const webhooks: WebhookEntry[] = data.map((row: any) => ({
+      id: row.id,
+      url: row.url,
+      events: row.events || ['venda_pendente', 'venda_aprovada'],
+    }));
+    return { webhooks };
+  }
+  // Fallback to localStorage
+  return getWebhookConfig();
+}
+
 export async function fireWebhookEvent(
   eventType: 'venda_pendente' | 'venda_aprovada',
   data: Record<string, unknown>
 ) {
-  const config = getWebhookConfig();
-  const targets = config.webhooks.filter(w => w.url && w.events.includes(eventType));
+  // Try DB first, fallback to localStorage
+  let targets: { url: string }[] = [];
+  
+  try {
+    const { data: dbWebhooks } = await supabase
+      .from('webhook_endpoints')
+      .select('*')
+      .eq('active', true)
+      .contains('events', [eventType]);
+    
+    if (dbWebhooks && dbWebhooks.length > 0) {
+      targets = dbWebhooks.filter((w: any) => w.url?.trim());
+    }
+  } catch {}
+
+  // Fallback to localStorage if no DB results
+  if (targets.length === 0) {
+    const config = getWebhookConfig();
+    targets = config.webhooks.filter(w => w.url && w.events.includes(eventType));
+  }
 
   const promises = targets.map(async (webhook) => {
     try {
