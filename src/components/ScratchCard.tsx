@@ -283,14 +283,21 @@ function ScratchGrid({
         const cy = row * (cellH + gap);
 
         if (posX >= cx && posX <= cx + cellW && posY >= cy && posY <= cy + cellH) {
-          // Sample many points in this cell to calculate scratch percentage
+          // Sample points in the INNER region of the cell (exclude corners/edges)
+          // This ensures only meaningful scratching counts, not just corner touches
           const gridSize = 5;
           let transparentCount = 0;
           const totalSamples = gridSize * gridSize;
+          const margin = 0.15; // 15% margin from edges
           for (let gx = 0; gx < gridSize; gx++) {
             for (let gy = 0; gy < gridSize; gy++) {
-              const sx = cx + (cellW * (gx + 0.5)) / gridSize;
-              const sy = cy + (cellH * (gy + 0.5)) / gridSize;
+              const normX = (gx + 0.5) / gridSize; // 0-1 range
+              const normY = (gy + 0.5) / gridSize;
+              // Map to inner region only
+              const mappedX = margin + normX * (1 - 2 * margin);
+              const mappedY = margin + normY * (1 - 2 * margin);
+              const sx = cx + cellW * mappedX;
+              const sy = cy + cellH * mappedY;
               const pixel = ctx.getImageData(sx * dpr, sy * dpr, 1, 1).data;
               if (pixel[3] < 50) transparentCount++;
             }
@@ -298,8 +305,8 @@ function ScratchGrid({
 
           const scratchPercent = transparentCount / totalSamples;
 
-          // Count cell as revealed after 40% scratched (but DON'T clear entire cell)
-          if (scratchPercent >= 0.4) {
+          // Count cell as revealed after 45% of inner area scratched
+          if (scratchPercent >= 0.45) {
             revealedCells.current.add(idx);
             const newCount = revealedCells.current.size;
             setRevealedCount(newCount);
@@ -517,7 +524,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
               {roundResult === 'pending'
                 ? 'Raspe todos os campos! 3 iguais = prêmio'
                 : roundResult === 'win'
-                ? `Parabéns! Você ganhou ${wonPrizes[wonPrizes.length - 1]?.emoji} ${wonPrizes[wonPrizes.length - 1]?.label}!`
+                ? `Parabéns! Você ganhou ${wonPrizes[wonPrizes.length - 1]?.label}!`
                 : 'Raspe todos os campos!'
               }
             </p>
@@ -658,11 +665,29 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
               {wonPrizes[wonPrizes.length - 1]?.label}
             </h2>
 
-            {currentRound < totalRounds - 1 && (
-              <p className="text-centauro-green text-sm font-bold text-center mt-2">
-                Você ainda tem mais {totalRounds - currentRound - 1} chance{totalRounds - currentRound - 1 > 1 ? 's' : ''}! 🍀
-              </p>
-            )}
+            <p className="text-primary-foreground/60 text-sm font-semibold text-center">
+              Parabéns, você ganhou {wonPrizes[wonPrizes.length - 1]?.label}!
+            </p>
+
+            <Button
+              onClick={() => {
+                setShowCelebration(false);
+                handleNext();
+              }}
+              className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg py-6 rounded-lg mt-2"
+            >
+              {currentRound < totalRounds - 1 ? (
+                <>
+                  Próxima chance
+                  <ChevronRight size={20} />
+                </>
+              ) : (
+                <>
+                  Resgatar prêmios
+                  <Gift size={20} />
+                </>
+              )}
+            </Button>
           </div>
         </div>
       )}
