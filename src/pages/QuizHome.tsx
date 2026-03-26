@@ -572,27 +572,28 @@ export default function QuizHome() {
             <h3 className="text-lg font-black text-foreground mb-5 text-center uppercase tracking-tight">
               Resumo do Pedido
             </h3>
-            <div className="space-y-2.5 mb-5">
-              <div className="flex items-center justify-between p-3.5 bg-secondary rounded-md">
-                <div>
-                  <p className="font-bold text-foreground text-sm">Camisa Oficial Brasil 2026</p>
-                  <p className="text-xs text-muted-foreground">Valor original: R$ 249,90</p>
+            <div className="space-y-3 mb-5">
+              <div className="flex items-center gap-4 p-3.5 bg-secondary rounded-md">
+                <img src={camisaImg} alt="Camisa Brasil 2026" className="w-16 h-16 object-contain rounded" />
+                <div className="flex-1">
+                  <p className="font-bold text-foreground text-sm">Camisa Brasil 2026</p>
+                  <p className="text-xs text-muted-foreground">Edição Copa do Mundo</p>
                 </div>
                 <p className="font-black text-centauro-green text-sm">GRÁTIS</p>
               </div>
-              <div className="flex items-center justify-between p-3.5 bg-secondary rounded-md">
-                <div>
+              <div className="flex items-center gap-4 p-3.5 bg-secondary rounded-md">
+                <img src={albumImg} alt="Álbum Copa 2026" className="w-16 h-16 object-contain rounded" />
+                <div className="flex-1">
                   <p className="font-bold text-foreground text-sm">Álbum Copa 2026 + 50 Packs</p>
-                  <p className="text-xs text-muted-foreground">Valor original: R$ 189,90</p>
+                  <p className="text-xs text-muted-foreground">Panini Edição Limitada</p>
                 </div>
                 <p className="font-black text-centauro-green text-sm">GRÁTIS</p>
               </div>
               <div className="border-t border-foreground/20" />
-              <div className="flex items-center justify-between p-3.5 bg-centauro-gold/10 rounded-md border border-centauro-gold/30">
-                <div>
-              <p className="font-bold text-foreground text-sm flex items-center gap-1.5">
-                    <Ticket size={14} className="text-centauro-gold" /> Concorrendo a 2 Ingressos VIP da Copa
-                  </p>
+              <div className="flex items-center gap-4 p-3.5 bg-centauro-gold/10 rounded-md border border-centauro-gold/30">
+                <Ticket size={28} className="text-centauro-gold flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="font-bold text-foreground text-sm">Concorrendo a 2 Ingressos VIP da Copa</p>
                   <p className="text-xs text-muted-foreground">Passagem + Hotel + Ingressos VIP • Sorteio em 15/06/2026</p>
                 </div>
                 <p className="font-black text-centauro-gold text-sm">INCLUSO</p>
