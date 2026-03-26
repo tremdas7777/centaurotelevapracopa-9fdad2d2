@@ -754,12 +754,12 @@ export default function QuizHome() {
           </Card>
 
           {/* Footer */}
-          <div className="text-center py-6">
-            <img src={centauroLogo} alt="Centauro" className="h-10 mx-auto mb-3 opacity-30" />
-            <p className="text-muted-foreground text-[10px]">
+          <div className="text-center py-6 bg-black">
+            <img src={centauroLogo} alt="Centauro" className="h-10 mx-auto mb-3 opacity-30 brightness-0 invert" />
+            <p className="text-white text-[10px]">
               © 2026 Centauro Esportes. Todos os direitos reservados.
             </p>
-            <p className="text-muted-foreground text-[10px] mt-0.5">
+            <p className="text-white text-[10px] mt-0.5">
               Promoção válida enquanto durar o estoque.
             </p>
           </div>
@@ -875,7 +875,7 @@ export default function QuizHome() {
       </div>
 
       {/* Footer vermelho */}
-      <footer className="bg-primary mt-8 py-8 px-4">
+      <footer className="bg-black mt-8 py-8 px-4">
         <div className="max-w-xl mx-auto text-primary-foreground">
           <div className="mb-5">
             <h4 className="font-bold text-sm mb-2">Links Rápidos</h4>
