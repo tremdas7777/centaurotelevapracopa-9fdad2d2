@@ -92,7 +92,7 @@ function ScratchGrid({
     const container = containerRef.current;
     if (!container) return { cellW: 0, cellH: 0, gap: 0, totalW: 0, totalH: 0 };
     const totalW = container.getBoundingClientRect().width;
-    const gap = 6;
+    const gap = 2;
     const cellW = (totalW - gap * 2) / 3;
     const cellH = cellW;
     const totalH = cellH * 3 + gap * 2;
@@ -113,44 +113,133 @@ function ScratchGrid({
     canvas.style.height = `${totalH}px`;
     ctx.scale(dpr, dpr);
 
-    // Draw 9 gold cells
-    for (let row = 0; row < 3; row++) {
-      for (let col = 0; col < 3; col++) {
-        const x = col * (cellW + gap);
-        const y = row * (cellH + gap);
+    // Full background - dark silver/gray gradient
+    const bgGrad = ctx.createRadialGradient(totalW / 2, totalH / 2, 0, totalW / 2, totalH / 2, totalW * 0.7);
+    bgGrad.addColorStop(0, '#6B6B6B');
+    bgGrad.addColorStop(0.5, '#4A4A4A');
+    bgGrad.addColorStop(1, '#333333');
+    
+    const outerR = 16;
+    ctx.beginPath();
+    ctx.moveTo(outerR, 0);
+    ctx.lineTo(totalW - outerR, 0);
+    ctx.quadraticCurveTo(totalW, 0, totalW, outerR);
+    ctx.lineTo(totalW, totalH - outerR);
+    ctx.quadraticCurveTo(totalW, totalH, totalW - outerR, totalH);
+    ctx.lineTo(outerR, totalH);
+    ctx.quadraticCurveTo(0, totalH, 0, totalH - outerR);
+    ctx.lineTo(0, outerR);
+    ctx.quadraticCurveTo(0, 0, outerR, 0);
+    ctx.closePath();
+    ctx.fillStyle = bgGrad;
+    ctx.fill();
 
-        const gradient = ctx.createLinearGradient(x, y, x + cellW, y + cellH);
-        gradient.addColorStop(0, '#C9A84C');
-        gradient.addColorStop(0.3, '#E8D48B');
-        gradient.addColorStop(0.5, '#F5E6A3');
-        gradient.addColorStop(0.7, '#E8D48B');
-        gradient.addColorStop(1, '#C9A84C');
-
-        // Rounded rect
-        const r = 12;
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.lineTo(x + cellW - r, y);
-        ctx.quadraticCurveTo(x + cellW, y, x + cellW, y + r);
-        ctx.lineTo(x + cellW, y + cellH - r);
-        ctx.quadraticCurveTo(x + cellW, y + cellH, x + cellW - r, y + cellH);
-        ctx.lineTo(x + r, y + cellH);
-        ctx.quadraticCurveTo(x, y + cellH, x, y + cellH - r);
-        ctx.lineTo(x, y + r);
-        ctx.quadraticCurveTo(x, y, x + r, y);
-        ctx.closePath();
-        ctx.fillStyle = gradient;
-        ctx.fill();
-
-        // "RASPE" text
-        ctx.fillStyle = 'rgba(0,0,0,0.1)';
-        const fontSize = Math.max(9, cellW * 0.1);
-        ctx.font = `bold ${fontSize}px Inter, sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('RASPE', x + cellW / 2, y + cellH / 2);
-      }
+    // Sunburst rays from center
+    ctx.save();
+    ctx.clip();
+    const cx = totalW / 2;
+    const cy = totalH / 2;
+    const rayCount = 24;
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    for (let i = 0; i < rayCount; i++) {
+      const angle = (i / rayCount) * Math.PI * 2;
+      const nextAngle = ((i + 0.5) / rayCount) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(angle) * totalW, cy + Math.sin(angle) * totalW);
+      ctx.lineTo(cx + Math.cos(nextAngle) * totalW, cy + Math.sin(nextAngle) * totalW);
+      ctx.closePath();
+      ctx.fill();
     }
+    ctx.restore();
+
+    // Draw grid lines (thin lines between cells)
+    ctx.save();
+    // Clip to rounded rect
+    ctx.beginPath();
+    ctx.moveTo(outerR, 0);
+    ctx.lineTo(totalW - outerR, 0);
+    ctx.quadraticCurveTo(totalW, 0, totalW, outerR);
+    ctx.lineTo(totalW, totalH - outerR);
+    ctx.quadraticCurveTo(totalW, totalH, totalW - outerR, totalH);
+    ctx.lineTo(outerR, totalH);
+    ctx.quadraticCurveTo(0, totalH, 0, totalH - outerR);
+    ctx.lineTo(0, outerR);
+    ctx.quadraticCurveTo(0, 0, outerR, 0);
+    ctx.closePath();
+    ctx.clip();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1.5;
+    // Vertical lines
+    for (let col = 1; col < 3; col++) {
+      const lx = col * (cellW + gap) - gap / 2;
+      ctx.beginPath();
+      ctx.moveTo(lx, 0);
+      ctx.lineTo(lx, totalH);
+      ctx.stroke();
+    }
+    // Horizontal lines
+    for (let row = 1; row < 3; row++) {
+      const ly = row * (cellH + gap) - gap / 2;
+      ctx.beginPath();
+      ctx.moveTo(0, ly);
+      ctx.lineTo(totalW, ly);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Draw stars
+    const drawStar = (sx: number, sy: number, size: number, alpha: number) => {
+      ctx.save();
+      ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+      ctx.translate(sx, sy);
+      ctx.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const a = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+        const method = i === 0 ? 'moveTo' : 'lineTo';
+        ctx[method](Math.cos(a) * size, Math.sin(a) * size);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    };
+    // Scattered stars
+    const starPositions = [
+      [totalW * 0.12, totalH * 0.08, 10, 0.5],
+      [totalW * 0.5, totalH * 0.05, 12, 0.6],
+      [totalW * 0.88, totalH * 0.1, 9, 0.4],
+      [totalW * 0.08, totalH * 0.92, 8, 0.35],
+      [totalW * 0.92, totalH * 0.88, 11, 0.45],
+      [totalW * 0.25, totalH * 0.95, 7, 0.3],
+      [totalW * 0.75, totalH * 0.03, 8, 0.35],
+    ];
+    for (const [sx, sy, sz, sa] of starPositions) {
+      drawStar(sx, sy, sz, sa);
+    }
+
+    // Hand/pointer icon in center
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = `${Math.min(totalW * 0.15, 50)}px sans-serif`;
+    ctx.fillText('👆', cx, cy - totalH * 0.08);
+
+    // "RASPE AQUI!" text
+    ctx.fillStyle = '#FFFFFF';
+    const titleSize = Math.min(totalW * 0.1, 32);
+    ctx.font = `900 ${titleSize}px Inter, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('RASPE AQUI!', cx, cy + totalH * 0.1);
+
+    // Subtitle
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    const subSize = Math.min(totalW * 0.04, 13);
+    ctx.font = `600 ${subSize}px Inter, sans-serif`;
+    ctx.fillText('Raspe os 9 quadradinhos, encontre', cx, cy + totalH * 0.22);
+    ctx.fillText('3 símbolos iguais e ganhe o prêmio!', cx, cy + totalH * 0.28);
+
   }, [getCellSize]);
 
   useEffect(() => {
@@ -291,15 +380,15 @@ function ScratchGrid({
 
       <div
         ref={containerRef}
-        className="relative w-full rounded-2xl overflow-hidden bg-foreground p-1"
+        className="relative w-full rounded-2xl overflow-hidden bg-foreground"
         style={{ minHeight: totalH || 'auto' }}
       >
         {/* Prize grid underneath */}
-        <div className="absolute inset-1 grid grid-cols-3" style={{ gap: `${gap}px` }}>
+        <div className="absolute inset-0 grid grid-cols-3" style={{ gap: `${gap}px` }}>
           {grid.map((item, i) => (
             <div
               key={i}
-              className="rounded-xl bg-gradient-to-br from-muted to-background flex flex-col items-center justify-center gap-0.5 aspect-square"
+              className="bg-gradient-to-br from-muted to-background flex flex-col items-center justify-center gap-0.5 aspect-square"
             >
               {item.image ? (
                 <>
