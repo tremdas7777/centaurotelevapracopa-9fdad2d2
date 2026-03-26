@@ -18,8 +18,8 @@ const ALL_ITEMS: ScratchItem[] = [
   { id: 'trofeu', label: 'Troféu', emoji: '🏆' },
   { id: 'chuteira', label: 'Chuteira', emoji: '👟' },
   { id: 'bandeira', label: 'Bandeira', emoji: '🇧🇷' },
-  { id: 'album', label: 'Álbum', emoji: '📖', image: albumImg },
-  { id: 'camisa', label: 'Camisa', emoji: '👕', image: camisaImg },
+  { id: 'album', label: 'Álbum Copa 2026', emoji: '📖', image: albumImg },
+  { id: 'camisa', label: 'Camisa Oficial', emoji: '👕', image: camisaImg },
 ];
 
 function generateLosingGrid(): ScratchItem[] {
@@ -445,9 +445,11 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
       setRoundResult('win');
       setWonPrizes(p => [...p, wonItem]);
       setShowCelebration(true);
+      document.body.style.overflow = 'hidden';
     } else {
       setRoundResult('lose');
       setShowLosePopup(true);
+      document.body.style.overflow = 'hidden';
     }
   }, [grid]);
 
@@ -603,6 +605,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
             <Button
               onClick={() => {
                 setShowLosePopup(false);
+                document.body.style.overflow = '';
                 handleNext();
               }}
               className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg py-6 rounded-lg mt-2"
@@ -671,6 +674,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
             <Button
               onClick={() => {
                 setShowCelebration(false);
+                document.body.style.overflow = '';
                 handleNext();
               }}
               className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-lg py-6 rounded-lg mt-2"
