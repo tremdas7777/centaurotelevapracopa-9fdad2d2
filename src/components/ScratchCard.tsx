@@ -377,7 +377,7 @@ function ScratchGrid({
           {grid.map((item, i) => (
             <div
               key={i}
-              className="bg-[#1a1a1a] flex flex-col items-center justify-center gap-0.5 aspect-square"
+              className="bg-white flex flex-col items-center justify-center gap-0.5 aspect-square"
             >
               {item.image ? (
                 <>
