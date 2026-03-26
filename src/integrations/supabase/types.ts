@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      gateway_config: {
+        Row: {
+          active_gateway: string
+          centurionpay_company_id: string | null
+          centurionpay_secret_key: string | null
+          id: string
+          pagouai_public_key: string | null
+          pagouai_secret_key: string | null
+          updated_at: string | null
+          vennox_company_id: string | null
+          vennox_secret_key: string | null
+        }
+        Insert: {
+          active_gateway?: string
+          centurionpay_company_id?: string | null
+          centurionpay_secret_key?: string | null
+          id?: string
+          pagouai_public_key?: string | null
+          pagouai_secret_key?: string | null
+          updated_at?: string | null
+          vennox_company_id?: string | null
+          vennox_secret_key?: string | null
+        }
+        Update: {
+          active_gateway?: string
+          centurionpay_company_id?: string | null
+          centurionpay_secret_key?: string | null
+          id?: string
+          pagouai_public_key?: string | null
+          pagouai_secret_key?: string | null
+          updated_at?: string | null
+          vennox_company_id?: string | null
+          vennox_secret_key?: string | null
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           amount_cents: number
