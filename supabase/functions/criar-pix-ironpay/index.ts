@@ -30,7 +30,6 @@ serve(async (req) => {
     const body: Record<string, unknown> = {
       amount: amountCents,
       payment_method: 'pix',
-      api_token: apiToken,
       customer: {
         ...(buyerName && { name: buyerName }),
         ...(buyerEmail && { email: buyerEmail }),
@@ -52,7 +51,9 @@ serve(async (req) => {
 
     console.log('IronPay request body:', JSON.stringify(body));
 
-    const response = await fetch('https://api.ironpayapp.com.br/api/public/v1/transactions', {
+    const apiUrl = `https://api.ironpayapp.com.br/api/public/v1/transactions?api_token=${encodeURIComponent(apiToken)}`;
+
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
