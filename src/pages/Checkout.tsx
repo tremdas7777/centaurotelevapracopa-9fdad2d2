@@ -141,8 +141,8 @@ export default function Checkout() {
           setBairro(data.bairro || '');
           setCidade(data.localidade || '');
           setEstado(data.uf || '');
-          const storeNumber = Math.floor(Math.random() * 900) + 100;
-          setNearestStore(`Centauro - Shopping ${data.localidade || 'Centro'}, Nº ${storeNumber}, ${data.localidade || ''} - ${data.uf || ''}`);
+          const store = findNearestStore(data.localidade || '', data.uf || '');
+          setNearestStore(store);
         } else {
           setShowCepError(true);
           setEndereco('');
