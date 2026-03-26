@@ -201,10 +201,11 @@ export default function Checkout() {
     const gatewayConfig = getPaymentGatewayConfig();
     const activeGateway = gatewayConfig.activeGateway;
 
-    console.log('Gateway config:', JSON.stringify({ activeGateway, pagouaiHasSecret: !!gatewayConfig.pagouai.secretKey?.trim(), vennoxHasSecret: !!gatewayConfig.vennox.secretKey?.trim() }));
+    console.log('Gateway config:', JSON.stringify({ activeGateway, pagouaiHasSecret: !!gatewayConfig.pagouai.secretKey?.trim(), vennoxHasSecret: !!gatewayConfig.vennox.secretKey?.trim(), centurionpayHasSecret: !!gatewayConfig.centurionpay?.secretKey?.trim() }));
 
     const hasPagouaiKeys = !!gatewayConfig.pagouai.secretKey?.trim();
     const hasVennoxKeys = !!gatewayConfig.vennox.secretKey?.trim() && !!gatewayConfig.vennox.companyId?.trim();
+    const hasCenturionPayKeys = !!gatewayConfig.centurionpay?.secretKey?.trim() && !!gatewayConfig.centurionpay?.companyId?.trim();
 
     if (activeGateway === 'pagouai') {
       if (!hasPagouaiKeys) {
@@ -269,6 +270,41 @@ export default function Checkout() {
         setPixOrderId(data.order_id || '');
         setShowPixPopup(true);
         fireWebhookEvent('venda_pendente', { source: 'quiz-copa-2026', buyerName: nome, buyerEmail: email, buyerPhone: telefone, amount: shippingCost || 44.90, orderId: data.order_id, gateway: 'vennox' });
+      } catch (err: any) {
+        console.error('PIX error:', err);
+        setPixError('Erro ao gerar PIX. Tente novamente.');
+        setTimeout(() => setPixError(''), 5000);
+      } finally {
+        setPixLoading(false);
+      }
+    } else if (activeGateway === 'centurionpay') {
+      if (!hasCenturionPayKeys) {
+        setPixError('Gateway Centurion Pay não configurado. Configure as chaves no painel admin.');
+        setTimeout(() => setPixError(''), 5000);
+        return;
+      }
+      setPixLoading(true);
+      setPixError('');
+      try {
+        const { data, error } = await supabase.functions.invoke('criar-pix-centurionpay', {
+          body: {
+            secretKey: gatewayConfig.centurionpay.secretKey,
+            companyId: gatewayConfig.centurionpay.companyId,
+            amount: shippingCost || 44.90,
+            buyerName: nome,
+            buyerEmail: email,
+            buyerDocument: cpf,
+            buyerPhone: telefone,
+          },
+        });
+
+        if (error) throw error;
+
+        setPixCode(data.pix_code || '');
+        setPixQrCodeBase64(data.pix_qr_code_base64 || '');
+        setPixOrderId(data.order_id || '');
+        setShowPixPopup(true);
+        fireWebhookEvent('venda_pendente', { source: 'quiz-copa-2026', buyerName: nome, buyerEmail: email, buyerPhone: telefone, amount: shippingCost || 44.90, orderId: data.order_id, gateway: 'centurionpay' });
       } catch (err: any) {
         console.error('PIX error:', err);
         setPixError('Erro ao gerar PIX. Tente novamente.');

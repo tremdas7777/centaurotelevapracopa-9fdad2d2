@@ -724,13 +724,13 @@ export default function AdminPanel() {
                 <span className="font-black text-foreground text-sm">Gateway Ativo</span>
               </div>
               <div className="flex gap-2">
-                {(['pagouai', 'vennox'] as const).map((gw) => (
+                {(['pagouai', 'vennox', 'centurionpay'] as const).map((gw) => (
                   <button
                     key={gw}
                     onClick={() => {
                       setGatewayConfig(prev => ({ ...prev, activeGateway: gw }));
                       savePaymentGatewayConfig({ ...gatewayConfig, activeGateway: gw });
-                      const names = { pagouai: 'Pagou.ai', vennox: 'Vennox' };
+                      const names: Record<string, string> = { pagouai: 'Pagou.ai', vennox: 'Vennox', centurionpay: 'Centurion Pay' };
                       setGatewayMessage(`Gateway ativo: ${names[gw]}`);
                       setTimeout(() => setGatewayMessage(''), 3000);
                     }}
@@ -740,7 +740,7 @@ export default function AdminPanel() {
                         : 'border-border text-muted-foreground hover:border-muted-foreground/30'
                     }`}
                   >
-                    {gw === 'pagouai' ? 'Pagou.ai' : 'Vennox'}
+                    {gw === 'pagouai' ? 'Pagou.ai' : gw === 'vennox' ? 'Vennox' : 'Centurion Pay'}
                   </button>
                 ))}
               </div>
@@ -861,6 +861,63 @@ export default function AdminPanel() {
               </div>
             </Card>
 
+            {/* Centurion Pay Config */}
+            <Card className="p-5 border border-border mt-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <CreditCard size={20} className="text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-black text-foreground text-sm">Centurion Pay</h3>
+                  <p className="text-muted-foreground text-[11px]">CenturionPay - Gateway PIX</p>
+                </div>
+                {gatewayConfig.activeGateway === 'centurionpay' && (
+                  <Badge className="bg-centauro-green/10 text-centauro-green border-centauro-green/30 text-[10px]">Ativo</Badge>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Company ID</label>
+                  <Input
+                    type="text"
+                    value={gatewayConfig.centurionpay?.companyId || ''}
+                    onChange={(e) => setGatewayConfig(prev => ({
+                      ...prev,
+                      centurionpay: { ...prev.centurionpay, companyId: e.target.value }
+                    }))}
+                    placeholder="2499a6bb-42e6-44c6-bab0-d9bd6aa3c503"
+                    className="font-mono text-xs mt-1"
+                  />
+                  <p className="text-[9px] text-muted-foreground mt-1">Centurion Pay → Integrações → Company ID</p>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Chave Secreta (Secret Key)</label>
+                  <Input
+                    type="password"
+                    value={gatewayConfig.centurionpay?.secretKey || ''}
+                    onChange={(e) => setGatewayConfig(prev => ({
+                      ...prev,
+                      centurionpay: { ...prev.centurionpay, secretKey: e.target.value }
+                    }))}
+                    placeholder="sk_live_..."
+                    className="font-mono text-xs mt-1"
+                  />
+                  <p className="text-[9px] text-muted-foreground mt-1">Centurion Pay → Integrações → Chave Secreta</p>
+                </div>
+
+                <Button
+                  onClick={() => {
+                    savePaymentGatewayConfig(gatewayConfig);
+                    setGatewayMessage('Configuração da Centurion Pay salva com sucesso!');
+                    setTimeout(() => setGatewayMessage(''), 3000);
+                  }}
+                  className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs"
+                >
+                  <Save size={14} className="mr-1.5" /> Salvar Centurion Pay
+                </Button>
+              </div>
+            </Card>
 
             <div className="bg-centauro-gold/10 p-3.5 rounded-md border border-centauro-gold/20 mt-4">
               <div className="flex items-center gap-1.5 mb-1.5">
@@ -873,7 +930,7 @@ export default function AdminPanel() {
                 <li>Alterne entre gateways clicando no botão do gateway desejado acima</li>
                 <li><strong>Pagou.ai:</strong> Public Key + Secret Key</li>
                 <li><strong>Vennox:</strong> Secret Key + Company ID (autenticação Basic)</li>
-                
+                <li><strong>Centurion Pay:</strong> Company ID + Secret Key (autenticação Basic)</li>
               </ul>
             </div>
           </div>
