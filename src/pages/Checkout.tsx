@@ -826,9 +826,9 @@ export default function Checkout() {
         </div>
 
         {/* Footer */}
-        <div className="text-center py-4 bg-black">
-          <img src={centauroLogo} alt="Centauro" className="h-10 mx-auto mb-2 opacity-30 brightness-0 invert" />
-          <p className="text-white text-[10px]">© 2026 Centauro Esportes. Todos os direitos reservados.</p>
+        <div className="text-center py-4">
+          <img src={centauroLogo} alt="Centauro" className="h-10 mx-auto mb-2 opacity-30" />
+          <p className="text-muted-foreground text-[10px]">© 2026 Centauro Esportes. Todos os direitos reservados.</p>
         </div>
       </div>
 
