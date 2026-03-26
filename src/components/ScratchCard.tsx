@@ -3,7 +3,6 @@ import { Gift, Star, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import centauroLogo from '@/assets/centauro-logo.webp';
 import cbfLogo from '@/assets/cbf-logo.webp';
-import centauroLogoColor from '@/assets/centauro-logo.webp';
 import camisaImg from '@/assets/camisa-brasil-hero.webp';
 import albumImg from '@/assets/album-copa-hero.webp';
 
@@ -74,13 +73,31 @@ const ROUND_CONFIGS = [
   { type: 'win' as const, winnerId: 'camisa', title: 'Última chance!' },
 ];
 
-// Canvas-based scratch cell with real drag-to-reveal
-function ScratchCell({ item, onRevealed }: { item: ScratchItem; onRevealed: () => void }) {
+// Single unified canvas scratch card with 9 cells
+function ScratchGrid({
+  grid,
+  onAllRevealed,
+}: {
+  grid: ScratchItem[];
+  onAllRevealed: (revealedIndices: number[]) => void;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDrawing = useRef(false);
-  const hasRevealed = useRef(false);
-  const [revealed, setRevealed] = useState(false);
+  const revealedCells = useRef<Set<number>>(new Set());
+  const hasFinished = useRef(false);
+  const [revealedCount, setRevealedCount] = useState(0);
+
+  const getCellSize = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return { cellW: 0, cellH: 0, gap: 0, totalW: 0, totalH: 0 };
+    const totalW = container.getBoundingClientRect().width;
+    const gap = 6;
+    const cellW = (totalW - gap * 2) / 3;
+    const cellH = cellW;
+    const totalH = cellH * 3 + gap * 2;
+    return { cellW, cellH, gap, totalW, totalH };
+  }, []);
 
   const initCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -89,92 +106,150 @@ function ScratchCell({ item, onRevealed }: { item: ScratchItem; onRevealed: () =
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const rect = container.getBoundingClientRect();
-    const size = rect.width;
-    canvas.width = size * 2;
-    canvas.height = size * 2;
-    ctx.scale(2, 2);
+    const { cellW, cellH, gap, totalW, totalH } = getCellSize();
+    const dpr = 2;
+    canvas.width = totalW * dpr;
+    canvas.height = totalH * dpr;
+    canvas.style.height = `${totalH}px`;
+    ctx.scale(dpr, dpr);
 
-    // Gold gradient
-    const gradient = ctx.createLinearGradient(0, 0, size, size);
-    gradient.addColorStop(0, '#C9A84C');
-    gradient.addColorStop(0.3, '#E8D48B');
-    gradient.addColorStop(0.5, '#F5E6A3');
-    gradient.addColorStop(0.7, '#E8D48B');
-    gradient.addColorStop(1, '#C9A84C');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, size, size);
+    // Draw 9 gold cells
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) {
+        const x = col * (cellW + gap);
+        const y = row * (cellH + gap);
 
-    // Load and draw Centauro logo
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      const logoW = size * 0.5;
-      const logoH = (img.height / img.width) * logoW;
-      const x = (size - logoW) / 2;
-      const y = (size - logoH) / 2;
-      ctx.globalAlpha = 0.2;
-      ctx.drawImage(img, x, y, logoW, logoH);
-      ctx.globalAlpha = 1.0;
-    };
-    img.src = centauroLogoColor;
+        const gradient = ctx.createLinearGradient(x, y, x + cellW, y + cellH);
+        gradient.addColorStop(0, '#C9A84C');
+        gradient.addColorStop(0.3, '#E8D48B');
+        gradient.addColorStop(0.5, '#F5E6A3');
+        gradient.addColorStop(0.7, '#E8D48B');
+        gradient.addColorStop(1, '#C9A84C');
 
-    // Subtle text
-    ctx.fillStyle = 'rgba(0,0,0,0.08)';
-    ctx.font = `bold ${Math.max(8, size * 0.08)}px Inter, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText('RASPE', size / 2, size * 0.25);
-    ctx.fillText('AQUI', size / 2, size * 0.82);
-  }, []);
+        // Rounded rect
+        const r = 12;
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + cellW - r, y);
+        ctx.quadraticCurveTo(x + cellW, y, x + cellW, y + r);
+        ctx.lineTo(x + cellW, y + cellH - r);
+        ctx.quadraticCurveTo(x + cellW, y + cellH, x + cellW - r, y + cellH);
+        ctx.lineTo(x + r, y + cellH);
+        ctx.quadraticCurveTo(x, y + cellH, x, y + cellH - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // "RASPE" text
+        ctx.fillStyle = 'rgba(0,0,0,0.1)';
+        const fontSize = Math.max(9, cellW * 0.1);
+        ctx.font = `bold ${fontSize}px Inter, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('RASPE', x + cellW / 2, y + cellH / 2);
+      }
+    }
+  }, [getCellSize]);
 
   useEffect(() => {
     initCanvas();
+    // Re-init on resize
+    const handleResize = () => initCanvas();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [initCanvas]);
 
-  const scratch = useCallback((x: number, y: number) => {
+  const checkCellReveal = useCallback((posX: number, posY: number) => {
     const canvas = canvasRef.current;
-    if (!canvas || hasRevealed.current) return;
+    if (!canvas || hasFinished.current) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const { cellW, cellH, gap } = getCellSize();
+
+    // Scratch with large brush
+    const dpr = 2;
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
-    ctx.arc(x, y, 18, 0, Math.PI * 2);
+    ctx.arc(posX, posY, 20, 0, Math.PI * 2);
     ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
 
-    // Check percentage
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let transparent = 0;
-    for (let i = 3; i < imageData.data.length; i += 16) {
-      if (imageData.data[i] === 0) transparent++;
-    }
-    const total = imageData.data.length / 16;
-    const pct = (transparent / total) * 100;
+    // Check which cell was touched and if it's sufficiently scratched
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) {
+        const idx = row * 3 + col;
+        if (revealedCells.current.has(idx)) continue;
 
-    if (pct > 50 && !hasRevealed.current) {
-      hasRevealed.current = true;
-      setTimeout(() => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        setRevealed(true);
-        onRevealed();
-      }, 200);
+        const cx = col * (cellW + gap);
+        const cy = row * (cellH + gap);
+
+        // Check if scratch position is in this cell
+        if (posX >= cx && posX <= cx + cellW && posY >= cy && posY <= cy + cellH) {
+          // Sample a few points in this cell to check transparency
+          const samplePoints = [
+            [cx + cellW * 0.3, cy + cellH * 0.3],
+            [cx + cellW * 0.7, cy + cellH * 0.3],
+            [cx + cellW * 0.5, cy + cellH * 0.5],
+            [cx + cellW * 0.3, cy + cellH * 0.7],
+            [cx + cellW * 0.7, cy + cellH * 0.7],
+          ];
+
+          let transparentCount = 0;
+          for (const [sx, sy] of samplePoints) {
+            const pixel = ctx.getImageData(sx * dpr, sy * dpr, 1, 1).data;
+            if (pixel[3] < 50) transparentCount++;
+          }
+
+          // If any scratch detected in cell, reveal it immediately
+          if (transparentCount >= 1) {
+            revealedCells.current.add(idx);
+            // Clear entire cell
+            ctx.globalCompositeOperation = 'destination-out';
+            const r = 12;
+            ctx.beginPath();
+            ctx.moveTo(cx + r, cy);
+            ctx.lineTo(cx + cellW - r, cy);
+            ctx.quadraticCurveTo(cx + cellW, cy, cx + cellW, cy + r);
+            ctx.lineTo(cx + cellW, cy + cellH - r);
+            ctx.quadraticCurveTo(cx + cellW, cy + cellH, cx + cellW - r, cy + cellH);
+            ctx.lineTo(cx + r, cy + cellH);
+            ctx.quadraticCurveTo(cx, cy + cellH, cx, cy + cellH - r);
+            ctx.lineTo(cx, cy + r);
+            ctx.quadraticCurveTo(cx, cy, cx + r, cy);
+            ctx.closePath();
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+
+            const newCount = revealedCells.current.size;
+            setRevealedCount(newCount);
+
+            if (newCount >= 9 && !hasFinished.current) {
+              hasFinished.current = true;
+              setTimeout(() => {
+                onAllRevealed(Array.from(revealedCells.current));
+              }, 400);
+            }
+          }
+        }
+      }
     }
-  }, [onRevealed]);
+  }, [getCellSize, onAllRevealed]);
 
   const getPos = (e: React.TouchEvent | React.MouseEvent) => {
     const canvas = canvasRef.current!;
     const rect = canvas.getBoundingClientRect();
-    const scaleX = (canvas.width / 2) / rect.width;
-    const scaleY = (canvas.height / 2) / rect.height;
     if ('touches' in e) {
       return {
-        x: (e.touches[0].clientX - rect.left) * scaleX / scaleX,
-        y: (e.touches[0].clientY - rect.top) * scaleY / scaleY,
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top,
       };
     }
     return {
-      x: ((e as React.MouseEvent).clientX - rect.left),
-      y: ((e as React.MouseEvent).clientY - rect.top),
+      x: (e as React.MouseEvent).clientX - rect.left,
+      y: (e as React.MouseEvent).clientY - rect.top,
     };
   };
 
@@ -182,42 +257,70 @@ function ScratchCell({ item, onRevealed }: { item: ScratchItem; onRevealed: () =
     e.preventDefault();
     isDrawing.current = true;
     const pos = getPos(e);
-    scratch(pos.x, pos.y);
+    checkCellReveal(pos.x, pos.y);
   };
 
   const handleMove = (e: React.TouchEvent | React.MouseEvent) => {
     if (!isDrawing.current) return;
     e.preventDefault();
     const pos = getPos(e);
-    scratch(pos.x, pos.y);
+    checkCellReveal(pos.x, pos.y);
   };
 
   const handleEnd = () => {
     isDrawing.current = false;
   };
 
+  const { cellW, cellH, gap, totalH } = getCellSize();
+
   return (
-    <div ref={containerRef} className="relative aspect-square rounded-xl overflow-hidden border border-border">
-      {/* Prize underneath */}
-      <div className="absolute inset-0 bg-gradient-to-br from-muted to-background flex flex-col items-center justify-center gap-0.5">
-        {item.image ? (
-          <>
-            <img src={item.image} alt={item.label} className="w-3/4 h-3/4 object-contain" />
-            <span className="text-[9px] md:text-[10px] font-bold text-foreground/70">{item.label}</span>
-          </>
-        ) : (
-          <>
-            <span className="text-3xl md:text-4xl">{item.emoji}</span>
-            <span className="text-[9px] md:text-[10px] font-bold text-foreground/70">{item.label}</span>
-          </>
-        )}
+    <div>
+      {/* Progress bar */}
+      <div className="mb-3">
+        <div className="flex justify-between text-[10px] font-bold text-primary-foreground/40 mb-1">
+          <span>Campos raspados</span>
+          <span>{revealedCount}/9</span>
+        </div>
+        <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+          <div
+            className="h-full bg-centauro-gold rounded-full transition-all duration-300"
+            style={{ width: `${(revealedCount / 9) * 100}%` }}
+          />
+        </div>
       </div>
 
-      {/* Canvas scratch layer */}
-      {!revealed && (
+      <div
+        ref={containerRef}
+        className="relative w-full rounded-2xl overflow-hidden bg-foreground p-1"
+        style={{ minHeight: totalH || 'auto' }}
+      >
+        {/* Prize grid underneath */}
+        <div className="absolute inset-1 grid grid-cols-3" style={{ gap: `${gap}px` }}>
+          {grid.map((item, i) => (
+            <div
+              key={i}
+              className="rounded-xl bg-gradient-to-br from-muted to-background flex flex-col items-center justify-center gap-0.5 aspect-square"
+            >
+              {item.image ? (
+                <>
+                  <img src={item.image} alt={item.label} className="w-3/4 h-3/4 object-contain" />
+                  <span className="text-[8px] md:text-[10px] font-bold text-foreground/70">{item.label}</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-2xl md:text-3xl">{item.emoji}</span>
+                  <span className="text-[8px] md:text-[10px] font-bold text-foreground/70">{item.label}</span>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Single canvas on top */}
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 w-full h-full cursor-pointer touch-none"
+          className="relative w-full cursor-pointer touch-none"
+          style={{ height: totalH || 300 }}
           onMouseDown={handleStart}
           onMouseMove={handleMove}
           onMouseUp={handleEnd}
@@ -226,7 +329,7 @@ function ScratchCell({ item, onRevealed }: { item: ScratchItem; onRevealed: () =
           onTouchMove={handleMove}
           onTouchEnd={handleEnd}
         />
-      )}
+      </div>
     </div>
   );
 }
@@ -237,7 +340,6 @@ interface ScratchCardProps {
 
 export default function ScratchCard({ onComplete }: ScratchCardProps) {
   const [currentRound, setCurrentRound] = useState(0);
-  const [revealedCount, setRevealedCount] = useState(0);
   const [grid, setGrid] = useState<ScratchItem[]>(() => generateLosingGrid());
   const [roundResult, setRoundResult] = useState<'pending' | 'win' | 'lose'>('pending');
   const [showCelebration, setShowCelebration] = useState(false);
@@ -246,30 +348,21 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
   const totalRounds = 3;
   const config = ROUND_CONFIGS[currentRound];
 
-  const handleCellRevealed = useCallback(() => {
-    setRevealedCount(prev => {
-      const newCount = prev + 1;
-      if (newCount >= 9) {
-        // All revealed, check result
-        setTimeout(() => {
-          const counts: Record<string, number> = {};
-          grid.forEach(item => {
-            counts[item.id] = (counts[item.id] || 0) + 1;
-          });
-          const winner = Object.entries(counts).find(([, count]) => count >= 3);
-          if (winner) {
-            const wonItem = ALL_ITEMS.find(i => i.id === winner[0])!;
-            setRoundResult('win');
-            setWonPrizes(p => [...p, wonItem]);
-            setShowCelebration(true);
-            setTimeout(() => setShowCelebration(false), 2000);
-          } else {
-            setRoundResult('lose');
-          }
-        }, 300);
-      }
-      return newCount;
+  const handleAllRevealed = useCallback(() => {
+    const counts: Record<string, number> = {};
+    grid.forEach(item => {
+      counts[item.id] = (counts[item.id] || 0) + 1;
     });
+    const winner = Object.entries(counts).find(([, count]) => count >= 3);
+    if (winner) {
+      const wonItem = ALL_ITEMS.find(i => i.id === winner[0])!;
+      setRoundResult('win');
+      setWonPrizes(p => [...p, wonItem]);
+      setShowCelebration(true);
+      setTimeout(() => setShowCelebration(false), 2000);
+    } else {
+      setRoundResult('lose');
+    }
   }, [grid]);
 
   const handleNext = () => {
@@ -277,7 +370,6 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
       const nextRound = currentRound + 1;
       const nextConfig = ROUND_CONFIGS[nextRound];
       setCurrentRound(nextRound);
-      setRevealedCount(0);
       setRoundResult('pending');
       if (nextConfig.type === 'win' && nextConfig.winnerId) {
         setGrid(generateWinningGrid(nextConfig.winnerId));
@@ -291,7 +383,7 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
 
   return (
     <div className="min-h-[100dvh] bg-foreground flex flex-col">
-      {/* Logo bar only (no banner image) */}
+      {/* Logo bar */}
       <div className="bg-primary py-4 px-4">
         <div className="max-w-4xl mx-auto flex items-center justify-center -translate-x-2">
           <img src={centauroLogo} alt="Centauro" className="h-14 md:h-20 object-contain brightness-0 invert" />
@@ -351,29 +443,9 @@ export default function ScratchCard({ onComplete }: ScratchCardProps) {
             </p>
           </div>
 
-          {/* Progress bar */}
-          <div className="mb-4">
-            <div className="flex justify-between text-[10px] font-bold text-primary-foreground/40 mb-1">
-              <span>Campos raspados</span>
-              <span>{revealedCount}/9</span>
-            </div>
-            <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full bg-centauro-gold rounded-full transition-all duration-300"
-                style={{ width: `${(revealedCount / 9) * 100}%` }}
-              />
-            </div>
-          </div>
-
-          {/* 3x3 Grid */}
-          <div className="grid grid-cols-3 gap-2 animate-scale-in" key={currentRound}>
-            {grid.map((item, i) => (
-              <ScratchCell
-                key={`${currentRound}-${i}`}
-                item={item}
-                onRevealed={handleCellRevealed}
-              />
-            ))}
+          {/* Scratch Grid */}
+          <div key={currentRound} className="animate-scale-in">
+            <ScratchGrid grid={grid} onAllRevealed={handleAllRevealed} />
           </div>
 
           {/* Legend */}
