@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { DollarSign, TrendingUp, Clock, CheckCircle, XCircle, RefreshCw, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 type FilterPeriod = 'hoje' | 'semana' | 'mes' | 'todos';
 
