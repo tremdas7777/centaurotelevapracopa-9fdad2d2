@@ -141,6 +141,20 @@ serve(async (req) => {
       console.error('Order save error:', orderError);
     }
 
+    // Fire venda_pendente webhook server-side
+    if (orderData) {
+      await fireServerWebhooks(supabase, 'venda_pendente', {
+        source: 'checkout',
+        orderId: orderData.id,
+        externalId: orderData.external_id,
+        buyerName: buyerName || null,
+        buyerEmail: buyerEmail || null,
+        buyerPhone: buyerPhone || null,
+        amount: amount,
+        gateway: 'pagouai',
+      });
+    }
+
     // Send SMS notification if phone is available
     if (buyerPhone) {
       try {
