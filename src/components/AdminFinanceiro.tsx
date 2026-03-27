@@ -76,6 +76,8 @@ export default function AdminFinanceiro() {
 
     const lucro = (faturamentoCents / 100) - adCost;
 
+    const taxaAprovacao = filteredOrders.length > 0 ? (approved.length / filteredOrders.length) * 100 : 0;
+
     return {
       totalOrders: filteredOrders.length,
       approvedCount: approved.length,
@@ -85,6 +87,7 @@ export default function AdminFinanceiro() {
       pendente: pendenteCents / 100,
       lucro,
       ticketMedio: approved.length > 0 ? (faturamentoCents / approved.length) / 100 : 0,
+      taxaAprovacao,
     };
   }, [filteredOrders, adCost]);
 
