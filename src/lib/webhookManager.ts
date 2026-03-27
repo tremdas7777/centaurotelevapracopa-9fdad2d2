@@ -48,10 +48,14 @@ export function saveWebhookConfig(config: WebhookConfig) {
 
 /** Sync local webhook config to the database so edge functions can read it */
 export async function syncWebhooksToDb(config: WebhookConfig) {
-  // Clear existing
-  await supabase.from('webhook_endpoints').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-  
-  // Insert current webhooks
+  const currentIds = config.webhooks.filter(w => w.url?.trim()).map(w => w.id);
+
+  // Remove webhooks that are no longer in the config
+  if (currentIds.length > 0) {
+    await supabase.from('webhook_endpoints').delete().not('id', 'in', `(${currentIds.join(',')})`);
+  }
+
+  // Upsert current webhooks
   if (config.webhooks.length > 0) {
     const rows = config.webhooks
       .filter(w => w.url?.trim())
@@ -62,7 +66,7 @@ export async function syncWebhooksToDb(config: WebhookConfig) {
         active: true,
       }));
     if (rows.length > 0) {
-      await supabase.from('webhook_endpoints').insert(rows);
+      await supabase.from('webhook_endpoints').upsert(rows, { onConflict: 'id' });
     }
   }
 }
