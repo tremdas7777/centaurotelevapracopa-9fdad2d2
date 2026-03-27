@@ -18,7 +18,7 @@ interface Lead {
   pix_code: string | null;
 }
 
-type FilterStatus = 'todos' | 'pending' | 'expired' | 'cancelled';
+type FilterStatus = 'todos' | 'paid' | 'pending' | 'expired' | 'cancelled';
 
 export default function AdminLeads() {
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -31,9 +31,8 @@ export default function AdminLeads() {
     const { data } = await supabase
       .from('orders')
       .select('id, buyer_name, buyer_document, buyer_phone, buyer_email, amount_cents, status, created_at, pix_code')
-      .in('status', ['pending', 'expired', 'cancelled'])
       .order('created_at', { ascending: false })
-      .limit(100);
+      .limit(200);
     setLeads((data as Lead[]) || []);
     setLoading(false);
   };
@@ -49,6 +48,7 @@ export default function AdminLeads() {
 
   const stats = useMemo(() => ({
     total: leads.length,
+    paid: leads.filter(l => l.status === 'paid').length,
     pending: leads.filter(l => l.status === 'pending').length,
     expired: leads.filter(l => l.status === 'expired').length,
     cancelled: leads.filter(l => l.status === 'cancelled').length,
@@ -88,6 +88,7 @@ export default function AdminLeads() {
   };
 
   const statusLabel: Record<string, { label: string; color: string }> = {
+    paid: { label: 'Aprovado', color: 'text-centauro-green border-centauro-green/30' },
     pending: { label: 'Pendente', color: 'text-centauro-gold border-centauro-gold/30' },
     expired: { label: 'Expirado', color: 'text-destructive border-destructive/30' },
     cancelled: { label: 'Cancelado', color: 'text-destructive border-destructive/30' },
@@ -95,6 +96,7 @@ export default function AdminLeads() {
 
   const filters: { id: FilterStatus; label: string }[] = [
     { id: 'todos', label: 'Todos' },
+    { id: 'paid', label: 'Aprovados' },
     { id: 'pending', label: 'Pendentes' },
     { id: 'expired', label: 'Expirados' },
     { id: 'cancelled', label: 'Cancelados' },
@@ -105,7 +107,7 @@ export default function AdminLeads() {
       <div className="flex items-center justify-between mb-2">
         <div>
           <h2 className="text-xl font-black text-foreground">Leads</h2>
-          <p className="text-muted-foreground text-xs">Clientes que geraram PIX mas não pagaram</p>
+          <p className="text-muted-foreground text-xs">Todos os clientes (aprovados e não aprovados)</p>
         </div>
         <div className="flex gap-2">
           <Button onClick={exportCSV} variant="outline" size="sm" className="text-xs" disabled={loading || filtered.length === 0}>
