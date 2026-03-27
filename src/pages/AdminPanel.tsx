@@ -369,6 +369,9 @@ export default function AdminPanel() {
         {/* FINANCEIRO TAB */}
         {activeTab === 'financeiro' && <AdminFinanceiro />}
 
+        {/* LEADS TAB */}
+        {activeTab === 'leads' && <AdminLeads />}
+
         {/* PIXELS TAB */}
         {activeTab === 'pixels' && (
           <div>
