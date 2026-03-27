@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { Eye, EyeOff, LogOut, Save, Link2, Info, BarChart3, ShoppingCart, TrendingUp, Users, CheckCircle, ArrowDown, Trash2, Code, Webhook, Bell, Zap, Loader2, ExternalLink, CreditCard, QrCode, Copy, RefreshCw, Plus } from 'lucide-react';
+import { Eye, EyeOff, LogOut, Save, Link2, Info, BarChart3, ShoppingCart, TrendingUp, Users, CheckCircle, ArrowDown, Trash2, Code, Webhook, Bell, Zap, Loader2, ExternalLink, CreditCard, QrCode, Copy, RefreshCw, Plus, DollarSign } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { getFunnelStats, clearFunnelEvents } from '@/lib/funnelTracking';
@@ -12,10 +12,11 @@ import { getWebhookConfig, saveWebhookConfig, fireWebhookEvent, syncWebhooksToDb
 import { getUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
 import { fetchPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
+import AdminFinanceiro from '@/components/AdminFinanceiro';
 
 const ADMIN_PASSWORD = 'escalabahia';
 
-type Tab = 'analytics' | 'pixels' | 'webhooks' | 'utmify' | 'checkout' | 'pagamentos' | 'pedidos';
+type Tab = 'analytics' | 'financeiro' | 'pixels' | 'webhooks' | 'utmify' | 'checkout' | 'pagamentos' | 'pedidos';
 
 export default function AdminPanel() {
   const [password, setPassword] = useState('');
@@ -242,6 +243,7 @@ export default function AdminPanel() {
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={14} /> },
+    { id: 'financeiro', label: 'Financeiro', icon: <DollarSign size={14} /> },
     { id: 'pixels', label: 'Pixels', icon: <Code size={14} /> },
     { id: 'webhooks', label: 'Webhooks', icon: <Bell size={14} /> },
     { id: 'utmify', label: 'Utmify', icon: <Zap size={14} /> },
@@ -361,6 +363,9 @@ export default function AdminPanel() {
             </div>
           </div>
         )}
+
+        {/* FINANCEIRO TAB */}
+        {activeTab === 'financeiro' && <AdminFinanceiro />}
 
         {/* PIXELS TAB */}
         {activeTab === 'pixels' && (
