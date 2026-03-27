@@ -175,22 +175,6 @@ export default function AdminFinanceiro() {
                 <span className="text-[11px] font-bold text-muted-foreground uppercase">Lucro</span>
               </div>
               <p className={`text-xl font-black ${stats.lucro >= 0 ? 'text-foreground' : 'text-destructive'}`}>{formatCurrency(stats.lucro)}</p>
-              <div className="flex items-center gap-1 mt-1">
-                <span className="text-[10px] text-muted-foreground">Ads R$</span>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={adCost || ''}
-                  onChange={(e) => {
-                    const val = Number(e.target.value) || 0;
-                    setAdCost(val);
-                    localStorage.setItem('admin_ad_cost', String(val));
-                  }}
-                  className="w-20 px-1.5 py-0.5 text-[10px] rounded border border-border bg-background text-foreground"
-                  placeholder="0,00"
-                />
-              </div>
             </Card>
 
             <Card className="p-4 border border-border shadow-sm">
