@@ -1,6 +1,35 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+async function fireServerWebhooks(
+  supabase: any,
+  eventType: 'venda_pendente' | 'venda_aprovada',
+  payload: Record<string, unknown>
+) {
+  try {
+    const { data: webhooks } = await supabase
+      .from('webhook_endpoints')
+      .select('url, events')
+      .eq('active', true);
+    if (!webhooks || webhooks.length === 0) return;
+    const targets = webhooks.filter((w: any) => w.url?.trim() && w.events?.includes(eventType));
+    await Promise.allSettled(targets.map(async (webhook: any) => {
+      try {
+        await fetch(webhook.url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ event: eventType, timestamp: new Date().toISOString(), ...payload }),
+        });
+        console.log(`Webhook sent to ${webhook.url} for ${eventType}`);
+      } catch (err) {
+        console.error(`Webhook error (${webhook.url}):`, err);
+      }
+    }));
+  } catch (err) {
+    console.error('Error firing server webhooks:', err);
+  }
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
