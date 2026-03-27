@@ -83,10 +83,10 @@ export default function AdminFinanceiro() {
       cancelledCount: cancelled.length,
       faturamento: faturamentoCents / 100,
       pendente: pendenteCents / 100,
-      lucro: lucroCents / 100,
+      lucro,
       ticketMedio: approved.length > 0 ? (faturamentoCents / approved.length) / 100 : 0,
     };
-  }, [filteredOrders]);
+  }, [filteredOrders, adCost]);
 
   const chartData = useMemo(() => {
     const dayMap: Record<string, { faturamento: number; vendas: number }> = {};
