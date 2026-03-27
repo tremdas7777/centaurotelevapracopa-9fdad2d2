@@ -23,6 +23,10 @@ export default function AdminFinanceiro() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState<FilterPeriod>('hoje');
+  const [adCost, setAdCost] = useState(() => {
+    const saved = localStorage.getItem('admin_ad_cost');
+    return saved ? Number(saved) : 0;
+  });
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -70,8 +74,7 @@ export default function AdminFinanceiro() {
     const faturamentoCents = approved.reduce((sum, o) => sum + o.amount_cents + (o.shipping_cost_cents || 0), 0);
     const pendenteCents = pending.reduce((sum, o) => sum + o.amount_cents + (o.shipping_cost_cents || 0), 0);
 
-    const MARGEM = 0.6;
-    const lucroCents = Math.round(faturamentoCents * MARGEM);
+    const lucro = (faturamentoCents / 100) - adCost;
 
     return {
       totalOrders: filteredOrders.length,
@@ -80,10 +83,10 @@ export default function AdminFinanceiro() {
       cancelledCount: cancelled.length,
       faturamento: faturamentoCents / 100,
       pendente: pendenteCents / 100,
-      lucro: lucroCents / 100,
+      lucro,
       ticketMedio: approved.length > 0 ? (faturamentoCents / approved.length) / 100 : 0,
     };
-  }, [filteredOrders]);
+  }, [filteredOrders, adCost]);
 
   const chartData = useMemo(() => {
     const dayMap: Record<string, { faturamento: number; vendas: number }> = {};
@@ -169,10 +172,25 @@ export default function AdminFinanceiro() {
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                   <TrendingUp size={16} className="text-primary" />
                 </div>
-                <span className="text-[11px] font-bold text-muted-foreground uppercase">Lucro Est.</span>
+                <span className="text-[11px] font-bold text-muted-foreground uppercase">Lucro</span>
               </div>
-              <p className="text-xl font-black text-foreground">{formatCurrency(stats.lucro)}</p>
-              <p className="text-[10px] text-muted-foreground mt-1">Margem de 60%</p>
+              <p className={`text-xl font-black ${stats.lucro >= 0 ? 'text-foreground' : 'text-destructive'}`}>{formatCurrency(stats.lucro)}</p>
+              <div className="flex items-center gap-1 mt-1">
+                <span className="text-[10px] text-muted-foreground">Ads R$</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={adCost || ''}
+                  onChange={(e) => {
+                    const val = Number(e.target.value) || 0;
+                    setAdCost(val);
+                    localStorage.setItem('admin_ad_cost', String(val));
+                  }}
+                  className="w-20 px-1.5 py-0.5 text-[10px] rounded border border-border bg-background text-foreground"
+                  placeholder="0,00"
+                />
+              </div>
             </Card>
 
             <Card className="p-4 border border-border shadow-sm">
