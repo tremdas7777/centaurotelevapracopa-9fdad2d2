@@ -23,6 +23,10 @@ export default function AdminFinanceiro() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState<FilterPeriod>('hoje');
+  const [adCost, setAdCost] = useState(() => {
+    const saved = localStorage.getItem('admin_ad_cost');
+    return saved ? Number(saved) : 0;
+  });
 
   const fetchOrders = async () => {
     setLoading(true);
