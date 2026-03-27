@@ -12,10 +12,11 @@ import { getWebhookConfig, saveWebhookConfig, fireWebhookEvent, syncWebhooksToDb
 import { getUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
 import { fetchPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
+import AdminFinanceiro from '@/components/AdminFinanceiro';
 
 const ADMIN_PASSWORD = 'escalabahia';
 
-type Tab = 'analytics' | 'pixels' | 'webhooks' | 'utmify' | 'checkout' | 'pagamentos' | 'pedidos';
+type Tab = 'analytics' | 'financeiro' | 'pixels' | 'webhooks' | 'utmify' | 'checkout' | 'pagamentos' | 'pedidos';
 
 export default function AdminPanel() {
   const [password, setPassword] = useState('');
@@ -242,6 +243,7 @@ export default function AdminPanel() {
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={14} /> },
+    { id: 'financeiro', label: 'Financeiro', icon: <DollarSign size={14} /> },
     { id: 'pixels', label: 'Pixels', icon: <Code size={14} /> },
     { id: 'webhooks', label: 'Webhooks', icon: <Bell size={14} /> },
     { id: 'utmify', label: 'Utmify', icon: <Zap size={14} /> },
