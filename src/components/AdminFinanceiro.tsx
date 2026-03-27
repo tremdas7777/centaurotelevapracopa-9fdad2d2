@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { DollarSign, TrendingUp, Clock, CheckCircle, XCircle, RefreshCw, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 type FilterPeriod = 'hoje' | 'semana' | 'mes' | 'todos';
 
@@ -69,7 +70,6 @@ export default function AdminFinanceiro() {
     const faturamentoCents = approved.reduce((sum, o) => sum + o.amount_cents + (o.shipping_cost_cents || 0), 0);
     const pendenteCents = pending.reduce((sum, o) => sum + o.amount_cents + (o.shipping_cost_cents || 0), 0);
 
-    // Lucro estimado (margem ~60% como exemplo — ajuste conforme necessário)
     const MARGEM = 0.6;
     const lucroCents = Math.round(faturamentoCents * MARGEM);
 
@@ -84,6 +84,25 @@ export default function AdminFinanceiro() {
       ticketMedio: approved.length > 0 ? (faturamentoCents / approved.length) / 100 : 0,
     };
   }, [filteredOrders]);
+
+  const chartData = useMemo(() => {
+    const dayMap: Record<string, { faturamento: number; vendas: number }> = {};
+    filteredOrders.filter(o => o.status === 'paid').forEach(order => {
+      const day = new Date(order.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      if (!dayMap[day]) dayMap[day] = { faturamento: 0, vendas: 0 };
+      dayMap[day].faturamento += (order.amount_cents + (order.shipping_cost_cents || 0)) / 100;
+      dayMap[day].vendas += 1;
+    });
+    return Object.entries(dayMap)
+      .map(([dia, v]) => ({ dia, faturamento: Number(v.faturamento.toFixed(2)), vendas: v.vendas }))
+      .reverse();
+  }, [filteredOrders]);
+
+  const pieData = useMemo(() => [
+    { name: 'Aprovadas', value: stats.approvedCount, color: 'hsl(142, 71%, 45%)' },
+    { name: 'Pendentes', value: stats.pendingCount, color: 'hsl(45, 93%, 47%)' },
+    { name: 'Canceladas', value: stats.cancelledCount, color: 'hsl(0, 84%, 60%)' },
+  ].filter(d => d.value > 0), [stats]);
 
   const formatCurrency = (value: number) =>
     value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -179,7 +198,46 @@ export default function AdminFinanceiro() {
             </Card>
           </div>
 
-          {/* Summary bar */}
+          {/* Charts */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <Card className="p-4 border border-border shadow-sm">
+              <h3 className="text-xs font-black text-foreground mb-3 uppercase">Faturamento por Dia</h3>
+              {chartData.length === 0 ? (
+                <p className="text-muted-foreground text-xs text-center py-8">Sem dados no período</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="dia" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                    <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                    <Tooltip
+                      formatter={(value: number) => [`R$ ${value.toFixed(2)}`, 'Faturamento']}
+                      contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid hsl(var(--border))' }}
+                    />
+                    <Bar dataKey="faturamento" fill="hsl(142, 71%, 45%)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </Card>
+
+            <Card className="p-4 border border-border shadow-sm">
+              <h3 className="text-xs font-black text-foreground mb-3 uppercase">Status das Vendas</h3>
+              {pieData.length === 0 ? (
+                <p className="text-muted-foreground text-xs text-center py-8">Sem dados no período</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                      {pieData.map((entry, i) => (
+                        <Cell key={i} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid hsl(var(--border))' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
+            </Card>
+          </div>
           <Card className="p-4 border border-border shadow-sm mb-4">
             <div className="flex items-center justify-between">
               <div className="text-xs font-bold text-muted-foreground">Resumo do período</div>
