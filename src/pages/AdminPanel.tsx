@@ -345,7 +345,35 @@ export default function AdminPanel() {
               ))}
             </div>
 
+            {/* Funnel Chart */}
             <Card className="mt-6 p-5 border border-border shadow-sm bg-background">
+              <h3 className="font-black text-foreground text-sm mb-3 uppercase">Funil Visual</h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={[
+                  { etapa: 'Visitantes', valor: stats.visitors, fill: 'hsl(var(--primary))' },
+                  { etapa: 'Quiz Início', valor: stats.quizStarted, fill: 'hsl(142, 71%, 45%)' },
+                  { etapa: 'Quiz Fim', valor: stats.quizCompleted, fill: 'hsl(45, 93%, 47%)' },
+                  { etapa: 'Checkout', valor: stats.checkout, fill: 'hsl(0, 84%, 60%)' },
+                ]} layout="vertical" margin={{ left: 10, right: 30 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
+                  <XAxis type="number" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                  <YAxis dataKey="etapa" type="category" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))', fontWeight: 700 }} width={80} />
+                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid hsl(var(--border))' }} />
+                  <Bar dataKey="valor" radius={[0, 6, 6, 0]}>
+                    {[
+                      { fill: 'hsl(var(--primary))' },
+                      { fill: 'hsl(142, 71%, 45%)' },
+                      { fill: 'hsl(45, 93%, 47%)' },
+                      { fill: 'hsl(0, 84%, 60%)' },
+                    ].map((entry, i) => (
+                      <Cell key={i} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+
+            <Card className="mt-4 p-5 border border-border shadow-sm bg-background">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-black text-foreground text-base">Conversão Global</h3>
