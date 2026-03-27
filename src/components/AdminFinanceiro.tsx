@@ -74,8 +74,7 @@ export default function AdminFinanceiro() {
     const faturamentoCents = approved.reduce((sum, o) => sum + o.amount_cents + (o.shipping_cost_cents || 0), 0);
     const pendenteCents = pending.reduce((sum, o) => sum + o.amount_cents + (o.shipping_cost_cents || 0), 0);
 
-    const MARGEM = 0.6;
-    const lucroCents = Math.round(faturamentoCents * MARGEM);
+    const lucro = (faturamentoCents / 100) - adCost;
 
     return {
       totalOrders: filteredOrders.length,
