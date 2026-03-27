@@ -70,7 +70,6 @@ export default function AdminFinanceiro() {
     const faturamentoCents = approved.reduce((sum, o) => sum + o.amount_cents + (o.shipping_cost_cents || 0), 0);
     const pendenteCents = pending.reduce((sum, o) => sum + o.amount_cents + (o.shipping_cost_cents || 0), 0);
 
-    // Lucro estimado (margem ~60% como exemplo — ajuste conforme necessário)
     const MARGEM = 0.6;
     const lucroCents = Math.round(faturamentoCents * MARGEM);
 
@@ -85,6 +84,25 @@ export default function AdminFinanceiro() {
       ticketMedio: approved.length > 0 ? (faturamentoCents / approved.length) / 100 : 0,
     };
   }, [filteredOrders]);
+
+  const chartData = useMemo(() => {
+    const dayMap: Record<string, { faturamento: number; vendas: number }> = {};
+    filteredOrders.filter(o => o.status === 'paid').forEach(order => {
+      const day = new Date(order.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      if (!dayMap[day]) dayMap[day] = { faturamento: 0, vendas: 0 };
+      dayMap[day].faturamento += (order.amount_cents + (order.shipping_cost_cents || 0)) / 100;
+      dayMap[day].vendas += 1;
+    });
+    return Object.entries(dayMap)
+      .map(([dia, v]) => ({ dia, faturamento: Number(v.faturamento.toFixed(2)), vendas: v.vendas }))
+      .reverse();
+  }, [filteredOrders]);
+
+  const pieData = useMemo(() => [
+    { name: 'Aprovadas', value: stats.approvedCount, color: 'hsl(142, 71%, 45%)' },
+    { name: 'Pendentes', value: stats.pendingCount, color: 'hsl(45, 93%, 47%)' },
+    { name: 'Canceladas', value: stats.cancelledCount, color: 'hsl(0, 84%, 60%)' },
+  ].filter(d => d.value > 0), [stats]);
 
   const formatCurrency = (value: number) =>
     value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
