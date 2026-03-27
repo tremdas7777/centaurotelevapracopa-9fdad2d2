@@ -201,6 +201,17 @@ export default function AdminFinanceiro() {
               <p className="text-xl font-black text-foreground">{stats.approvedCount}</p>
               <p className="text-[10px] text-muted-foreground mt-1">Ticket médio: {formatCurrency(stats.ticketMedio)}</p>
             </Card>
+
+            <Card className="p-4 border border-border shadow-sm">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <TrendingUp size={16} className="text-primary" />
+                </div>
+                <span className="text-[11px] font-bold text-muted-foreground uppercase">Taxa Aprovação</span>
+              </div>
+              <p className="text-xl font-black text-foreground">{stats.taxaAprovacao.toFixed(1)}%</p>
+              <p className="text-[10px] text-muted-foreground mt-1">{stats.approvedCount}/{stats.totalOrders} pedidos</p>
+            </Card>
           </div>
 
           {/* Charts */}
