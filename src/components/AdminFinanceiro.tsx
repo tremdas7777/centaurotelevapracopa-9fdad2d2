@@ -198,7 +198,46 @@ export default function AdminFinanceiro() {
             </Card>
           </div>
 
-          {/* Summary bar */}
+          {/* Charts */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <Card className="p-4 border border-border shadow-sm">
+              <h3 className="text-xs font-black text-foreground mb-3 uppercase">Faturamento por Dia</h3>
+              {chartData.length === 0 ? (
+                <p className="text-muted-foreground text-xs text-center py-8">Sem dados no período</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="dia" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                    <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                    <Tooltip
+                      formatter={(value: number) => [`R$ ${value.toFixed(2)}`, 'Faturamento']}
+                      contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid hsl(var(--border))' }}
+                    />
+                    <Bar dataKey="faturamento" fill="hsl(142, 71%, 45%)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </Card>
+
+            <Card className="p-4 border border-border shadow-sm">
+              <h3 className="text-xs font-black text-foreground mb-3 uppercase">Status das Vendas</h3>
+              {pieData.length === 0 ? (
+                <p className="text-muted-foreground text-xs text-center py-8">Sem dados no período</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                      {pieData.map((entry, i) => (
+                        <Cell key={i} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid hsl(var(--border))' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
+            </Card>
+          </div>
           <Card className="p-4 border border-border shadow-sm mb-4">
             <div className="flex items-center justify-between">
               <div className="text-xs font-bold text-muted-foreground">Resumo do período</div>
