@@ -144,13 +144,26 @@ export default function AdminPanel() {
   };
 
   const handleTestWebhook = async (eventType: 'venda_pendente' | 'venda_aprovada') => {
-    if (webhookConfig.webhooks.length === 0) {
+    // Check both local state and DB for webhooks
+    let hasWebhooks = webhookConfig.webhooks.length > 0;
+    if (!hasWebhooks) {
+      const dbConfig = await loadWebhooksFromDb();
+      hasWebhooks = dbConfig.webhooks.length > 0;
+      if (hasWebhooks) {
+        setWebhookConfig(dbConfig);
+      }
+    }
+    if (!hasWebhooks) {
       setWebhookMessage('Adicione pelo menos um webhook primeiro!');
       setTimeout(() => setWebhookMessage(''), 3000);
       return;
     }
-    await fireWebhookEvent(eventType, { source: 'quiz-copa-2026', test: true });
-    setWebhookMessage(`Teste de ${eventType === 'venda_pendente' ? 'venda pendente' : 'venda aprovada'} enviado!`);
+    try {
+      await fireWebhookEvent(eventType, { source: 'quiz-copa-2026', test: true });
+      setWebhookMessage(`Teste de ${eventType === 'venda_pendente' ? 'venda pendente' : 'venda aprovada'} enviado!`);
+    } catch (err) {
+      setWebhookMessage('Erro ao enviar teste de webhook');
+    }
     setTimeout(() => setWebhookMessage(''), 3000);
   };
 
