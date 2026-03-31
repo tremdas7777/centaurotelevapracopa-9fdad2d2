@@ -18,11 +18,17 @@ export interface CenturionPayConfig {
   enabled: boolean;
 }
 
+export interface IronPayConfig {
+  apiToken: string;
+  enabled: boolean;
+}
+
 export interface PaymentGatewayConfig {
-  activeGateway: 'pagouai' | 'vennox' | 'centurionpay';
+  activeGateway: 'pagouai' | 'vennox' | 'centurionpay' | 'ironpay';
   pagouai: PagouAiConfig;
   vennox: VennoxConfig;
   centurionpay: CenturionPayConfig;
+  ironpay: IronPayConfig;
 }
 
 const defaultConfig: PaymentGatewayConfig = {
@@ -30,6 +36,7 @@ const defaultConfig: PaymentGatewayConfig = {
   pagouai: { publicKey: '', secretKey: '', enabled: false },
   vennox: { secretKey: '', companyId: '', enabled: false },
   centurionpay: { secretKey: '', companyId: '', enabled: false },
+  ironpay: { apiToken: '', enabled: false },
 };
 
 // In-memory cache to avoid repeated DB calls within the same page
@@ -53,7 +60,7 @@ export async function fetchPaymentGatewayConfig(): Promise<PaymentGatewayConfig>
     }
 
     const config: PaymentGatewayConfig = {
-      activeGateway: (['pagouai', 'vennox', 'centurionpay'].includes(data.active_gateway)
+      activeGateway: (['pagouai', 'vennox', 'centurionpay', 'ironpay'].includes(data.active_gateway)
         ? data.active_gateway
         : 'centurionpay') as PaymentGatewayConfig['activeGateway'],
       pagouai: {
@@ -70,6 +77,10 @@ export async function fetchPaymentGatewayConfig(): Promise<PaymentGatewayConfig>
         secretKey: data.centurionpay_secret_key || '',
         companyId: data.centurionpay_company_id || '',
         enabled: !!(data.centurionpay_secret_key && data.centurionpay_company_id),
+      },
+      ironpay: {
+        apiToken: (data as any).ironpay_api_token || '',
+        enabled: !!((data as any).ironpay_api_token),
       },
     };
 
@@ -90,7 +101,7 @@ export async function savePaymentGatewayConfig(config: PaymentGatewayConfig): Pr
       .limit(1)
       .single();
 
-    const updateData = {
+    const updateData: Record<string, unknown> = {
       active_gateway: config.activeGateway,
       pagouai_public_key: config.pagouai.publicKey,
       pagouai_secret_key: config.pagouai.secretKey,
@@ -98,6 +109,7 @@ export async function savePaymentGatewayConfig(config: PaymentGatewayConfig): Pr
       vennox_company_id: config.vennox.companyId,
       centurionpay_secret_key: config.centurionpay.secretKey,
       centurionpay_company_id: config.centurionpay.companyId,
+      ironpay_api_token: config.ironpay.apiToken,
       updated_at: new Date().toISOString(),
     };
 

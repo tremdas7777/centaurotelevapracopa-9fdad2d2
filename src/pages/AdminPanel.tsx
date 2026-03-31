@@ -55,6 +55,7 @@ export default function AdminPanel() {
     pagouai: { publicKey: '', secretKey: '', enabled: false },
     vennox: { secretKey: '', companyId: '', enabled: false },
     centurionpay: { secretKey: '', companyId: '', enabled: false },
+    ironpay: { apiToken: '', enabled: false },
   });
   const [gatewayMessage, setGatewayMessage] = useState('');
   const [orders, setOrders] = useState<any[]>([]);
@@ -785,14 +786,14 @@ export default function AdminPanel() {
                 <span className="font-black text-foreground text-sm">Gateway Ativo</span>
               </div>
               <div className="flex gap-2">
-                {(['pagouai', 'vennox', 'centurionpay'] as const).map((gw) => (
+                {(['pagouai', 'vennox', 'centurionpay', 'ironpay'] as const).map((gw) => (
                   <button
                     key={gw}
                     onClick={async () => {
                       const updated = { ...gatewayConfig, activeGateway: gw };
                       setGatewayConfig(updated);
                       await savePaymentGatewayConfig(updated);
-                      const names: Record<string, string> = { pagouai: 'Pagou.ai', vennox: 'Vennox', centurionpay: 'Centurion Pay' };
+                      const names: Record<string, string> = { pagouai: 'Pagou.ai', vennox: 'Vennox', centurionpay: 'Centurion Pay', ironpay: 'Iron Pay' };
                       setGatewayMessage(`Gateway ativo: ${names[gw]}`);
                       setTimeout(() => setGatewayMessage(''), 3000);
                     }}
@@ -802,7 +803,7 @@ export default function AdminPanel() {
                         : 'border-border text-muted-foreground hover:border-muted-foreground/30'
                     }`}
                   >
-                    {gw === 'pagouai' ? 'Pagou.ai' : gw === 'vennox' ? 'Vennox' : 'Centurion Pay'}
+                    {gw === 'pagouai' ? 'Pagou.ai' : gw === 'vennox' ? 'Vennox' : gw === 'centurionpay' ? 'Centurion Pay' : 'Iron Pay'}
                   </button>
                 ))}
               </div>
@@ -981,6 +982,50 @@ export default function AdminPanel() {
               </div>
             </Card>
 
+            {/* Iron Pay Config */}
+            <Card className="p-5 border border-border mt-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <CreditCard size={20} className="text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-black text-foreground text-sm">Iron Pay</h3>
+                  <p className="text-muted-foreground text-[11px]">IronPay - Gateway PIX</p>
+                </div>
+                {gatewayConfig.activeGateway === 'ironpay' && (
+                  <Badge className="bg-centauro-green/10 text-centauro-green border-centauro-green/30 text-[10px]">Ativo</Badge>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Token da API Pública</label>
+                  <Input
+                    type="password"
+                    value={gatewayConfig.ironpay?.apiToken || ''}
+                    onChange={(e) => setGatewayConfig(prev => ({
+                      ...prev,
+                      ironpay: { ...prev.ironpay, apiToken: e.target.value }
+                    }))}
+                    placeholder="RUOkOpSr6bO7jIo6yAJk..."
+                    className="font-mono text-xs mt-1"
+                  />
+                  <p className="text-[9px] text-muted-foreground mt-1">Iron Pay → Configurações de API → Token de Acesso</p>
+                </div>
+
+                <Button
+                  onClick={async () => {
+                    await savePaymentGatewayConfig(gatewayConfig);
+                    setGatewayMessage('Configuração da Iron Pay salva com sucesso!');
+                    setTimeout(() => setGatewayMessage(''), 3000);
+                  }}
+                  className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs"
+                >
+                  <Save size={14} className="mr-1.5" /> Salvar Iron Pay
+                </Button>
+              </div>
+            </Card>
+
             <div className="bg-centauro-gold/10 p-3.5 rounded-md border border-centauro-gold/20 mt-4">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <Info size={13} className="text-centauro-gold" />
@@ -993,6 +1038,7 @@ export default function AdminPanel() {
                 <li><strong>Pagou.ai:</strong> Public Key + Secret Key</li>
                 <li><strong>Vennox:</strong> Secret Key + Company ID (autenticação Basic)</li>
                 <li><strong>Centurion Pay:</strong> Company ID + Secret Key (autenticação Basic)</li>
+                <li><strong>Iron Pay:</strong> Token da API Pública</li>
               </ul>
             </div>
           </div>
