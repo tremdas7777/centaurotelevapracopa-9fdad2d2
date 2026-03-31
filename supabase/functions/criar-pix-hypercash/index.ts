@@ -113,7 +113,6 @@ serve(async (req) => {
           address: {
             street: metadata.address,
             streetNumber: metadata.addressNumber || '',
-            complementary: metadata.complement || '',
             neighborhood: metadata.neighborhood || '',
             city: metadata.city || '',
             state: metadata.state || '',
