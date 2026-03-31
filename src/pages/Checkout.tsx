@@ -6,7 +6,8 @@ import { Card } from '@/components/ui/card';
 import { CheckCircle, Truck, Shield, Lock, Ticket, Clock, Users, Loader2, ChevronRight, User, MapPin, CreditCard } from 'lucide-react';
 import centauroLogo from '@/assets/centauro-logo.webp';
 import cbfLogo from '@/assets/cbf-logo.webp';
-import camisaImg from '@/assets/camisa-brasil-hero.webp';
+import camisaAmarelaImg from '@/assets/camisa-brasil-hero.webp';
+import camisaAzulImg from '@/assets/camisa-brasil-azul.png';
 import albumImg from '@/assets/album-copa-hero.webp';
 import ingressosVipImg from '@/assets/ingressos-vip-copa.png';
 import { trackEvent } from '@/lib/funnelTracking';
@@ -33,6 +34,9 @@ export default function Checkout() {
   const [searchParams] = useSearchParams();
   const prefilledName = searchParams.get('nome') || '';
   const prefilledCpf = searchParams.get('cpf') || '';
+  const shirtColor = searchParams.get('cor') || 'amarela';
+  const shirtSize = searchParams.get('tamanho') || 'M';
+  const camisaImg = shirtColor === 'azul' ? camisaAzulImg : camisaAmarelaImg;
 
   const [currentStep, setCurrentStep] = useState(1);
   const [nome, setNome] = useState(prefilledName);
@@ -555,8 +559,8 @@ export default function Checkout() {
           <div className="flex items-center gap-3 mb-2">
             <img src={camisaImg} alt="Camisa" className="w-12 h-12 object-contain rounded" />
             <div className="flex-1">
-              <p className="text-xs font-bold text-foreground">Camisa Brasil 2026</p>
-              <p className="text-[10px] text-muted-foreground">Edição Copa do Mundo</p>
+              <p className="text-xs font-bold text-foreground">Camisa Brasil 2026 ({shirtColor === 'azul' ? 'Azul' : 'Amarela'})</p>
+              <p className="text-[10px] text-muted-foreground">Tamanho: {shirtSize} • Edição Copa do Mundo</p>
             </div>
             <span className="text-xs font-black text-centauro-green">GRÁTIS</span>
           </div>

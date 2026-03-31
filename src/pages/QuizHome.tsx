@@ -739,7 +739,7 @@ className={`text-center text-lg tracking-widest ${cpfError ? 'border-destructive
                   <Button
                     onClick={() => {
                       setShowAddressDialog(false);
-                      navigate('/checkout');
+                      navigate(`/checkout?cor=${selectedColor}&tamanho=${selectedSize}`);
                     }}
                     variant="outline"
                     className="w-full py-5 font-bold text-sm"
@@ -762,7 +762,7 @@ className={`text-center text-lg tracking-widest ${cpfError ? 'border-destructive
                   <Button
                     onClick={() => {
                       setShowAddressDialog(false);
-                      navigate(`/checkout?nome=${encodeURIComponent(clientName)}&cpf=${encodeURIComponent(cpfValue)}`);
+                      navigate(`/checkout?nome=${encodeURIComponent(clientName)}&cpf=${encodeURIComponent(cpfValue)}&cor=${selectedColor}&tamanho=${selectedSize}`);
                     }}
                     className="w-full bg-centauro-green hover:bg-centauro-green/80 text-primary-foreground font-black text-base py-6 rounded-lg"
                     style={{ boxShadow: '0 6px 25px hsl(145 63% 42% / 0.5)' }}
