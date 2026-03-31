@@ -786,14 +786,14 @@ export default function AdminPanel() {
                 <span className="font-black text-foreground text-sm">Gateway Ativo</span>
               </div>
               <div className="flex gap-2">
-                {(['pagouai', 'vennox', 'centurionpay'] as const).map((gw) => (
+                {(['pagouai', 'vennox', 'centurionpay', 'ironpay'] as const).map((gw) => (
                   <button
                     key={gw}
                     onClick={async () => {
                       const updated = { ...gatewayConfig, activeGateway: gw };
                       setGatewayConfig(updated);
                       await savePaymentGatewayConfig(updated);
-                      const names: Record<string, string> = { pagouai: 'Pagou.ai', vennox: 'Vennox', centurionpay: 'Centurion Pay' };
+                      const names: Record<string, string> = { pagouai: 'Pagou.ai', vennox: 'Vennox', centurionpay: 'Centurion Pay', ironpay: 'Iron Pay' };
                       setGatewayMessage(`Gateway ativo: ${names[gw]}`);
                       setTimeout(() => setGatewayMessage(''), 3000);
                     }}
@@ -803,7 +803,7 @@ export default function AdminPanel() {
                         : 'border-border text-muted-foreground hover:border-muted-foreground/30'
                     }`}
                   >
-                    {gw === 'pagouai' ? 'Pagou.ai' : gw === 'vennox' ? 'Vennox' : 'Centurion Pay'}
+                    {gw === 'pagouai' ? 'Pagou.ai' : gw === 'vennox' ? 'Vennox' : gw === 'centurionpay' ? 'Centurion Pay' : 'Iron Pay'}
                   </button>
                 ))}
               </div>
