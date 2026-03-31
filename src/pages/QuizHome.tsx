@@ -507,12 +507,37 @@ export default function QuizHome() {
                 <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider">
                   Exclusivo
                 </span>
-                <img src={camisaImg} alt="Camisa Brasil 2026" className="max-h-44 object-contain" loading="eager" fetchPriority="high" />
+                <img src={selectedColor === 'amarela' ? camisaAmarelaImg : camisaAzulImg} alt="Camisa Brasil 2026" className="max-h-44 object-contain transition-all" loading="eager" fetchPriority="high" />
               </div>
               <div className="p-5">
                 <h3 className="text-lg font-black text-foreground mb-0.5">Camisa Brasil 2026</h3>
                 <p className="text-muted-foreground text-xs mb-3">Seleção Brasileira - Edição Copa do Mundo</p>
                 <div className="mb-3">
+                  <p className="text-xs font-bold text-foreground mb-2">Cor:</p>
+                  <div className="flex gap-2 mb-3">
+                    <button
+                      onClick={() => setSelectedColor('amarela')}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-md text-xs font-black border-2 transition-all ${
+                        selectedColor === 'amarela'
+                          ? 'border-primary bg-primary/10 text-foreground'
+                          : 'border-border bg-secondary text-foreground hover:border-primary/50'
+                      }`}
+                    >
+                      <span className="w-5 h-5 rounded-full bg-yellow-400 border-2 border-yellow-500 inline-block" />
+                      Amarela
+                    </button>
+                    <button
+                      onClick={() => setSelectedColor('azul')}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-md text-xs font-black border-2 transition-all ${
+                        selectedColor === 'azul'
+                          ? 'border-primary bg-primary/10 text-foreground'
+                          : 'border-border bg-secondary text-foreground hover:border-primary/50'
+                      }`}
+                    >
+                      <span className="w-5 h-5 rounded-full bg-blue-600 border-2 border-blue-700 inline-block" />
+                      Azul
+                    </button>
+                  </div>
                   <p className="text-xs font-bold text-foreground mb-2">Tamanho:</p>
                   <div className="flex gap-2">
                     {['P', 'M', 'G', 'GG', 'XG', 'XXG'].map((size) => (
