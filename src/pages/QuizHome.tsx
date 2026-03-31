@@ -603,10 +603,10 @@ export default function QuizHome() {
             </h3>
             <div className="space-y-3 mb-5">
               <div className="flex items-center gap-4 p-3.5 bg-secondary rounded-md">
-                <img src={selectedColor === 'amarela' ? camisaAmarelaImg : camisaAzulImg} alt="Camisa Brasil 2026" className="w-16 h-16 object-contain rounded" />
+                <img src={selectedColor === 'azul' ? camisaAzulImg : camisaAmarelaImg} alt="Camisa Brasil 2026" className="w-16 h-16 object-contain rounded" />
                 <div className="flex-1">
-                  <p className="font-bold text-foreground text-sm">Camisa Brasil 2026 ({selectedColor === 'amarela' ? 'Amarela' : 'Azul'})</p>
-                  <p className="text-xs text-muted-foreground">Tamanho: {selectedSize} • Edição Copa do Mundo</p>
+                  <p className="font-bold text-foreground text-sm">Camisa Brasil 2026 {selectedColor ? `(${selectedColor === 'amarela' ? 'Amarela' : 'Azul'})` : ''}</p>
+                  <p className="text-xs text-muted-foreground">{selectedSize ? `Tamanho: ${selectedSize} • ` : ''}Edição Copa do Mundo</p>
                 </div>
                 <p className="font-black text-centauro-green text-sm">GRÁTIS</p>
               </div>
