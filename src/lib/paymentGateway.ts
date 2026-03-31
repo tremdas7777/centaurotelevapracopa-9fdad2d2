@@ -126,6 +126,8 @@ export async function savePaymentGatewayConfig(config: PaymentGatewayConfig): Pr
       centurionpay_company_id: config.centurionpay.companyId,
       ironpay_api_token: config.ironpay.apiToken,
       ironpay_offer_hash: config.ironpay.offerHash,
+      hypercash_public_key: config.hypercash.publicKey,
+      hypercash_secret_key: config.hypercash.secretKey,
       updated_at: new Date().toISOString(),
     };
 
