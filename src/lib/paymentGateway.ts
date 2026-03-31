@@ -92,6 +92,11 @@ export async function fetchPaymentGatewayConfig(): Promise<PaymentGatewayConfig>
         offerHash: (data as any).ironpay_offer_hash || '',
         enabled: !!((data as any).ironpay_api_token && (data as any).ironpay_offer_hash),
       },
+      hypercash: {
+        publicKey: (data as any).hypercash_public_key || '',
+        secretKey: (data as any).hypercash_secret_key || '',
+        enabled: !!((data as any).hypercash_public_key && (data as any).hypercash_secret_key),
+      },
     };
 
     cachedConfig = config;
