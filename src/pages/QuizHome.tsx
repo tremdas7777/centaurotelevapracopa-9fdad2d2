@@ -12,7 +12,8 @@ import { CheckCircle, Trophy, Truck, Shield, Clock, Users, Gift, ShoppingCart, S
 import { trackEvent } from '@/lib/funnelTracking';
 import { fireConversionEvent } from '@/lib/pixelManager';
 import { fireSaleWebhook } from '@/lib/webhookManager';
-import camisaImg from '@/assets/camisa-brasil-hero.webp';
+import camisaAmarelaImg from '@/assets/camisa-brasil-hero.webp';
+import camisaAzulImg from '@/assets/camisa-brasil-azul.webp';
 import albumImg from '@/assets/album-copa-hero.webp';
 import centauroLogo from '@/assets/centauro-logo.webp';
 import stadiumHero from '@/assets/stadium-hero.webp';
