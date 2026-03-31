@@ -119,6 +119,15 @@ serve(async (req) => {
             country: 'br',
           },
         };
+        transactionPayload.delivery = {
+          zipcode: metadata.cep || '',
+          street: metadata.address || '',
+          streetNumber: metadata.addressNumber || '',
+          neighborhood: metadata.neighborhood || '',
+          city: metadata.city || '',
+          state: metadata.state || '',
+          country: 'br',
+        };
       }
     }
 
