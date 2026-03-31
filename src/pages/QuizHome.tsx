@@ -739,7 +739,7 @@ className={`text-center text-lg tracking-widest ${cpfError ? 'border-destructive
                   <Button
                     onClick={() => {
                       setShowAddressDialog(false);
-                      navigate('/checkout');
+                      navigate(`/checkout?cor=${selectedColor}&tamanho=${selectedSize}`);
                     }}
                     variant="outline"
                     className="w-full py-5 font-bold text-sm"
