@@ -24,12 +24,19 @@ export interface IronPayConfig {
   enabled: boolean;
 }
 
+export interface HyperCashConfig {
+  publicKey: string;
+  secretKey: string;
+  enabled: boolean;
+}
+
 export interface PaymentGatewayConfig {
-  activeGateway: 'pagouai' | 'vennox' | 'centurionpay' | 'ironpay';
+  activeGateway: 'pagouai' | 'vennox' | 'centurionpay' | 'ironpay' | 'hypercash';
   pagouai: PagouAiConfig;
   vennox: VennoxConfig;
   centurionpay: CenturionPayConfig;
   ironpay: IronPayConfig;
+  hypercash: HyperCashConfig;
 }
 
 const defaultConfig: PaymentGatewayConfig = {
