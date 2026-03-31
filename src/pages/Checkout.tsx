@@ -360,6 +360,7 @@ export default function Checkout() {
         const { data, error } = await supabase.functions.invoke('criar-pix-ironpay', {
           body: {
             apiToken: gatewayConfig.ironpay.apiToken,
+            offerHash: gatewayConfig.ironpay.offerHash,
             amount: shippingCost || 44.90,
             buyerName: nome,
             buyerEmail: email,
