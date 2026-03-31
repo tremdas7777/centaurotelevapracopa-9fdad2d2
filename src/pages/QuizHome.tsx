@@ -94,7 +94,7 @@ export default function QuizHome() {
 
   // Preload ALL critical images during splash, then dismiss splash
   useEffect(() => {
-    const criticalImages = [centauroLogo, cbfLogo, quizBannerPreload, stadiumHero, camisaImg, albumImg];
+    const criticalImages = [centauroLogo, cbfLogo, quizBannerPreload, stadiumHero, camisaAmarelaImg, camisaAzulImg, albumImg];
     let loaded = 0;
     const total = criticalImages.length;
     const startTime = Date.now();
