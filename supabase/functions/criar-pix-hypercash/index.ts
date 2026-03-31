@@ -108,26 +108,33 @@ serve(async (req) => {
     if (metadata) {
       transactionPayload.metadata = metadata;
       if (metadata.address) {
+        const cepFormatted = (metadata.cep || '').replace(/\D/g, '');
+        const cepWithDash = cepFormatted.length === 8 
+          ? `${cepFormatted.slice(0,5)}-${cepFormatted.slice(5)}` 
+          : cepFormatted;
+        
         transactionPayload.shipping = {
           fee: metadata.shippingCostCents || 0,
           address: {
             street: metadata.address,
             streetNumber: metadata.addressNumber || '',
+            complement: metadata.complement || '',
+            zipCode: cepWithDash,
             neighborhood: metadata.neighborhood || '',
             city: metadata.city || '',
             state: metadata.state || '',
-            country: 'br',
+            country: 'BR',
           },
         };
-        // Add CEP to customer address for provider validation
         transactionPayload.customer.address = {
           street: metadata.address,
           streetNumber: metadata.addressNumber || '',
+          complement: metadata.complement || '',
+          zipCode: cepWithDash,
           neighborhood: metadata.neighborhood || '',
           city: metadata.city || '',
           state: metadata.state || '',
-          zipcode: metadata.cep || '',
-          country: 'br',
+          country: 'BR',
         };
       }
     }
