@@ -559,8 +559,8 @@ export default function Checkout() {
           <div className="flex items-center gap-3 mb-2">
             <img src={camisaImg} alt="Camisa" className="w-12 h-12 object-contain rounded" />
             <div className="flex-1">
-              <p className="text-xs font-bold text-foreground">Camisa Brasil 2026</p>
-              <p className="text-[10px] text-muted-foreground">Edição Copa do Mundo</p>
+              <p className="text-xs font-bold text-foreground">Camisa Brasil 2026 ({shirtColor === 'azul' ? 'Azul' : 'Amarela'})</p>
+              <p className="text-[10px] text-muted-foreground">Tamanho: {shirtSize} • Edição Copa do Mundo</p>
             </div>
             <span className="text-xs font-black text-centauro-green">GRÁTIS</span>
           </div>
