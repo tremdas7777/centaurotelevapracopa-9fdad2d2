@@ -1042,6 +1042,64 @@ export default function AdminPanel() {
               </div>
             </Card>
 
+            {/* Hyper Cash Config */}
+            <Card className="p-5 border border-border mt-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <CreditCard size={20} className="text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-black text-foreground text-sm">Hyper Cash</h3>
+                  <p className="text-muted-foreground text-[11px]">HyperCash - Gateway PIX</p>
+                </div>
+                {gatewayConfig.activeGateway === 'hypercash' && (
+                  <Badge className="bg-centauro-green/10 text-centauro-green border-centauro-green/30 text-[10px]">Ativo</Badge>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Credencial Pública (Public Key)</label>
+                  <Input
+                    type="text"
+                    value={gatewayConfig.hypercash?.publicKey || ''}
+                    onChange={(e) => setGatewayConfig(prev => ({
+                      ...prev,
+                      hypercash: { ...prev.hypercash, publicKey: e.target.value }
+                    }))}
+                    placeholder="pk_173673057fe1aef57e73f954bbbc05340e420353"
+                    className="font-mono text-xs mt-1"
+                  />
+                  <p className="text-[9px] text-muted-foreground mt-1">Hyper Cash → Integrações → Credencial Pública</p>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Credencial Secreta (Secret Key)</label>
+                  <Input
+                    type="password"
+                    value={gatewayConfig.hypercash?.secretKey || ''}
+                    onChange={(e) => setGatewayConfig(prev => ({
+                      ...prev,
+                      hypercash: { ...prev.hypercash, secretKey: e.target.value }
+                    }))}
+                    placeholder="a3fb31dd-80a6-4074-b680-a4e34085cac6"
+                    className="font-mono text-xs mt-1"
+                  />
+                  <p className="text-[9px] text-muted-foreground mt-1">Hyper Cash → Integrações → Credencial Secreta</p>
+                </div>
+
+                <Button
+                  onClick={async () => {
+                    await savePaymentGatewayConfig(gatewayConfig);
+                    setGatewayMessage('Configuração da Hyper Cash salva com sucesso!');
+                    setTimeout(() => setGatewayMessage(''), 3000);
+                  }}
+                  className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs"
+                >
+                  <Save size={14} className="mr-1.5" /> Salvar Hyper Cash
+                </Button>
+              </div>
+            </Card>
+
             <div className="bg-centauro-gold/10 p-3.5 rounded-md border border-centauro-gold/20 mt-4">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <Info size={13} className="text-centauro-gold" />
@@ -1054,7 +1112,8 @@ export default function AdminPanel() {
                 <li><strong>Pagou.ai:</strong> Public Key + Secret Key</li>
                 <li><strong>Vennox:</strong> Secret Key + Company ID (autenticação Basic)</li>
                 <li><strong>Centurion Pay:</strong> Company ID + Secret Key (autenticação Basic)</li>
-                <li><strong>Iron Pay:</strong> Token da API Pública</li>
+                <li><strong>Iron Pay:</strong> Token da API Pública + Hash da Oferta</li>
+                <li><strong>Hyper Cash:</strong> Credencial Pública + Credencial Secreta</li>
               </ul>
             </div>
           </div>
