@@ -786,25 +786,25 @@ export default function AdminPanel() {
                 <QrCode size={16} className="text-centauro-green" />
                 <span className="font-black text-foreground text-sm">Gateway Ativo</span>
               </div>
-              <div className="flex gap-2">
-                {(['pagouai', 'vennox', 'centurionpay', 'ironpay'] as const).map((gw) => (
+              <div className="flex gap-2 flex-wrap">
+                {(['pagouai', 'vennox', 'centurionpay', 'ironpay', 'hypercash'] as const).map((gw) => (
                   <button
                     key={gw}
                     onClick={async () => {
                       const updated = { ...gatewayConfig, activeGateway: gw };
                       setGatewayConfig(updated);
                       await savePaymentGatewayConfig(updated);
-                      const names: Record<string, string> = { pagouai: 'Pagou.ai', vennox: 'Vennox', centurionpay: 'Centurion Pay', ironpay: 'Iron Pay' };
+                      const names: Record<string, string> = { pagouai: 'Pagou.ai', vennox: 'Vennox', centurionpay: 'Centurion Pay', ironpay: 'Iron Pay', hypercash: 'Hyper Cash' };
                       setGatewayMessage(`Gateway ativo: ${names[gw]}`);
                       setTimeout(() => setGatewayMessage(''), 3000);
                     }}
-                    className={`flex-1 px-3 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${
+                    className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${
                       gatewayConfig.activeGateway === gw
                         ? 'border-centauro-green bg-centauro-green/5 text-centauro-green'
                         : 'border-border text-muted-foreground hover:border-muted-foreground/30'
                     }`}
                   >
-                    {gw === 'pagouai' ? 'Pagou.ai' : gw === 'vennox' ? 'Vennox' : gw === 'centurionpay' ? 'Centurion Pay' : 'Iron Pay'}
+                    {gw === 'pagouai' ? 'Pagou.ai' : gw === 'vennox' ? 'Vennox' : gw === 'centurionpay' ? 'Centurion Pay' : gw === 'ironpay' ? 'Iron Pay' : 'Hyper Cash'}
                   </button>
                 ))}
               </div>
