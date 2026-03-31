@@ -383,6 +383,7 @@ export default function Checkout() {
         setPixLoading(false);
       }
     }
+  };
 
   const validateEmail = (value: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
