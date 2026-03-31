@@ -116,17 +116,9 @@ serve(async (req) => {
             neighborhood: metadata.neighborhood || '',
             city: metadata.city || '',
             state: metadata.state || '',
+            zipcode: metadata.cep || '',
             country: 'br',
           },
-        };
-        transactionPayload.delivery = {
-          zipcode: metadata.cep || '',
-          street: metadata.address || '',
-          streetNumber: metadata.addressNumber || '',
-          neighborhood: metadata.neighborhood || '',
-          city: metadata.city || '',
-          state: metadata.state || '',
-          country: 'br',
         };
       }
     }
