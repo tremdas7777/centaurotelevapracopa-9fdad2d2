@@ -45,6 +45,7 @@ const defaultConfig: PaymentGatewayConfig = {
   vennox: { secretKey: '', companyId: '', enabled: false },
   centurionpay: { secretKey: '', companyId: '', enabled: false },
   ironpay: { apiToken: '', offerHash: '', enabled: false },
+  hypercash: { publicKey: '', secretKey: '', enabled: false },
 };
 
 // In-memory cache to avoid repeated DB calls within the same page
