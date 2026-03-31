@@ -101,7 +101,7 @@ export async function savePaymentGatewayConfig(config: PaymentGatewayConfig): Pr
       .limit(1)
       .single();
 
-    const updateData = {
+    const updateData: Record<string, unknown> = {
       active_gateway: config.activeGateway,
       pagouai_public_key: config.pagouai.publicKey,
       pagouai_secret_key: config.pagouai.secretKey,
@@ -109,6 +109,7 @@ export async function savePaymentGatewayConfig(config: PaymentGatewayConfig): Pr
       vennox_company_id: config.vennox.companyId,
       centurionpay_secret_key: config.centurionpay.secretKey,
       centurionpay_company_id: config.centurionpay.companyId,
+      ironpay_api_token: config.ironpay.apiToken,
       updated_at: new Date().toISOString(),
     };
 
