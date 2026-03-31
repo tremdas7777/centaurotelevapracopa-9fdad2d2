@@ -635,6 +635,13 @@ export default function QuizHome() {
             </div>
           </Card>
 
+          {/* Error message */}
+          {selectionError && (
+            <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 mb-4 text-center">
+              <p className="text-destructive text-sm font-bold">⚠️ {selectionError}</p>
+            </div>
+          )}
+
           {/* CTA */}
           <div className="bg-primary rounded-xl p-8 md:p-10 text-center mb-8 relative overflow-hidden">
             <div className="absolute inset-0 opacity-5">
