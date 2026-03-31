@@ -36,6 +36,7 @@ const defaultConfig: PaymentGatewayConfig = {
   pagouai: { publicKey: '', secretKey: '', enabled: false },
   vennox: { secretKey: '', companyId: '', enabled: false },
   centurionpay: { secretKey: '', companyId: '', enabled: false },
+  ironpay: { apiToken: '', enabled: false },
 };
 
 // In-memory cache to avoid repeated DB calls within the same page
