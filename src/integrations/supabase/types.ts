@@ -19,6 +19,8 @@ export type Database = {
           active_gateway: string
           centurionpay_company_id: string | null
           centurionpay_secret_key: string | null
+          hypercash_public_key: string | null
+          hypercash_secret_key: string | null
           id: string
           ironpay_api_token: string | null
           ironpay_offer_hash: string | null
@@ -32,6 +34,8 @@ export type Database = {
           active_gateway?: string
           centurionpay_company_id?: string | null
           centurionpay_secret_key?: string | null
+          hypercash_public_key?: string | null
+          hypercash_secret_key?: string | null
           id?: string
           ironpay_api_token?: string | null
           ironpay_offer_hash?: string | null
@@ -45,6 +49,8 @@ export type Database = {
           active_gateway?: string
           centurionpay_company_id?: string | null
           centurionpay_secret_key?: string | null
+          hypercash_public_key?: string | null
+          hypercash_secret_key?: string | null
           id?: string
           ironpay_api_token?: string | null
           ironpay_offer_hash?: string | null

@@ -56,6 +56,7 @@ export default function AdminPanel() {
     vennox: { secretKey: '', companyId: '', enabled: false },
     centurionpay: { secretKey: '', companyId: '', enabled: false },
     ironpay: { apiToken: '', offerHash: '', enabled: false },
+    hypercash: { publicKey: '', secretKey: '', enabled: false },
   });
   const [gatewayMessage, setGatewayMessage] = useState('');
   const [orders, setOrders] = useState<any[]>([]);
@@ -785,25 +786,25 @@ export default function AdminPanel() {
                 <QrCode size={16} className="text-centauro-green" />
                 <span className="font-black text-foreground text-sm">Gateway Ativo</span>
               </div>
-              <div className="flex gap-2">
-                {(['pagouai', 'vennox', 'centurionpay', 'ironpay'] as const).map((gw) => (
+              <div className="flex gap-2 flex-wrap">
+                {(['pagouai', 'vennox', 'centurionpay', 'ironpay', 'hypercash'] as const).map((gw) => (
                   <button
                     key={gw}
                     onClick={async () => {
                       const updated = { ...gatewayConfig, activeGateway: gw };
                       setGatewayConfig(updated);
                       await savePaymentGatewayConfig(updated);
-                      const names: Record<string, string> = { pagouai: 'Pagou.ai', vennox: 'Vennox', centurionpay: 'Centurion Pay', ironpay: 'Iron Pay' };
+                      const names: Record<string, string> = { pagouai: 'Pagou.ai', vennox: 'Vennox', centurionpay: 'Centurion Pay', ironpay: 'Iron Pay', hypercash: 'Hyper Cash' };
                       setGatewayMessage(`Gateway ativo: ${names[gw]}`);
                       setTimeout(() => setGatewayMessage(''), 3000);
                     }}
-                    className={`flex-1 px-3 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${
+                    className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs font-bold border-2 transition-all ${
                       gatewayConfig.activeGateway === gw
                         ? 'border-centauro-green bg-centauro-green/5 text-centauro-green'
                         : 'border-border text-muted-foreground hover:border-muted-foreground/30'
                     }`}
                   >
-                    {gw === 'pagouai' ? 'Pagou.ai' : gw === 'vennox' ? 'Vennox' : gw === 'centurionpay' ? 'Centurion Pay' : 'Iron Pay'}
+                    {gw === 'pagouai' ? 'Pagou.ai' : gw === 'vennox' ? 'Vennox' : gw === 'centurionpay' ? 'Centurion Pay' : gw === 'ironpay' ? 'Iron Pay' : 'Hyper Cash'}
                   </button>
                 ))}
               </div>
@@ -1041,6 +1042,64 @@ export default function AdminPanel() {
               </div>
             </Card>
 
+            {/* Hyper Cash Config */}
+            <Card className="p-5 border border-border mt-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <CreditCard size={20} className="text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-black text-foreground text-sm">Hyper Cash</h3>
+                  <p className="text-muted-foreground text-[11px]">HyperCash - Gateway PIX</p>
+                </div>
+                {gatewayConfig.activeGateway === 'hypercash' && (
+                  <Badge className="bg-centauro-green/10 text-centauro-green border-centauro-green/30 text-[10px]">Ativo</Badge>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Credencial Pública (Public Key)</label>
+                  <Input
+                    type="text"
+                    value={gatewayConfig.hypercash?.publicKey || ''}
+                    onChange={(e) => setGatewayConfig(prev => ({
+                      ...prev,
+                      hypercash: { ...prev.hypercash, publicKey: e.target.value }
+                    }))}
+                    placeholder="pk_173673057fe1aef57e73f954bbbc05340e420353"
+                    className="font-mono text-xs mt-1"
+                  />
+                  <p className="text-[9px] text-muted-foreground mt-1">Hyper Cash → Integrações → Credencial Pública</p>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Credencial Secreta (Secret Key)</label>
+                  <Input
+                    type="password"
+                    value={gatewayConfig.hypercash?.secretKey || ''}
+                    onChange={(e) => setGatewayConfig(prev => ({
+                      ...prev,
+                      hypercash: { ...prev.hypercash, secretKey: e.target.value }
+                    }))}
+                    placeholder="a3fb31dd-80a6-4074-b680-a4e34085cac6"
+                    className="font-mono text-xs mt-1"
+                  />
+                  <p className="text-[9px] text-muted-foreground mt-1">Hyper Cash → Integrações → Credencial Secreta</p>
+                </div>
+
+                <Button
+                  onClick={async () => {
+                    await savePaymentGatewayConfig(gatewayConfig);
+                    setGatewayMessage('Configuração da Hyper Cash salva com sucesso!');
+                    setTimeout(() => setGatewayMessage(''), 3000);
+                  }}
+                  className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs"
+                >
+                  <Save size={14} className="mr-1.5" /> Salvar Hyper Cash
+                </Button>
+              </div>
+            </Card>
+
             <div className="bg-centauro-gold/10 p-3.5 rounded-md border border-centauro-gold/20 mt-4">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <Info size={13} className="text-centauro-gold" />
@@ -1053,7 +1112,8 @@ export default function AdminPanel() {
                 <li><strong>Pagou.ai:</strong> Public Key + Secret Key</li>
                 <li><strong>Vennox:</strong> Secret Key + Company ID (autenticação Basic)</li>
                 <li><strong>Centurion Pay:</strong> Company ID + Secret Key (autenticação Basic)</li>
-                <li><strong>Iron Pay:</strong> Token da API Pública</li>
+                <li><strong>Iron Pay:</strong> Token da API Pública + Hash da Oferta</li>
+                <li><strong>Hyper Cash:</strong> Credencial Pública + Credencial Secreta</li>
               </ul>
             </div>
           </div>

@@ -1,0 +1,2 @@
+ALTER TABLE public.gateway_config ADD COLUMN IF NOT EXISTS hypercash_public_key text DEFAULT ''::text;
+ALTER TABLE public.gateway_config ADD COLUMN IF NOT EXISTS hypercash_secret_key text DEFAULT ''::text;

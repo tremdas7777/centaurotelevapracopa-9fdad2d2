@@ -209,27 +209,37 @@ export default function Checkout() {
     const hasVennoxKeys = !!gatewayConfig.vennox.secretKey?.trim() && !!gatewayConfig.vennox.companyId?.trim();
     const hasCenturionPayKeys = !!gatewayConfig.centurionpay?.secretKey?.trim() && !!gatewayConfig.centurionpay?.companyId?.trim();
     const hasIronPayKeys = !!gatewayConfig.ironpay?.apiToken?.trim() && !!gatewayConfig.ironpay?.offerHash?.trim();
+    const hasHyperCashKeys = !!gatewayConfig.hypercash?.publicKey?.trim() && !!gatewayConfig.hypercash?.secretKey?.trim();
 
     // If active gateway isn't configured, fall back to one that is
     if (activeGateway === 'pagouai' && !hasPagouaiKeys) {
       if (hasCenturionPayKeys) activeGateway = 'centurionpay';
       else if (hasVennoxKeys) activeGateway = 'vennox';
       else if (hasIronPayKeys) activeGateway = 'ironpay';
+      else if (hasHyperCashKeys) activeGateway = 'hypercash';
     } else if (activeGateway === 'vennox' && !hasVennoxKeys) {
       if (hasCenturionPayKeys) activeGateway = 'centurionpay';
       else if (hasPagouaiKeys) activeGateway = 'pagouai';
       else if (hasIronPayKeys) activeGateway = 'ironpay';
+      else if (hasHyperCashKeys) activeGateway = 'hypercash';
     } else if (activeGateway === 'centurionpay' && !hasCenturionPayKeys) {
       if (hasPagouaiKeys) activeGateway = 'pagouai';
       else if (hasVennoxKeys) activeGateway = 'vennox';
       else if (hasIronPayKeys) activeGateway = 'ironpay';
+      else if (hasHyperCashKeys) activeGateway = 'hypercash';
     } else if (activeGateway === 'ironpay' && !hasIronPayKeys) {
       if (hasCenturionPayKeys) activeGateway = 'centurionpay';
       else if (hasPagouaiKeys) activeGateway = 'pagouai';
       else if (hasVennoxKeys) activeGateway = 'vennox';
+      else if (hasHyperCashKeys) activeGateway = 'hypercash';
+    } else if (activeGateway === 'hypercash' && !hasHyperCashKeys) {
+      if (hasCenturionPayKeys) activeGateway = 'centurionpay';
+      else if (hasPagouaiKeys) activeGateway = 'pagouai';
+      else if (hasVennoxKeys) activeGateway = 'vennox';
+      else if (hasIronPayKeys) activeGateway = 'ironpay';
     }
 
-    console.log('Gateway config:', JSON.stringify({ activeGateway, original: gatewayConfig.activeGateway, pagouaiHasSecret: hasPagouaiKeys, vennoxHasSecret: hasVennoxKeys, centurionpayHasSecret: hasCenturionPayKeys, ironpayHasToken: hasIronPayKeys }));
+    console.log('Gateway config:', JSON.stringify({ activeGateway, original: gatewayConfig.activeGateway, pagouaiHasSecret: hasPagouaiKeys, vennoxHasSecret: hasVennoxKeys, centurionpayHasSecret: hasCenturionPayKeys, ironpayHasToken: hasIronPayKeys, hypercashHasKeys: hasHyperCashKeys }));
 
     const purchaseMetadata = {
       address: endereco,
@@ -365,6 +375,41 @@ export default function Checkout() {
           body: {
             apiToken: gatewayConfig.ironpay.apiToken,
             offerHash: gatewayConfig.ironpay.offerHash,
+            amount: shippingCost || 44.90,
+            buyerName: nome,
+            buyerEmail: email,
+            buyerDocument: cpf,
+            buyerPhone: telefone,
+            metadata: purchaseMetadata,
+          },
+        });
+
+        if (error) throw error;
+
+        setPixCode(data.pix_code || '');
+        setPixQrCodeBase64(data.pix_qr_code_base64 || '');
+        setPixOrderId(data.order_id || '');
+        setShowPixPopup(true);
+      } catch (err: any) {
+        console.error('PIX error:', err);
+        setPixError('Erro ao gerar PIX. Tente novamente.');
+        setTimeout(() => setPixError(''), 5000);
+      } finally {
+        setPixLoading(false);
+      }
+    } else if (activeGateway === 'hypercash') {
+      if (!hasHyperCashKeys) {
+        setPixError('Gateway Hyper Cash não configurado. Configure as credenciais no painel admin.');
+        setTimeout(() => setPixError(''), 5000);
+        return;
+      }
+      setPixLoading(true);
+      setPixError('');
+      try {
+        const { data, error } = await supabase.functions.invoke('criar-pix-hypercash', {
+          body: {
+            publicKey: gatewayConfig.hypercash.publicKey,
+            secretKey: gatewayConfig.hypercash.secretKey,
             amount: shippingCost || 44.90,
             buyerName: nome,
             buyerEmail: email,

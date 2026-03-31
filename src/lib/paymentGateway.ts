@@ -24,12 +24,19 @@ export interface IronPayConfig {
   enabled: boolean;
 }
 
+export interface HyperCashConfig {
+  publicKey: string;
+  secretKey: string;
+  enabled: boolean;
+}
+
 export interface PaymentGatewayConfig {
-  activeGateway: 'pagouai' | 'vennox' | 'centurionpay' | 'ironpay';
+  activeGateway: 'pagouai' | 'vennox' | 'centurionpay' | 'ironpay' | 'hypercash';
   pagouai: PagouAiConfig;
   vennox: VennoxConfig;
   centurionpay: CenturionPayConfig;
   ironpay: IronPayConfig;
+  hypercash: HyperCashConfig;
 }
 
 const defaultConfig: PaymentGatewayConfig = {
@@ -38,6 +45,7 @@ const defaultConfig: PaymentGatewayConfig = {
   vennox: { secretKey: '', companyId: '', enabled: false },
   centurionpay: { secretKey: '', companyId: '', enabled: false },
   ironpay: { apiToken: '', offerHash: '', enabled: false },
+  hypercash: { publicKey: '', secretKey: '', enabled: false },
 };
 
 // In-memory cache to avoid repeated DB calls within the same page
@@ -84,6 +92,11 @@ export async function fetchPaymentGatewayConfig(): Promise<PaymentGatewayConfig>
         offerHash: (data as any).ironpay_offer_hash || '',
         enabled: !!((data as any).ironpay_api_token && (data as any).ironpay_offer_hash),
       },
+      hypercash: {
+        publicKey: (data as any).hypercash_public_key || '',
+        secretKey: (data as any).hypercash_secret_key || '',
+        enabled: !!((data as any).hypercash_public_key && (data as any).hypercash_secret_key),
+      },
     };
 
     cachedConfig = config;
@@ -113,6 +126,8 @@ export async function savePaymentGatewayConfig(config: PaymentGatewayConfig): Pr
       centurionpay_company_id: config.centurionpay.companyId,
       ironpay_api_token: config.ironpay.apiToken,
       ironpay_offer_hash: config.ironpay.offerHash,
+      hypercash_public_key: config.hypercash.publicKey,
+      hypercash_secret_key: config.hypercash.secretKey,
       updated_at: new Date().toISOString(),
     };
 
