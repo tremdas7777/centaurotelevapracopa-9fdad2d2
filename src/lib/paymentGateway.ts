@@ -60,7 +60,7 @@ export async function fetchPaymentGatewayConfig(): Promise<PaymentGatewayConfig>
     }
 
     const config: PaymentGatewayConfig = {
-      activeGateway: (['pagouai', 'vennox', 'centurionpay'].includes(data.active_gateway)
+      activeGateway: (['pagouai', 'vennox', 'centurionpay', 'ironpay'].includes(data.active_gateway)
         ? data.active_gateway
         : 'centurionpay') as PaymentGatewayConfig['activeGateway'],
       pagouai: {
@@ -77,6 +77,10 @@ export async function fetchPaymentGatewayConfig(): Promise<PaymentGatewayConfig>
         secretKey: data.centurionpay_secret_key || '',
         companyId: data.centurionpay_company_id || '',
         enabled: !!(data.centurionpay_secret_key && data.centurionpay_company_id),
+      },
+      ironpay: {
+        apiToken: (data as any).ironpay_api_token || '',
+        enabled: !!((data as any).ironpay_api_token),
       },
     };
 
