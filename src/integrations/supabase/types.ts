@@ -21,6 +21,7 @@ export type Database = {
           centurionpay_secret_key: string | null
           id: string
           ironpay_api_token: string | null
+          ironpay_offer_hash: string | null
           pagouai_public_key: string | null
           pagouai_secret_key: string | null
           updated_at: string | null
@@ -33,6 +34,7 @@ export type Database = {
           centurionpay_secret_key?: string | null
           id?: string
           ironpay_api_token?: string | null
+          ironpay_offer_hash?: string | null
           pagouai_public_key?: string | null
           pagouai_secret_key?: string | null
           updated_at?: string | null
@@ -45,6 +47,7 @@ export type Database = {
           centurionpay_secret_key?: string | null
           id?: string
           ironpay_api_token?: string | null
+          ironpay_offer_hash?: string | null
           pagouai_public_key?: string | null
           pagouai_secret_key?: string | null
           updated_at?: string | null
