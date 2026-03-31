@@ -81,7 +81,8 @@ export async function fetchPaymentGatewayConfig(): Promise<PaymentGatewayConfig>
       },
       ironpay: {
         apiToken: (data as any).ironpay_api_token || '',
-        enabled: !!((data as any).ironpay_api_token),
+        offerHash: (data as any).ironpay_offer_hash || '',
+        enabled: !!((data as any).ironpay_api_token && (data as any).ironpay_offer_hash),
       },
     };
 
