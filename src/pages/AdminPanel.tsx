@@ -55,7 +55,7 @@ export default function AdminPanel() {
     pagouai: { publicKey: '', secretKey: '', enabled: false },
     vennox: { secretKey: '', companyId: '', enabled: false },
     centurionpay: { secretKey: '', companyId: '', enabled: false },
-    ironpay: { apiToken: '', enabled: false },
+    ironpay: { apiToken: '', offerHash: '', enabled: false },
   });
   const [gatewayMessage, setGatewayMessage] = useState('');
   const [orders, setOrders] = useState<any[]>([]);
