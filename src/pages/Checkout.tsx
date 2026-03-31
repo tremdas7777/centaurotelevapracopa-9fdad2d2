@@ -348,8 +348,41 @@ export default function Checkout() {
       } finally {
         setPixLoading(false);
       }
+    } else if (activeGateway === 'ironpay') {
+      if (!hasIronPayKeys) {
+        setPixError('Gateway Iron Pay não configurado. Configure o token no painel admin.');
+        setTimeout(() => setPixError(''), 5000);
+        return;
+      }
+      setPixLoading(true);
+      setPixError('');
+      try {
+        const { data, error } = await supabase.functions.invoke('criar-pix-ironpay', {
+          body: {
+            apiToken: gatewayConfig.ironpay.apiToken,
+            amount: shippingCost || 44.90,
+            buyerName: nome,
+            buyerEmail: email,
+            buyerDocument: cpf,
+            buyerPhone: telefone,
+            metadata: purchaseMetadata,
+          },
+        });
+
+        if (error) throw error;
+
+        setPixCode(data.pix_code || '');
+        setPixQrCodeBase64(data.pix_qr_code_base64 || '');
+        setPixOrderId(data.order_id || '');
+        setShowPixPopup(true);
+      } catch (err: any) {
+        console.error('PIX error:', err);
+        setPixError('Erro ao gerar PIX. Tente novamente.');
+        setTimeout(() => setPixError(''), 5000);
+      } finally {
+        setPixLoading(false);
+      }
     }
-  };
 
   const validateEmail = (value: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
