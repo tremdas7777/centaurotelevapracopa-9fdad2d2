@@ -129,7 +129,7 @@ serve(async (req) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${btoa(`${publicKey}:${secretKey}`)}`,
+        'Authorization': `Basic ${btoa(`x:${secretKey}`)}`,
       },
       body: JSON.stringify(transactionPayload),
     });
