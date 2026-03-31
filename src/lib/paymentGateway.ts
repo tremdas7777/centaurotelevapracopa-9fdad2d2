@@ -20,6 +20,7 @@ export interface CenturionPayConfig {
 
 export interface IronPayConfig {
   apiToken: string;
+  offerHash: string;
   enabled: boolean;
 }
 
