@@ -508,7 +508,7 @@ export default function QuizHome() {
                 <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider">
                   Exclusivo
                 </span>
-                <img src={selectedColor === 'amarela' ? camisaAmarelaImg : camisaAzulImg} alt="Camisa Brasil 2026" className="max-h-44 object-contain transition-all" loading="eager" fetchPriority="high" />
+                <img src={selectedColor === 'azul' ? camisaAzulImg : camisaAmarelaImg} alt="Camisa Brasil 2026" className="max-h-44 object-contain transition-all" loading="eager" fetchPriority="high" />
               </div>
               <div className="p-5">
                 <h3 className="text-lg font-black text-foreground mb-0.5">Camisa Brasil 2026</h3>
