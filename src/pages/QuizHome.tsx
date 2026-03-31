@@ -13,7 +13,7 @@ import { trackEvent } from '@/lib/funnelTracking';
 import { fireConversionEvent } from '@/lib/pixelManager';
 import { fireSaleWebhook } from '@/lib/webhookManager';
 import camisaAmarelaImg from '@/assets/camisa-brasil-hero.webp';
-import camisaAzulImg from '@/assets/camisa-brasil-azul.webp';
+import camisaAzulImg from '@/assets/camisa-brasil-azul.png';
 import albumImg from '@/assets/album-copa-hero.webp';
 import centauroLogo from '@/assets/centauro-logo.webp';
 import stadiumHero from '@/assets/stadium-hero.webp';
