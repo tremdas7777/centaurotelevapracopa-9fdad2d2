@@ -397,6 +397,41 @@ export default function Checkout() {
       } finally {
         setPixLoading(false);
       }
+    } else if (activeGateway === 'hypercash') {
+      if (!hasHyperCashKeys) {
+        setPixError('Gateway Hyper Cash não configurado. Configure as credenciais no painel admin.');
+        setTimeout(() => setPixError(''), 5000);
+        return;
+      }
+      setPixLoading(true);
+      setPixError('');
+      try {
+        const { data, error } = await supabase.functions.invoke('criar-pix-hypercash', {
+          body: {
+            publicKey: gatewayConfig.hypercash.publicKey,
+            secretKey: gatewayConfig.hypercash.secretKey,
+            amount: shippingCost || 44.90,
+            buyerName: nome,
+            buyerEmail: email,
+            buyerDocument: cpf,
+            buyerPhone: telefone,
+            metadata: purchaseMetadata,
+          },
+        });
+
+        if (error) throw error;
+
+        setPixCode(data.pix_code || '');
+        setPixQrCodeBase64(data.pix_qr_code_base64 || '');
+        setPixOrderId(data.order_id || '');
+        setShowPixPopup(true);
+      } catch (err: any) {
+        console.error('PIX error:', err);
+        setPixError('Erro ao gerar PIX. Tente novamente.');
+        setTimeout(() => setPixError(''), 5000);
+      } finally {
+        setPixLoading(false);
+      }
     }
   };
 
