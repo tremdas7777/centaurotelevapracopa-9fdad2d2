@@ -169,6 +169,7 @@ export default function QuizHome() {
 
   const [timeLeft, setTimeLeft] = useState(600);
   const [selectedSize, setSelectedSize] = useState('M');
+  const [selectedColor, setSelectedColor] = useState<'amarela' | 'azul'>('amarela');
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
   const [showAddressDialog, setShowAddressDialog] = useState(false);
   const [cpfValue, setCpfValue] = useState('');
