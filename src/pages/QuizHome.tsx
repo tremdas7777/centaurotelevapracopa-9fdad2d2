@@ -517,7 +517,7 @@ export default function QuizHome() {
                   <p className="text-xs font-bold text-foreground mb-2">Cor:</p>
                   <div className="flex gap-2 mb-3">
                     <button
-                      onClick={() => setSelectedColor('amarela')}
+                      onClick={() => { setSelectedColor('amarela'); setSelectionError(''); }}
                       className={`flex items-center gap-2 px-3 py-2 rounded-md text-xs font-black border-2 transition-all ${
                         selectedColor === 'amarela'
                           ? 'border-primary bg-primary/10 text-foreground'
