@@ -18,11 +18,17 @@ export interface CenturionPayConfig {
   enabled: boolean;
 }
 
+export interface IronPayConfig {
+  apiToken: string;
+  enabled: boolean;
+}
+
 export interface PaymentGatewayConfig {
-  activeGateway: 'pagouai' | 'vennox' | 'centurionpay';
+  activeGateway: 'pagouai' | 'vennox' | 'centurionpay' | 'ironpay';
   pagouai: PagouAiConfig;
   vennox: VennoxConfig;
   centurionpay: CenturionPayConfig;
+  ironpay: IronPayConfig;
 }
 
 const defaultConfig: PaymentGatewayConfig = {
