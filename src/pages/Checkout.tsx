@@ -225,7 +225,7 @@ export default function Checkout() {
       else if (hasVennoxKeys) activeGateway = 'vennox';
     }
 
-    console.log('Gateway config:', JSON.stringify({ activeGateway, original: gatewayConfig.activeGateway, pagouaiHasSecret: hasPagouaiKeys, vennoxHasSecret: hasVennoxKeys, centurionpayHasSecret: hasCenturionPayKeys }));
+    console.log('Gateway config:', JSON.stringify({ activeGateway, original: gatewayConfig.activeGateway, pagouaiHasSecret: hasPagouaiKeys, vennoxHasSecret: hasVennoxKeys, centurionpayHasSecret: hasCenturionPayKeys, ironpayHasToken: hasIronPayKeys }));
 
     const purchaseMetadata = {
       address: endereco,
