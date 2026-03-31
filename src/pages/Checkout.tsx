@@ -204,7 +204,7 @@ export default function Checkout() {
     const hasPagouaiKeys = !!gatewayConfig.pagouai.secretKey?.trim();
     const hasVennoxKeys = !!gatewayConfig.vennox.secretKey?.trim() && !!gatewayConfig.vennox.companyId?.trim();
     const hasCenturionPayKeys = !!gatewayConfig.centurionpay?.secretKey?.trim() && !!gatewayConfig.centurionpay?.companyId?.trim();
-    const hasIronPayKeys = !!gatewayConfig.ironpay?.apiToken?.trim();
+    const hasIronPayKeys = !!gatewayConfig.ironpay?.apiToken?.trim() && !!gatewayConfig.ironpay?.offerHash?.trim();
 
     // If active gateway isn't configured, fall back to one that is
     if (activeGateway === 'pagouai' && !hasPagouaiKeys) {
@@ -360,6 +360,7 @@ export default function Checkout() {
         const { data, error } = await supabase.functions.invoke('criar-pix-ironpay', {
           body: {
             apiToken: gatewayConfig.ironpay.apiToken,
+            offerHash: gatewayConfig.ironpay.offerHash,
             amount: shippingCost || 44.90,
             buyerName: nome,
             buyerEmail: email,

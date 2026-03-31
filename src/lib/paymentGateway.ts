@@ -20,6 +20,7 @@ export interface CenturionPayConfig {
 
 export interface IronPayConfig {
   apiToken: string;
+  offerHash: string;
   enabled: boolean;
 }
 
@@ -36,7 +37,7 @@ const defaultConfig: PaymentGatewayConfig = {
   pagouai: { publicKey: '', secretKey: '', enabled: false },
   vennox: { secretKey: '', companyId: '', enabled: false },
   centurionpay: { secretKey: '', companyId: '', enabled: false },
-  ironpay: { apiToken: '', enabled: false },
+  ironpay: { apiToken: '', offerHash: '', enabled: false },
 };
 
 // In-memory cache to avoid repeated DB calls within the same page
@@ -80,7 +81,8 @@ export async function fetchPaymentGatewayConfig(): Promise<PaymentGatewayConfig>
       },
       ironpay: {
         apiToken: (data as any).ironpay_api_token || '',
-        enabled: !!((data as any).ironpay_api_token),
+        offerHash: (data as any).ironpay_offer_hash || '',
+        enabled: !!((data as any).ironpay_api_token && (data as any).ironpay_offer_hash),
       },
     };
 
@@ -110,6 +112,7 @@ export async function savePaymentGatewayConfig(config: PaymentGatewayConfig): Pr
       centurionpay_secret_key: config.centurionpay.secretKey,
       centurionpay_company_id: config.centurionpay.companyId,
       ironpay_api_token: config.ironpay.apiToken,
+      ironpay_offer_hash: config.ironpay.offerHash,
       updated_at: new Date().toISOString(),
     };
 

@@ -41,10 +41,10 @@ serve(async (req) => {
   }
 
   try {
-    const { apiToken, amount, buyerName, buyerEmail, buyerDocument, buyerPhone, externalRef, metadata } = await req.json();
+    const { apiToken, offerHash, amount, buyerName, buyerEmail, buyerDocument, buyerPhone, externalRef, metadata } = await req.json();
 
-    if (!apiToken || !amount) {
-      return new Response(JSON.stringify({ error: 'apiToken e amount são obrigatórios' }), {
+    if (!apiToken || !amount || !offerHash) {
+      return new Response(JSON.stringify({ error: 'apiToken, offerHash e amount são obrigatórios' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -58,14 +58,13 @@ serve(async (req) => {
 
     const body: Record<string, unknown> = {
       api_token: apiToken,
-      paymentMethod: 'pix',
-      amount: amountCents,
-      items: [
+      offer_hash: offerHash,
+      payment_method: 'pix',
+      cart: [
         {
-          title: 'Panela Antiaderente 12L',
-          unitPrice: amountCents,
+          offer_hash: offerHash,
           quantity: 1,
-          tangible: false,
+          price: amountCents,
         },
       ],
     };
@@ -84,6 +83,8 @@ serve(async (req) => {
     if (externalRef) {
       body.externalRef = externalRef;
     }
+
+    console.log('IronPay request body:', JSON.stringify(body));
 
     const response = await fetch('https://api.ironpayapp.com.br/api/public/v1/transactions', {
       method: 'POST',

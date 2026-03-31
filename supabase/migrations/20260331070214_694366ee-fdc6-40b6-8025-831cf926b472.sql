@@ -1,0 +1,1 @@
+ALTER TABLE public.gateway_config ADD COLUMN IF NOT EXISTS ironpay_offer_hash text;

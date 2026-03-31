@@ -55,7 +55,7 @@ export default function AdminPanel() {
     pagouai: { publicKey: '', secretKey: '', enabled: false },
     vennox: { secretKey: '', companyId: '', enabled: false },
     centurionpay: { secretKey: '', companyId: '', enabled: false },
-    ironpay: { apiToken: '', enabled: false },
+    ironpay: { apiToken: '', offerHash: '', enabled: false },
   });
   const [gatewayMessage, setGatewayMessage] = useState('');
   const [orders, setOrders] = useState<any[]>([]);
@@ -1011,6 +1011,21 @@ export default function AdminPanel() {
                     className="font-mono text-xs mt-1"
                   />
                   <p className="text-[9px] text-muted-foreground mt-1">Iron Pay → Configurações de API → Token de Acesso</p>
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Hash da Oferta</label>
+                  <Input
+                    type="text"
+                    value={gatewayConfig.ironpay?.offerHash || ''}
+                    onChange={(e) => setGatewayConfig(prev => ({
+                      ...prev,
+                      ironpay: { ...prev.ironpay, offerHash: e.target.value }
+                    }))}
+                    placeholder="hash-da-oferta-ironpay"
+                    className="font-mono text-xs mt-1"
+                  />
+                  <p className="text-[9px] text-muted-foreground mt-1">Iron Pay → Produtos → Oferta → Copiar Hash</p>
                 </div>
 
                 <Button
