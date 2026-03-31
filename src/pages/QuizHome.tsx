@@ -653,6 +653,15 @@ export default function QuizHome() {
               </p>
               <Button
                 onClick={() => {
+                  if (!selectedColor || !selectedSize) {
+                    const missing = [];
+                    if (!selectedColor) missing.push('a cor da camisa');
+                    if (!selectedSize) missing.push('o tamanho da camisa');
+                    setSelectionError(`Selecione ${missing.join(' e ')} antes de continuar.`);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                  }
+                  setSelectionError('');
                   const isExternal = localStorage.getItem('externalCheckout') === 'true';
                   if (isExternal) {
                     handleGoToCheckout();
