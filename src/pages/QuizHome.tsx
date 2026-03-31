@@ -528,7 +528,7 @@ export default function QuizHome() {
                       Amarela
                     </button>
                     <button
-                      onClick={() => setSelectedColor('azul')}
+                      onClick={() => { setSelectedColor('azul'); setSelectionError(''); }}
                       className={`flex items-center gap-2 px-3 py-2 rounded-md text-xs font-black border-2 transition-all ${
                         selectedColor === 'azul'
                           ? 'border-primary bg-primary/10 text-foreground'
