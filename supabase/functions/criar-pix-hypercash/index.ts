@@ -108,17 +108,33 @@ serve(async (req) => {
     if (metadata) {
       transactionPayload.metadata = metadata;
       if (metadata.address) {
+        const cepFormatted = (metadata.cep || '').replace(/\D/g, '');
+        const cepWithDash = cepFormatted.length === 8 
+          ? `${cepFormatted.slice(0,5)}-${cepFormatted.slice(5)}` 
+          : cepFormatted;
+        
         transactionPayload.shipping = {
           fee: metadata.shippingCostCents || 0,
           address: {
             street: metadata.address,
             streetNumber: metadata.addressNumber || '',
-            complementary: metadata.complement || '',
+            complement: metadata.complement || '',
+            zipCode: cepWithDash,
             neighborhood: metadata.neighborhood || '',
             city: metadata.city || '',
             state: metadata.state || '',
-            country: 'br',
+            country: 'BR',
           },
+        };
+        transactionPayload.customer.address = {
+          street: metadata.address,
+          streetNumber: metadata.addressNumber || '',
+          complement: metadata.complement || '',
+          zipCode: cepWithDash,
+          neighborhood: metadata.neighborhood || '',
+          city: metadata.city || '',
+          state: metadata.state || '',
+          country: 'BR',
         };
       }
     }
@@ -129,24 +145,28 @@ serve(async (req) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${btoa(`${publicKey}:${secretKey}`)}`,
+        'Authorization': `Basic ${btoa(`x:${secretKey}`)}`,
       },
       body: JSON.stringify(transactionPayload),
     });
 
-    const data = await response.json();
+    const responseData = await response.json();
     console.log('HyperCash response status:', response.status);
 
-    if (!response.ok) {
-      console.error('HyperCash error:', JSON.stringify(data));
-      return new Response(JSON.stringify({ error: 'HyperCash API error', details: data }), {
+    // HyperCash wraps response in { data, message, status, error }
+    const data = responseData.data || responseData;
+
+    if (!response.ok || responseData.error) {
+      console.error('HyperCash error:', JSON.stringify(responseData));
+      return new Response(JSON.stringify({ error: 'HyperCash API error', details: responseData }), {
         status: response.status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const pixCode = data.pixCode || data.pix_code || data.pixCopiaECola || '';
-    const pixQrCodeBase64 = data.pixQrCodeBase64 || data.pix_qr_code_base64 || data.qrCodeBase64 || '';
+    // Extract PIX code from nested structure
+    const pixCode = data.pix?.qrcode || data.pixCode || data.pix_code || data.pixCopiaECola || '';
+    const pixQrCodeBase64 = data.pix?.qrCodeBase64 || data.pixQrCodeBase64 || data.pix_qr_code_base64 || '';
 
     // Save order to DB
     const { data: order, error: orderError } = await supabase
