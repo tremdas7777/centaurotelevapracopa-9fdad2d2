@@ -544,7 +544,7 @@ export default function QuizHome() {
                     {['P', 'M', 'G', 'GG', 'XG', 'XXG'].map((size) => (
                       <button
                         key={size}
-                        onClick={() => setSelectedSize(size)}
+                        onClick={() => { setSelectedSize(size); setSelectionError(''); }}
                         className={`w-10 h-10 rounded-md text-xs font-black border-2 transition-all ${
                           selectedSize === size
                             ? 'bg-primary text-primary-foreground border-primary'
