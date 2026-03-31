@@ -168,8 +168,9 @@ export default function QuizHome() {
   }, [showSplash, showAnimation, showScratchCard, showHome, quizComplete]);
 
   const [timeLeft, setTimeLeft] = useState(600);
-  const [selectedSize, setSelectedSize] = useState('M');
-  const [selectedColor, setSelectedColor] = useState<'amarela' | 'azul'>('amarela');
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<'amarela' | 'azul' | null>(null);
+  const [selectionError, setSelectionError] = useState('');
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
   const [showAddressDialog, setShowAddressDialog] = useState(false);
   const [cpfValue, setCpfValue] = useState('');
@@ -507,7 +508,7 @@ export default function QuizHome() {
                 <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider">
                   Exclusivo
                 </span>
-                <img src={selectedColor === 'amarela' ? camisaAmarelaImg : camisaAzulImg} alt="Camisa Brasil 2026" className="max-h-44 object-contain transition-all" loading="eager" fetchPriority="high" />
+                <img src={selectedColor === 'azul' ? camisaAzulImg : camisaAmarelaImg} alt="Camisa Brasil 2026" className="max-h-44 object-contain transition-all" loading="eager" fetchPriority="high" />
               </div>
               <div className="p-5">
                 <h3 className="text-lg font-black text-foreground mb-0.5">Camisa Brasil 2026</h3>
@@ -516,7 +517,7 @@ export default function QuizHome() {
                   <p className="text-xs font-bold text-foreground mb-2">Cor:</p>
                   <div className="flex gap-2 mb-3">
                     <button
-                      onClick={() => setSelectedColor('amarela')}
+                      onClick={() => { setSelectedColor('amarela'); setSelectionError(''); }}
                       className={`flex items-center gap-2 px-3 py-2 rounded-md text-xs font-black border-2 transition-all ${
                         selectedColor === 'amarela'
                           ? 'border-primary bg-primary/10 text-foreground'
@@ -527,7 +528,7 @@ export default function QuizHome() {
                       Amarela
                     </button>
                     <button
-                      onClick={() => setSelectedColor('azul')}
+                      onClick={() => { setSelectedColor('azul'); setSelectionError(''); }}
                       className={`flex items-center gap-2 px-3 py-2 rounded-md text-xs font-black border-2 transition-all ${
                         selectedColor === 'azul'
                           ? 'border-primary bg-primary/10 text-foreground'
@@ -543,7 +544,7 @@ export default function QuizHome() {
                     {['P', 'M', 'G', 'GG', 'XG', 'XXG'].map((size) => (
                       <button
                         key={size}
-                        onClick={() => setSelectedSize(size)}
+                        onClick={() => { setSelectedSize(size); setSelectionError(''); }}
                         className={`w-10 h-10 rounded-md text-xs font-black border-2 transition-all ${
                           selectedSize === size
                             ? 'bg-primary text-primary-foreground border-primary'
@@ -602,10 +603,10 @@ export default function QuizHome() {
             </h3>
             <div className="space-y-3 mb-5">
               <div className="flex items-center gap-4 p-3.5 bg-secondary rounded-md">
-                <img src={selectedColor === 'amarela' ? camisaAmarelaImg : camisaAzulImg} alt="Camisa Brasil 2026" className="w-16 h-16 object-contain rounded" />
+                <img src={selectedColor === 'azul' ? camisaAzulImg : camisaAmarelaImg} alt="Camisa Brasil 2026" className="w-16 h-16 object-contain rounded" />
                 <div className="flex-1">
-                  <p className="font-bold text-foreground text-sm">Camisa Brasil 2026 ({selectedColor === 'amarela' ? 'Amarela' : 'Azul'})</p>
-                  <p className="text-xs text-muted-foreground">Tamanho: {selectedSize} • Edição Copa do Mundo</p>
+                  <p className="font-bold text-foreground text-sm">Camisa Brasil 2026 {selectedColor ? `(${selectedColor === 'amarela' ? 'Amarela' : 'Azul'})` : ''}</p>
+                  <p className="text-xs text-muted-foreground">{selectedSize ? `Tamanho: ${selectedSize} • ` : ''}Edição Copa do Mundo</p>
                 </div>
                 <p className="font-black text-centauro-green text-sm">GRÁTIS</p>
               </div>
@@ -634,6 +635,13 @@ export default function QuizHome() {
             </div>
           </Card>
 
+          {/* Error message */}
+          {selectionError && (
+            <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 mb-4 text-center">
+              <p className="text-destructive text-sm font-bold">⚠️ {selectionError}</p>
+            </div>
+          )}
+
           {/* CTA */}
           <div className="bg-primary rounded-xl p-8 md:p-10 text-center mb-8 relative overflow-hidden">
             <div className="absolute inset-0 opacity-5">
@@ -652,6 +660,15 @@ export default function QuizHome() {
               </p>
               <Button
                 onClick={() => {
+                  if (!selectedColor || !selectedSize) {
+                    const missing = [];
+                    if (!selectedColor) missing.push('a cor da camisa');
+                    if (!selectedSize) missing.push('o tamanho da camisa');
+                    setSelectionError(`Selecione ${missing.join(' e ')} antes de continuar.`);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                  }
+                  setSelectionError('');
                   const isExternal = localStorage.getItem('externalCheckout') === 'true';
                   if (isExternal) {
                     handleGoToCheckout();
