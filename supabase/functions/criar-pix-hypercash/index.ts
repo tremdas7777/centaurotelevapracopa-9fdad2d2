@@ -116,9 +116,18 @@ serve(async (req) => {
             neighborhood: metadata.neighborhood || '',
             city: metadata.city || '',
             state: metadata.state || '',
-            zipcode: metadata.cep || '',
             country: 'br',
           },
+        };
+        // Add CEP to customer address for provider validation
+        transactionPayload.customer.address = {
+          street: metadata.address,
+          streetNumber: metadata.addressNumber || '',
+          neighborhood: metadata.neighborhood || '',
+          city: metadata.city || '',
+          state: metadata.state || '',
+          zipcode: metadata.cep || '',
+          country: 'br',
         };
       }
     }
