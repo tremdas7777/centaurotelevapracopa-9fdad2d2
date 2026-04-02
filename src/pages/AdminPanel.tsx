@@ -13,7 +13,7 @@ import { getWebhookConfig, saveWebhookConfig, fireWebhookEvent, syncWebhooksToDb
 import { loadUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
 import { fetchPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
-import AdminFinanceiro from '@/components/AdminFinanceiro';
+
 import AdminLeads from '@/components/AdminLeads';
 
 const ADMIN_PASSWORD = 'escalabahia';
