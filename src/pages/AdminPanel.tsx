@@ -123,10 +123,21 @@ export default function AdminPanel() {
     setTimeout(() => setPixelMessage(''), 3000);
   };
 
-  const handleSaveUtmify = () => {
-    saveUtmifyConfig(utmifyConfig);
+  const handleSaveUtmify = async () => {
+    await saveUtmifyConfig(utmifyConfig);
     setUtmifyMessage('Token Utmify salvo com sucesso!');
     setTimeout(() => setUtmifyMessage(''), 3000);
+  };
+
+  const handleDeleteUtmifyToken = async (tokenNum: 1 | 2) => {
+    const updated = { ...utmifyConfig };
+    if (tokenNum === 1) updated.apiToken = '';
+    else updated.apiToken2 = '';
+    setUtmifyConfig(updated);
+    await saveUtmifyConfig(updated);
+    const setMsg = tokenNum === 1 ? setUtmifyMessage : setUtmifyMessage2;
+    setMsg('Token excluído com sucesso!');
+    setTimeout(() => setMsg(''), 3000);
   };
 
   const handleTestUtmify = async (tokenNum: 1 | 2) => {
