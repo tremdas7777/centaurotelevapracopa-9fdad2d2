@@ -229,7 +229,7 @@ serve(async (req) => {
       console.error('Order insert error:', orderError);
     }
 
-    // Fire venda_pendente webhook
+    // Fire venda_pendente webhook + Utmify
     await fireServerWebhooks(supabase, 'venda_pendente', {
       order_id: order?.id,
       amount_cents: amountCents,
@@ -239,6 +239,12 @@ serve(async (req) => {
       buyer_phone: cleanPhone,
       gateway: 'hypercash',
     });
+    if (order?.id) {
+      await fireUtmifyEvent(supabase, 'waiting_payment', {
+        id: order.id, buyer_name: buyerName, buyer_email: buyerEmail,
+        buyer_phone: cleanPhone, buyer_document: cleanDoc, amount_cents: amountCents,
+      });
+    }
 
     // Optional SMS
     try {
