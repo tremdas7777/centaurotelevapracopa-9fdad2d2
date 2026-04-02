@@ -109,7 +109,7 @@ serve(async (req) => {
 
       console.log(`Order ${externalId} updated to ${newStatus}`);
 
-      // Fire webhook on approval
+      // Fire webhook + Utmify on approval
       if (newStatus === 'paid' && orderData) {
         await fireServerWebhooks(supabase, 'venda_aprovada', {
           source: 'gateway-postback',
@@ -120,6 +120,10 @@ serve(async (req) => {
           buyerPhone: orderData.buyer_phone,
           amount: orderData.amount_cents / 100,
           gateway: orderData.gateway,
+        });
+        await fireUtmifyEvent(supabase, 'paid', {
+          id: orderData.id, buyer_name: orderData.buyer_name, buyer_email: orderData.buyer_email,
+          buyer_phone: orderData.buyer_phone, buyer_document: orderData.buyer_document, amount_cents: orderData.amount_cents,
         });
       }
 
