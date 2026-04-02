@@ -757,16 +757,28 @@ export default function AdminPanel() {
                     placeholder="Cole aqui o Token 2 da Utmify"
                     className="font-mono text-xs"
                   />
-                  <Button
-                    onClick={() => handleTestUtmify(2)}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs font-bold"
-                    disabled={utmifyTesting2 || !utmifyConfig.apiToken2}
-                  >
-                    {utmifyTesting2 ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Zap size={14} className="mr-1.5" />}
-                    {utmifyTesting2 ? 'Testando...' : 'Testar Token 2'}
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => handleTestUtmify(2)}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs font-bold"
+                      disabled={utmifyTesting2 || !utmifyConfig.apiToken2}
+                    >
+                      {utmifyTesting2 ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Zap size={14} className="mr-1.5" />}
+                      {utmifyTesting2 ? 'Testando...' : 'Testar Token 2'}
+                    </Button>
+                    {utmifyConfig.apiToken2 && (
+                      <Button
+                        onClick={() => handleDeleteUtmifyToken(2)}
+                        variant="outline"
+                        size="sm"
+                        className="text-xs font-bold text-destructive border-destructive/30 hover:bg-destructive/10"
+                      >
+                        <Trash2 size={14} className="mr-1.5" /> Excluir
+                      </Button>
+                    )}
+                  </div>
                   {utmifyMessage2 && (
                     <div className={`p-2 rounded-md text-center text-xs font-bold ${
                       utmifyMessage2.includes('válido') || utmifyMessage2.includes('sucesso') || utmifyMessage2.includes('✓') || utmifyMessage2.includes('salvo')
