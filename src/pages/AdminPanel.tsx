@@ -51,12 +51,8 @@ export default function AdminPanel() {
 
   // Payment gateway state
   const [gatewayConfig, setGatewayConfig] = useState<PaymentGatewayConfig>({
-    activeGateway: 'centurionpay',
+    activeGateway: 'pagouai',
     pagouai: { publicKey: '', secretKey: '', enabled: false },
-    vennox: { secretKey: '', companyId: '', enabled: false },
-    centurionpay: { secretKey: '', companyId: '', enabled: false },
-    ironpay: { apiToken: '', offerHash: '', enabled: false },
-    hypercash: { publicKey: '', secretKey: '', enabled: false },
   });
   const [gatewayMessage, setGatewayMessage] = useState('');
   const [orders, setOrders] = useState<any[]>([]);
