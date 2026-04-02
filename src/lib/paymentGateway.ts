@@ -6,49 +6,16 @@ export interface PagouAiConfig {
   enabled: boolean;
 }
 
-export interface VennoxConfig {
-  secretKey: string;
-  companyId: string;
-  enabled: boolean;
-}
-
-export interface CenturionPayConfig {
-  secretKey: string;
-  companyId: string;
-  enabled: boolean;
-}
-
-export interface IronPayConfig {
-  apiToken: string;
-  offerHash: string;
-  enabled: boolean;
-}
-
-export interface HyperCashConfig {
-  publicKey: string;
-  secretKey: string;
-  enabled: boolean;
-}
-
 export interface PaymentGatewayConfig {
-  activeGateway: 'pagouai' | 'vennox' | 'centurionpay' | 'ironpay' | 'hypercash';
+  activeGateway: 'pagouai';
   pagouai: PagouAiConfig;
-  vennox: VennoxConfig;
-  centurionpay: CenturionPayConfig;
-  ironpay: IronPayConfig;
-  hypercash: HyperCashConfig;
 }
 
 const defaultConfig: PaymentGatewayConfig = {
-  activeGateway: 'centurionpay',
+  activeGateway: 'pagouai',
   pagouai: { publicKey: '', secretKey: '', enabled: false },
-  vennox: { secretKey: '', companyId: '', enabled: false },
-  centurionpay: { secretKey: '', companyId: '', enabled: false },
-  ironpay: { apiToken: '', offerHash: '', enabled: false },
-  hypercash: { publicKey: '', secretKey: '', enabled: false },
 };
 
-// In-memory cache to avoid repeated DB calls within the same page
 let cachedConfig: PaymentGatewayConfig | null = null;
 
 export function getCachedGatewayConfig(): PaymentGatewayConfig {
@@ -69,33 +36,11 @@ export async function fetchPaymentGatewayConfig(): Promise<PaymentGatewayConfig>
     }
 
     const config: PaymentGatewayConfig = {
-      activeGateway: (['pagouai', 'vennox', 'centurionpay', 'ironpay'].includes(data.active_gateway)
-        ? data.active_gateway
-        : 'centurionpay') as PaymentGatewayConfig['activeGateway'],
+      activeGateway: 'pagouai',
       pagouai: {
         publicKey: data.pagouai_public_key || '',
         secretKey: data.pagouai_secret_key || '',
         enabled: !!(data.pagouai_secret_key),
-      },
-      vennox: {
-        secretKey: data.vennox_secret_key || '',
-        companyId: data.vennox_company_id || '',
-        enabled: !!(data.vennox_secret_key && data.vennox_company_id),
-      },
-      centurionpay: {
-        secretKey: data.centurionpay_secret_key || '',
-        companyId: data.centurionpay_company_id || '',
-        enabled: !!(data.centurionpay_secret_key && data.centurionpay_company_id),
-      },
-      ironpay: {
-        apiToken: (data as any).ironpay_api_token || '',
-        offerHash: (data as any).ironpay_offer_hash || '',
-        enabled: !!((data as any).ironpay_api_token && (data as any).ironpay_offer_hash),
-      },
-      hypercash: {
-        publicKey: (data as any).hypercash_public_key || '',
-        secretKey: (data as any).hypercash_secret_key || '',
-        enabled: !!((data as any).hypercash_public_key && (data as any).hypercash_secret_key),
       },
     };
 
@@ -109,7 +54,6 @@ export async function fetchPaymentGatewayConfig(): Promise<PaymentGatewayConfig>
 
 export async function savePaymentGatewayConfig(config: PaymentGatewayConfig): Promise<boolean> {
   try {
-    // Get existing row id
     const { data: existing } = await supabase
       .from('gateway_config')
       .select('id')
@@ -117,17 +61,9 @@ export async function savePaymentGatewayConfig(config: PaymentGatewayConfig): Pr
       .single();
 
     const updateData: Record<string, unknown> = {
-      active_gateway: config.activeGateway,
+      active_gateway: 'pagouai',
       pagouai_public_key: config.pagouai.publicKey,
       pagouai_secret_key: config.pagouai.secretKey,
-      vennox_secret_key: config.vennox.secretKey,
-      vennox_company_id: config.vennox.companyId,
-      centurionpay_secret_key: config.centurionpay.secretKey,
-      centurionpay_company_id: config.centurionpay.companyId,
-      ironpay_api_token: config.ironpay.apiToken,
-      ironpay_offer_hash: config.ironpay.offerHash,
-      hypercash_public_key: config.hypercash.publicKey,
-      hypercash_secret_key: config.hypercash.secretKey,
       updated_at: new Date().toISOString(),
     };
 
@@ -152,7 +88,6 @@ export async function savePaymentGatewayConfig(config: PaymentGatewayConfig): Pr
   }
 }
 
-// Legacy support - keep getPaymentGatewayConfig for sync access (uses cache)
 export function getPaymentGatewayConfig(): PaymentGatewayConfig {
   return cachedConfig || defaultConfig;
 }

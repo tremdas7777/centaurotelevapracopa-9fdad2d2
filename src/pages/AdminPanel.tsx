@@ -13,12 +13,12 @@ import { getWebhookConfig, saveWebhookConfig, fireWebhookEvent, syncWebhooksToDb
 import { loadUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
 import { fetchPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
-import AdminFinanceiro from '@/components/AdminFinanceiro';
+
 import AdminLeads from '@/components/AdminLeads';
 
 const ADMIN_PASSWORD = 'escalabahia';
 
-type Tab = 'analytics' | 'financeiro' | 'leads' | 'pixels' | 'webhooks' | 'utmify' | 'checkout' | 'pagamentos' | 'pedidos';
+type Tab = 'analytics' | 'leads' | 'pixels' | 'webhooks' | 'utmify' | 'checkout' | 'pagamentos' | 'pedidos';
 
 export default function AdminPanel() {
   const [password, setPassword] = useState('');
@@ -51,12 +51,8 @@ export default function AdminPanel() {
 
   // Payment gateway state
   const [gatewayConfig, setGatewayConfig] = useState<PaymentGatewayConfig>({
-    activeGateway: 'centurionpay',
+    activeGateway: 'pagouai',
     pagouai: { publicKey: '', secretKey: '', enabled: false },
-    vennox: { secretKey: '', companyId: '', enabled: false },
-    centurionpay: { secretKey: '', companyId: '', enabled: false },
-    ironpay: { apiToken: '', offerHash: '', enabled: false },
-    hypercash: { publicKey: '', secretKey: '', enabled: false },
   });
   const [gatewayMessage, setGatewayMessage] = useState('');
   const [orders, setOrders] = useState<any[]>([]);
@@ -259,7 +255,7 @@ export default function AdminPanel() {
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={14} /> },
-    { id: 'financeiro', label: 'Financeiro', icon: <DollarSign size={14} /> },
+    
     { id: 'leads', label: 'Leads', icon: <Users size={14} /> },
     { id: 'pixels', label: 'Pixels', icon: <Code size={14} /> },
     { id: 'webhooks', label: 'Webhooks', icon: <Bell size={14} /> },
@@ -409,8 +405,6 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* FINANCEIRO TAB */}
-        {activeTab === 'financeiro' && <AdminFinanceiro />}
 
         {/* LEADS TAB */}
         {activeTab === 'leads' && <AdminLeads />}
