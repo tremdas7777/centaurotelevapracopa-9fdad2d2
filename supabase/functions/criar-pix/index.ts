@@ -72,16 +72,12 @@ serve(async (req) => {
       ],
     };
 
-    if (buyerName || buyerEmail || buyerDocument || buyerPhone) {
-      body.customer = {
-        ...(buyerName && { name: buyerName }),
-        ...(buyerEmail && { email: buyerEmail }),
-        ...(buyerPhone && { phone: buyerPhone.replace(/\D/g, '') }),
-        ...(buyerDocument && {
-          documents: [{ type: 'cpf', number: buyerDocument.replace(/\D/g, '') }],
-        }),
-      };
-    }
+    body.customer = {
+      name: buyerName || 'Cliente',
+      email: buyerEmail || 'cliente@email.com',
+      document: buyerDocument ? buyerDocument.replace(/\D/g, '') : '00000000000',
+      ...(buyerPhone && { phone: buyerPhone.replace(/\D/g, '') }),
+    };
 
     if (externalRef) {
       body.externalRef = externalRef;
