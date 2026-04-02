@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { getFunnelStats, clearFunnelEvents } from '@/lib/funnelTracking';
 import { getPixelConfig, savePixelConfig, type PixelConfig, type FacebookPixelEntry, type TikTokPixelEntry, type GoogleAdsEntry } from '@/lib/pixelManager';
 import { getWebhookConfig, saveWebhookConfig, fireWebhookEvent, syncWebhooksToDb, loadWebhooksFromDb, type WebhookConfig, type WebhookEntry } from '@/lib/webhookManager';
-import { getUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
+import { loadUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
 import { fetchPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
 import AdminFinanceiro from '@/components/AdminFinanceiro';
