@@ -830,7 +830,7 @@ export default function AdminPanel() {
                       const updated = { ...gatewayConfig, activeGateway: gw };
                       setGatewayConfig(updated);
                       await savePaymentGatewayConfig(updated);
-                      const names: Record<string, string> = { pagouai: 'Pagou.ai', vennox: 'Vennox', centurionpay: 'Centurion Pay', ironpay: 'Iron Pay', hypercash: 'Hyper Cash' };
+                      const names: Record<string, string> = { vennox: 'Vennox', centurionpay: 'Centurion Pay', ironpay: 'Iron Pay', hypercash: 'Hyper Cash' };
                       setGatewayMessage(`Gateway ativo: ${names[gw]}`);
                       setTimeout(() => setGatewayMessage(''), 3000);
                     }}
