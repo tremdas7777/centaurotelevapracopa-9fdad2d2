@@ -27,6 +27,8 @@ export type Database = {
           pagouai_public_key: string | null
           pagouai_secret_key: string | null
           updated_at: string | null
+          utmify_token_1: string | null
+          utmify_token_2: string | null
           vennox_company_id: string | null
           vennox_secret_key: string | null
         }
@@ -42,6 +44,8 @@ export type Database = {
           pagouai_public_key?: string | null
           pagouai_secret_key?: string | null
           updated_at?: string | null
+          utmify_token_1?: string | null
+          utmify_token_2?: string | null
           vennox_company_id?: string | null
           vennox_secret_key?: string | null
         }
@@ -57,6 +61,8 @@ export type Database = {
           pagouai_public_key?: string | null
           pagouai_secret_key?: string | null
           updated_at?: string | null
+          utmify_token_1?: string | null
+          utmify_token_2?: string | null
           vennox_company_id?: string | null
           vennox_secret_key?: string | null
         }

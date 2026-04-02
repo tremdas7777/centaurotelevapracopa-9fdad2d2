@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { getFunnelStats, clearFunnelEvents } from '@/lib/funnelTracking';
 import { getPixelConfig, savePixelConfig, type PixelConfig, type FacebookPixelEntry, type TikTokPixelEntry, type GoogleAdsEntry } from '@/lib/pixelManager';
 import { getWebhookConfig, saveWebhookConfig, fireWebhookEvent, syncWebhooksToDb, loadWebhooksFromDb, type WebhookConfig, type WebhookEntry } from '@/lib/webhookManager';
-import { getUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
+import { loadUtmifyConfig, saveUtmifyConfig, testUtmifyToken, type UtmifyConfig } from '@/lib/utmifyManager';
 import { fetchPaymentGatewayConfig, savePaymentGatewayConfig, type PaymentGatewayConfig } from '@/lib/paymentGateway';
 import { supabase } from '@/integrations/supabase/client';
 import AdminFinanceiro from '@/components/AdminFinanceiro';
@@ -78,7 +78,7 @@ export default function AdminPanel() {
       setWebhookConfig(config);
       saveWebhookConfig(config); // sync to localStorage
     });
-    setUtmifyConfig(getUtmifyConfig());
+    loadUtmifyConfig().then(config => setUtmifyConfig(config));
     fetchPaymentGatewayConfig().then(config => setGatewayConfig(config));
   }, []);
 
@@ -123,10 +123,21 @@ export default function AdminPanel() {
     setTimeout(() => setPixelMessage(''), 3000);
   };
 
-  const handleSaveUtmify = () => {
-    saveUtmifyConfig(utmifyConfig);
+  const handleSaveUtmify = async () => {
+    await saveUtmifyConfig(utmifyConfig);
     setUtmifyMessage('Token Utmify salvo com sucesso!');
     setTimeout(() => setUtmifyMessage(''), 3000);
+  };
+
+  const handleDeleteUtmifyToken = async (tokenNum: 1 | 2) => {
+    const updated = { ...utmifyConfig };
+    if (tokenNum === 1) updated.apiToken = '';
+    else updated.apiToken2 = '';
+    setUtmifyConfig(updated);
+    await saveUtmifyConfig(updated);
+    const setMsg = tokenNum === 1 ? setUtmifyMessage : setUtmifyMessage2;
+    setMsg('Token excluído com sucesso!');
+    setTimeout(() => setMsg(''), 3000);
   };
 
   const handleTestUtmify = async (tokenNum: 1 | 2) => {
@@ -705,16 +716,28 @@ export default function AdminPanel() {
                     placeholder="Cole aqui o Token 1 da Utmify"
                     className="font-mono text-xs"
                   />
-                  <Button
-                    onClick={() => handleTestUtmify(1)}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs font-bold"
-                    disabled={utmifyTesting || !utmifyConfig.apiToken}
-                  >
-                    {utmifyTesting ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Zap size={14} className="mr-1.5" />}
-                    {utmifyTesting ? 'Testando...' : 'Testar Token 1'}
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => handleTestUtmify(1)}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs font-bold"
+                      disabled={utmifyTesting || !utmifyConfig.apiToken}
+                    >
+                      {utmifyTesting ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Zap size={14} className="mr-1.5" />}
+                      {utmifyTesting ? 'Testando...' : 'Testar Token 1'}
+                    </Button>
+                    {utmifyConfig.apiToken && (
+                      <Button
+                        onClick={() => handleDeleteUtmifyToken(1)}
+                        variant="outline"
+                        size="sm"
+                        className="text-xs font-bold text-destructive border-destructive/30 hover:bg-destructive/10"
+                      >
+                        <Trash2 size={14} className="mr-1.5" /> Excluir
+                      </Button>
+                    )}
+                  </div>
                   {utmifyMessage && (
                     <div className={`p-2 rounded-md text-center text-xs font-bold ${
                       utmifyMessage.includes('válido') || utmifyMessage.includes('sucesso') || utmifyMessage.includes('✓') || utmifyMessage.includes('salvo')
@@ -734,16 +757,28 @@ export default function AdminPanel() {
                     placeholder="Cole aqui o Token 2 da Utmify"
                     className="font-mono text-xs"
                   />
-                  <Button
-                    onClick={() => handleTestUtmify(2)}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs font-bold"
-                    disabled={utmifyTesting2 || !utmifyConfig.apiToken2}
-                  >
-                    {utmifyTesting2 ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Zap size={14} className="mr-1.5" />}
-                    {utmifyTesting2 ? 'Testando...' : 'Testar Token 2'}
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => handleTestUtmify(2)}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs font-bold"
+                      disabled={utmifyTesting2 || !utmifyConfig.apiToken2}
+                    >
+                      {utmifyTesting2 ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Zap size={14} className="mr-1.5" />}
+                      {utmifyTesting2 ? 'Testando...' : 'Testar Token 2'}
+                    </Button>
+                    {utmifyConfig.apiToken2 && (
+                      <Button
+                        onClick={() => handleDeleteUtmifyToken(2)}
+                        variant="outline"
+                        size="sm"
+                        className="text-xs font-bold text-destructive border-destructive/30 hover:bg-destructive/10"
+                      >
+                        <Trash2 size={14} className="mr-1.5" /> Excluir
+                      </Button>
+                    )}
+                  </div>
                   {utmifyMessage2 && (
                     <div className={`p-2 rounded-md text-center text-xs font-bold ${
                       utmifyMessage2.includes('válido') || utmifyMessage2.includes('sucesso') || utmifyMessage2.includes('✓') || utmifyMessage2.includes('salvo')
