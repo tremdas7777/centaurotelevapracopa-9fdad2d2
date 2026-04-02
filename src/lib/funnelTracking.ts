@@ -1,7 +1,7 @@
 // Funnel event tracking using localStorage
 // Events: 'visitor' | 'quiz_started' | 'quiz_completed' | 'checkout'
 
-export type FunnelEvent = 'visitor' | 'quiz_started' | 'quiz_completed' | 'checkout';
+export type FunnelEvent = 'visitor' | 'quiz_started' | 'quiz_completed' | 'scratch_completed' | 'checkout';
 
 interface FunnelEntry {
   event: FunnelEvent;
