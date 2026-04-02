@@ -78,7 +78,7 @@ export default function AdminPanel() {
       setWebhookConfig(config);
       saveWebhookConfig(config); // sync to localStorage
     });
-    setUtmifyConfig(getUtmifyConfig());
+    loadUtmifyConfig().then(config => setUtmifyConfig(config));
     fetchPaymentGatewayConfig().then(config => setGatewayConfig(config));
   }, []);
 
