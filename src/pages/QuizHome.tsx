@@ -168,7 +168,7 @@ export default function QuizHome() {
   }, [showSplash, showAnimation, showScratchCard, showHome, quizComplete]);
 
   const [timeLeft, setTimeLeft] = useState(600);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>('M');
   const [selectedColor, setSelectedColor] = useState<'amarela' | 'azul' | null>(null);
   const [selectionError, setSelectionError] = useState('');
   const [viewersCount] = useState(Math.floor(Math.random() * 30) + 38);
