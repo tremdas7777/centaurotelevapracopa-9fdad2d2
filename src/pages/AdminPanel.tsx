@@ -823,7 +823,7 @@ export default function AdminPanel() {
                 <span className="font-black text-foreground text-sm">Gateway Ativo</span>
               </div>
               <div className="flex gap-2 flex-wrap">
-                {(['pagouai', 'vennox', 'centurionpay', 'ironpay', 'hypercash'] as const).map((gw) => (
+                {(['vennox', 'centurionpay', 'ironpay', 'hypercash'] as const).map((gw) => (
                   <button
                     key={gw}
                     onClick={async () => {
