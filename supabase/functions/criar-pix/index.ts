@@ -199,7 +199,7 @@ serve(async (req) => {
       console.error('Order save error:', orderError);
     }
 
-    // Fire venda_pendente webhook server-side
+    // Fire venda_pendente webhook + Utmify server-side
     if (orderData) {
       await fireServerWebhooks(supabase, 'venda_pendente', {
         source: 'checkout',
@@ -210,6 +210,14 @@ serve(async (req) => {
         buyerPhone: buyerPhone || null,
         amount: amount,
         gateway: 'pagouai',
+      });
+      await fireUtmifyEvent(supabase, 'waiting_payment', {
+        id: orderData.id,
+        buyer_name: buyerName,
+        buyer_email: buyerEmail,
+        buyer_phone: buyerPhone,
+        buyer_document: buyerDocument,
+        amount_cents: Math.round(amount * 100),
       });
     }
 
