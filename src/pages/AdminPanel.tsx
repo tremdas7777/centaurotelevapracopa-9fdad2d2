@@ -405,8 +405,6 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* FINANCEIRO TAB */}
-        {activeTab === 'financeiro' && <AdminFinanceiro />}
 
         {/* LEADS TAB */}
         {activeTab === 'leads' && <AdminLeads />}
