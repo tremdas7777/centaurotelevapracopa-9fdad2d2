@@ -1091,7 +1091,7 @@ export default function AdminPanel() {
                 <li>O gateway ativo será usado para gerar o QR Code PIX no checkout</li>
                 <li>As chaves são enviadas de forma segura via servidor</li>
                 <li>Alterne entre gateways clicando no botão do gateway desejado acima</li>
-                <li><strong>Pagou.ai:</strong> Public Key + Secret Key</li>
+                
                 <li><strong>Vennox:</strong> Secret Key + Company ID (autenticação Basic)</li>
                 <li><strong>Centurion Pay:</strong> Company ID + Secret Key (autenticação Basic)</li>
                 <li><strong>Iron Pay:</strong> Token da API Pública + Hash da Oferta</li>
