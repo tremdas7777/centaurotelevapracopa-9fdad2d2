@@ -1,6 +1,34 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+async function fireUtmifyEvent(
+  supabase: any,
+  status: 'waiting_payment' | 'paid',
+  orderData: { id: string; buyer_name?: string; buyer_email?: string; buyer_phone?: string; buyer_document?: string; amount_cents: number },
+) {
+  try {
+    const { data: config } = await supabase.from('gateway_config').select('utmify_token_1, utmify_token_2').limit(1).single();
+    if (!config) return;
+    const tokens = [config.utmify_token_1, config.utmify_token_2].filter(Boolean);
+    if (tokens.length === 0) return;
+    const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    const payload = {
+      orderId: orderData.id, platform: 'quiz-copa-2026', paymentMethod: 'pix', status,
+      createdAt: now, approvedDate: status === 'paid' ? now : null, refundedAt: null,
+      customer: { name: orderData.buyer_name || 'Cliente', email: orderData.buyer_email || 'cliente@email.com', phone: orderData.buyer_phone || null, document: orderData.buyer_document || null },
+      products: [{ id: 'copa-2026-kit', name: 'Kit Copa 2026', planId: null, planName: null, quantity: 1, priceInCents: orderData.amount_cents }],
+      trackingParameters: { src: null, sck: null, utm_source: null, utm_campaign: null, utm_medium: null, utm_content: null, utm_term: null },
+      commission: { totalPriceInCents: orderData.amount_cents, gatewayFeeInCents: 0, userCommissionInCents: orderData.amount_cents, currency: 'BRL' },
+    };
+    await Promise.allSettled(tokens.map(async (token: string) => {
+      try {
+        const resp = await fetch('https://api.utmify.com.br/api-credentials/orders', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-token': token }, body: JSON.stringify(payload) });
+        console.log(`Utmify ${status} sent (token ${token.substring(0,8)}...): ${resp.status}`);
+      } catch (err) { console.error(`Utmify error:`, err); }
+    }));
+  } catch (err) { console.error('Utmify event error:', err); }
+}
+
 async function fireServerWebhooks(
   supabase: any,
   eventType: 'venda_pendente' | 'venda_aprovada',
@@ -137,7 +165,7 @@ serve(async (req) => {
       console.error('Order save error:', orderError);
     }
 
-    // Fire venda_pendente webhook server-side
+    // Fire venda_pendente webhook + Utmify server-side
     if (orderData) {
       await fireServerWebhooks(supabase, 'venda_pendente', {
         source: 'checkout',
@@ -148,6 +176,10 @@ serve(async (req) => {
         buyerPhone: buyerPhone || null,
         amount: amount,
         gateway: 'vennox',
+      });
+      await fireUtmifyEvent(supabase, 'waiting_payment', {
+        id: orderData.id, buyer_name: buyerName, buyer_email: buyerEmail,
+        buyer_phone: buyerPhone, buyer_document: buyerDocument, amount_cents: Math.round(amount * 100),
       });
     }
 
