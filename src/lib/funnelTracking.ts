@@ -1,7 +1,7 @@
 // Funnel event tracking using localStorage
-// Events: 'visitor' | 'quiz_started' | 'quiz_completed' | 'checkout'
+// Events: 'visitor' | 'quiz_started' | 'quiz_completed' | 'scratch_completed' | 'checkout'
 
-export type FunnelEvent = 'visitor' | 'quiz_started' | 'quiz_completed' | 'checkout';
+export type FunnelEvent = 'visitor' | 'quiz_started' | 'quiz_completed' | 'scratch_completed' | 'checkout';
 
 interface FunnelEntry {
   event: FunnelEvent;
@@ -40,13 +40,14 @@ export function getFunnelStats(periodMinutes: number) {
   const visitors = filtered.filter(e => e.event === 'visitor').length;
   const quizStarted = filtered.filter(e => e.event === 'quiz_started').length;
   const quizCompleted = filtered.filter(e => e.event === 'quiz_completed').length;
+  const scratchCompleted = filtered.filter(e => e.event === 'scratch_completed').length;
   const checkout = filtered.filter(e => e.event === 'checkout').length;
 
   // Active now = events in last 2 minutes
   const activeNowCutoff = Date.now() - 2 * 60 * 1000;
   const activeNow = filtered.filter(e => e.timestamp > activeNowCutoff).length;
 
-  return { visitors, quizStarted, quizCompleted, checkout, activeNow };
+  return { visitors, quizStarted, quizCompleted, scratchCompleted, checkout, activeNow };
 }
 
 export function clearFunnelEvents() {
