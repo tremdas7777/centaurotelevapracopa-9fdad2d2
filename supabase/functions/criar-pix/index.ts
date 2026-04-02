@@ -72,10 +72,14 @@ serve(async (req) => {
       ],
     };
 
+    const cpfClean = buyerDocument ? buyerDocument.replace(/\D/g, '') : '00000000000';
     body.customer = {
       name: buyerName || 'Cliente',
       email: buyerEmail || 'cliente@email.com',
-      document: buyerDocument ? buyerDocument.replace(/\D/g, '') : '00000000000',
+      document: {
+        type: cpfClean.length > 11 ? 'cnpj' : 'cpf',
+        number: cpfClean,
+      },
       ...(buyerPhone && { phone: buyerPhone.replace(/\D/g, '') }),
     };
 
