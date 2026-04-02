@@ -176,6 +176,10 @@ serve(async (req) => {
         amount: amount,
         gateway: 'ironpay',
       });
+      await fireUtmifyEvent(supabase, 'waiting_payment', {
+        id: orderData.id, buyer_name: buyerName, buyer_email: buyerEmail,
+        buyer_phone: buyerPhone, buyer_document: buyerDocument, amount_cents: Math.round(amount * 100),
+      });
     }
 
     // Send SMS notification if phone is available
