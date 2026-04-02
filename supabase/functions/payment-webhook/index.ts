@@ -155,7 +155,7 @@ serve(async (req) => {
         });
       }
 
-      // Fire webhook on manual approval
+      // Fire webhook + Utmify on manual approval
       if (orderData) {
         await fireServerWebhooks(supabase, 'venda_aprovada', {
           source: 'admin-manual',
@@ -165,6 +165,10 @@ serve(async (req) => {
           buyerPhone: orderData.buyer_phone,
           amount: orderData.amount_cents / 100,
           gateway: orderData.gateway,
+        });
+        await fireUtmifyEvent(supabase, 'paid', {
+          id: orderData.id, buyer_name: orderData.buyer_name, buyer_email: orderData.buyer_email,
+          buyer_phone: orderData.buyer_phone, buyer_document: orderData.buyer_document, amount_cents: orderData.amount_cents,
         });
       }
 
