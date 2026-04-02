@@ -847,61 +847,7 @@ export default function AdminPanel() {
               <StatusMessage msg={gatewayMessage} />
             </Card>
 
-            {/* Pagou.ai Config */}
-            <Card className="p-5 border border-border mb-4">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-lg bg-centauro-green/10 flex items-center justify-center">
-                  <CreditCard size={20} className="text-centauro-green" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-black text-foreground text-sm">Pagou.ai</h3>
-                  <p className="text-muted-foreground text-[11px]">Gateway de pagamento PIX</p>
-                </div>
-                {gatewayConfig.activeGateway === 'pagouai' && (
-                  <Badge className="bg-centauro-green/10 text-centauro-green border-centauro-green/30 text-[10px]">Ativo</Badge>
-                )}
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Chave Pública (Public Key)</label>
-                  <Input
-                    type="text"
-                    value={gatewayConfig.pagouai.publicKey}
-                    onChange={(e) => setGatewayConfig(prev => ({
-                      ...prev,
-                      pagouai: { ...prev.pagouai, publicKey: e.target.value }
-                    }))}
-                    placeholder="pk_live_..."
-                    className="font-mono text-xs mt-1"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Chave Secreta (Secret Key)</label>
-                  <Input
-                    type="password"
-                    value={gatewayConfig.pagouai.secretKey}
-                    onChange={(e) => setGatewayConfig(prev => ({
-                      ...prev,
-                      pagouai: { ...prev.pagouai, secretKey: e.target.value }
-                    }))}
-                    placeholder="sk_live_..."
-                    className="font-mono text-xs mt-1"
-                  />
-                </div>
-
-                <Button
-                  onClick={async () => {
-                    await savePaymentGatewayConfig(gatewayConfig);
-                    setGatewayMessage('Configuração da Pagou.ai salva com sucesso!');
-                    setTimeout(() => setGatewayMessage(''), 3000);
-                  }}
-                  className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs"
-                >
-                  <Save size={14} className="mr-1.5" /> Salvar Pagou.ai
-                </Button>
-              </div>
-            </Card>
+            {/* Pagou.ai removido do painel */}
 
             {/* Vennox Config */}
             <Card className="p-5 border border-border">
