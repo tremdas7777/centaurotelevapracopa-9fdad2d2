@@ -823,14 +823,14 @@ export default function AdminPanel() {
                 <span className="font-black text-foreground text-sm">Gateway Ativo</span>
               </div>
               <div className="flex gap-2 flex-wrap">
-                {(['pagouai', 'vennox', 'centurionpay', 'ironpay', 'hypercash'] as const).map((gw) => (
+                {(['vennox', 'centurionpay', 'ironpay', 'hypercash'] as const).map((gw) => (
                   <button
                     key={gw}
                     onClick={async () => {
                       const updated = { ...gatewayConfig, activeGateway: gw };
                       setGatewayConfig(updated);
                       await savePaymentGatewayConfig(updated);
-                      const names: Record<string, string> = { pagouai: 'Pagou.ai', vennox: 'Vennox', centurionpay: 'Centurion Pay', ironpay: 'Iron Pay', hypercash: 'Hyper Cash' };
+                      const names: Record<string, string> = { vennox: 'Vennox', centurionpay: 'Centurion Pay', ironpay: 'Iron Pay', hypercash: 'Hyper Cash' };
                       setGatewayMessage(`Gateway ativo: ${names[gw]}`);
                       setTimeout(() => setGatewayMessage(''), 3000);
                     }}
@@ -840,68 +840,14 @@ export default function AdminPanel() {
                         : 'border-border text-muted-foreground hover:border-muted-foreground/30'
                     }`}
                   >
-                    {gw === 'pagouai' ? 'Pagou.ai' : gw === 'vennox' ? 'Vennox' : gw === 'centurionpay' ? 'Centurion Pay' : gw === 'ironpay' ? 'Iron Pay' : 'Hyper Cash'}
+                    {gw === 'vennox' ? 'Vennox' : gw === 'centurionpay' ? 'Centurion Pay' : gw === 'ironpay' ? 'Iron Pay' : 'Hyper Cash'}
                   </button>
                 ))}
               </div>
               <StatusMessage msg={gatewayMessage} />
             </Card>
 
-            {/* Pagou.ai Config */}
-            <Card className="p-5 border border-border mb-4">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-lg bg-centauro-green/10 flex items-center justify-center">
-                  <CreditCard size={20} className="text-centauro-green" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-black text-foreground text-sm">Pagou.ai</h3>
-                  <p className="text-muted-foreground text-[11px]">Gateway de pagamento PIX</p>
-                </div>
-                {gatewayConfig.activeGateway === 'pagouai' && (
-                  <Badge className="bg-centauro-green/10 text-centauro-green border-centauro-green/30 text-[10px]">Ativo</Badge>
-                )}
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Chave Pública (Public Key)</label>
-                  <Input
-                    type="text"
-                    value={gatewayConfig.pagouai.publicKey}
-                    onChange={(e) => setGatewayConfig(prev => ({
-                      ...prev,
-                      pagouai: { ...prev.pagouai, publicKey: e.target.value }
-                    }))}
-                    placeholder="pk_live_..."
-                    className="font-mono text-xs mt-1"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Chave Secreta (Secret Key)</label>
-                  <Input
-                    type="password"
-                    value={gatewayConfig.pagouai.secretKey}
-                    onChange={(e) => setGatewayConfig(prev => ({
-                      ...prev,
-                      pagouai: { ...prev.pagouai, secretKey: e.target.value }
-                    }))}
-                    placeholder="sk_live_..."
-                    className="font-mono text-xs mt-1"
-                  />
-                </div>
-
-                <Button
-                  onClick={async () => {
-                    await savePaymentGatewayConfig(gatewayConfig);
-                    setGatewayMessage('Configuração da Pagou.ai salva com sucesso!');
-                    setTimeout(() => setGatewayMessage(''), 3000);
-                  }}
-                  className="w-full bg-centauro-green hover:bg-centauro-green/90 text-primary-foreground font-bold text-xs"
-                >
-                  <Save size={14} className="mr-1.5" /> Salvar Pagou.ai
-                </Button>
-              </div>
-            </Card>
+            {/* Pagou.ai removido do painel */}
 
             {/* Vennox Config */}
             <Card className="p-5 border border-border">
@@ -1145,7 +1091,7 @@ export default function AdminPanel() {
                 <li>O gateway ativo será usado para gerar o QR Code PIX no checkout</li>
                 <li>As chaves são enviadas de forma segura via servidor</li>
                 <li>Alterne entre gateways clicando no botão do gateway desejado acima</li>
-                <li><strong>Pagou.ai:</strong> Public Key + Secret Key</li>
+                
                 <li><strong>Vennox:</strong> Secret Key + Company ID (autenticação Basic)</li>
                 <li><strong>Centurion Pay:</strong> Company ID + Secret Key (autenticação Basic)</li>
                 <li><strong>Iron Pay:</strong> Token da API Pública + Hash da Oferta</li>
