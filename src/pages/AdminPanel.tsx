@@ -716,16 +716,28 @@ export default function AdminPanel() {
                     placeholder="Cole aqui o Token 1 da Utmify"
                     className="font-mono text-xs"
                   />
-                  <Button
-                    onClick={() => handleTestUtmify(1)}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs font-bold"
-                    disabled={utmifyTesting || !utmifyConfig.apiToken}
-                  >
-                    {utmifyTesting ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Zap size={14} className="mr-1.5" />}
-                    {utmifyTesting ? 'Testando...' : 'Testar Token 1'}
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => handleTestUtmify(1)}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs font-bold"
+                      disabled={utmifyTesting || !utmifyConfig.apiToken}
+                    >
+                      {utmifyTesting ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Zap size={14} className="mr-1.5" />}
+                      {utmifyTesting ? 'Testando...' : 'Testar Token 1'}
+                    </Button>
+                    {utmifyConfig.apiToken && (
+                      <Button
+                        onClick={() => handleDeleteUtmifyToken(1)}
+                        variant="outline"
+                        size="sm"
+                        className="text-xs font-bold text-destructive border-destructive/30 hover:bg-destructive/10"
+                      >
+                        <Trash2 size={14} className="mr-1.5" /> Excluir
+                      </Button>
+                    )}
+                  </div>
                   {utmifyMessage && (
                     <div className={`p-2 rounded-md text-center text-xs font-bold ${
                       utmifyMessage.includes('válido') || utmifyMessage.includes('sucesso') || utmifyMessage.includes('✓') || utmifyMessage.includes('salvo')
